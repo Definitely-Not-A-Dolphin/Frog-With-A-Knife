@@ -1,0 +1,1 @@
+This is my very own discord bot. I am working tirelessly on this project (not really), but the end goal is a surprise.
