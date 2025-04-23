@@ -1,0 +1,8 @@
+{
+  "placeholder" : {
+    "name" : "placeHolderMeme",
+    "link" : "./memefiles/0001BaldCat.jpg"
+  },
+
+  "type": "module"
+}
