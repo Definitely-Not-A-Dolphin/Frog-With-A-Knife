@@ -6,7 +6,7 @@ module.exports = {
     .setDescription('Replies with Pong!'),
   async execute(interaction) {
     await interaction.reply({
-      content: 'Pong!', withResponse: true
+      content: 'Pong!', withResponse: tru
     })
       .then((response) => console.log(`Reply sent with content "${response.resource.message.content}", ordered by "${interaction.user.username}"`))
       .catch(console.error);
