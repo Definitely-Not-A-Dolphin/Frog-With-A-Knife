@@ -37,8 +37,13 @@ module.exports = {
     .addStringOption(option =>
       option.setName('input')
         .setDescription('The input to echo back')
-        .setRequired(true)),
+        .setRequired(true)
+    ),
   async execute(interaction) {
-    await interaction.reply(/* Wat moet hier??? */);
+    await interaction.reply({
+      content: "shit man", withResponse: true
+    })
+      .then((response) => console.log(`Reply sent with content "${response.resource.message.content}", ordered by "${interaction.user.username}"`))
+      .catch(console.error);
   },
 };

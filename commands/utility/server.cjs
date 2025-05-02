@@ -6,6 +6,10 @@ module.exports = {
     .setDescription('Provides information about the server.'),
   async execute(interaction) {
     // interaction.guild is the object representing the Guild in which the command was run
-    await interaction.reply(`This server is ${interaction.guild.name} and has ${interaction.guild.memberCount} members.`);
+    await interaction.reply({
+      content: `This server is ${interaction.guild.name} and has ${interaction.guild.memberCount} members.`
+    })
+      .then((response) => console.log(`Reply sent with content "${response.resource.message.content}", ordered by "${interaction.user.username}"`))
+      .catch(console.error);
   },
 };
