@@ -1,42 +1,52 @@
 const { SlashCommandBuilder } = require('discord.js');
 
 function morseEncoder(message) {
+  message = message.toLowerCase();
+
   let newMessage = "";
-  
+
   const conversionTable = new Map([
-    ["a", "⸱- "],
-    ["b", "⸱--- "],
-    ["c", "-⸱-⸱ "],
-    ["d", "-⸱⸱ "],
-    ["e", "⸱ "],
-    ["f", "⸱⸱-⸱ "],
-    ["f", "--⸱ "],
-    ["g", "--⸱ "],
-    ["h", "⸱⸱⸱⸱ "],
-    ["i", "⸱⸱ "],
-    ["j", "⸱--- "],
-    ["k", "-⸱- "],
-    ["l", "⸱-⸱⸱ "],
-    ["m", "-- "],
-    ["n", "-⸱ "],
-    ["o", "--- "],
-    ["p", "⸱--⸱ "],
-    ["q", "--⸱- "],
-    ["r", "⸱-⸱ "],
-    ["s", "⸱⸱⸱ "],
-    ["t", "- "],
-    ["u", "⸱⸱- "],
-    ["v", "⸱⸱⸱- "],
-    ["w", "⸱-- "],
-    ["x", "-⸱⸱- "],
-    ["y", "-⸱-- "],
-    ["z", "--⸱⸱ "],
+    ["a", "⸱-"],
+    ["b", "⸱---"],
+    ["c", "-⸱-⸱"],
+    ["d", "-⸱⸱"],
+    ["e", "⸱"],
+    ["f", "⸱⸱-⸱"],
+    ["f", "--⸱"],
+    ["g", "--⸱"],
+    ["h", "⸱⸱⸱⸱"],
+    ["i", "⸱⸱"],
+    ["j", "⸱---"],
+    ["k", "-⸱-"],
+    ["l", "⸱-⸱⸱"],
+    ["m", "--"],
+    ["n", "-⸱"],
+    ["o", "---"],
+    ["p", "⸱--⸱"],
+    ["q", "--⸱-"],
+    ["r", "⸱-⸱"],
+    ["s", "⸱⸱⸱"],
+    ["t", "-"],
+    ["u", "⸱⸱-"],
+    ["v", "⸱⸱⸱-"],
+    ["w", "⸱--"],
+    ["x", "-⸱⸱-"],
+    ["y", "-⸱--"],
+    ["z", "--⸱⸱"],
     [" ", "   "]
   ]);
-  
-  for (let i = 0; i <= message.length - 1; i++) {
-    newMessage += conversionTable.get(message[i]);
+
+  let i = 0;
+
+  for (i; i <= message.length - 1; i++) {
+    newMessage += conversionTable.get(message[i]) + " ";
   };
+
+  newMessage = newMessage.substring(0, newMessage.length - 1);
+
+  // Replaces all "undefine"s with # for readability
+
+  newMessage = newMessage.replace(/undefined/g, "#");
 
   return newMessage;
 };
@@ -56,7 +66,12 @@ module.exports = {
     await interaction.reply({
       content: morseEncoder(input), withResponse: true
     })
-      .then((response) => console.log(`Reply sent with content "${response.resource.message.content}", ordered by "${interaction.user.username}"`))
-      .catch(console.error);
+
+    if (morseEncoder(input).includes("undefined", "")) {
+      await interaction.reply({
+        content: "\n" + "-# This translation contains characters I haven't figured out yet.", withResponse: true
+      }).then((response) => console.log(`"${interaction.user.username}" ordered "${input} ". Replied "${response.resource.message.content}".`))
+        .catch(console.error)
+    }
   },
 };

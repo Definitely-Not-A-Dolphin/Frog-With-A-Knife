@@ -6,9 +6,9 @@ module.exports = {
     .setDescription('Replies with Pong!'),
   async execute(interaction) {
     await interaction.reply({
-      content: 'Pong!', withResponse: tru
+      content: 'Pong!', withResponse: true
     })
-      .then((response) => console.log(`Reply sent with content "${response.resource.message.content}", ordered by "${interaction.user.username}"`))
-      .catch(console.error);
+    .then((response) => console.log(`"${interaction.user.username}" ordered "${response.resource.message.content}".`))
+    .catch(console.error);
   },
 };
