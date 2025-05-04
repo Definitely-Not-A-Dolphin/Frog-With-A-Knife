@@ -1,4 +1,4 @@
-/* import placeholder from './../../memes.json' assert {type: 'json'};
+/* const data = require("./../../memes.json");
 
 const { SlashCommandBuilder } = require('discord.js');
 
@@ -7,6 +7,6 @@ module.exports = {
     .setName('memePlaceholder')
     .setDescription('Gives you an image!'),
   async execute(interaction) {
-    await interaction.reply(placeholder.link);
+    await interaction.reply(data["placeholder"]["name"]);
   },
 }; */
