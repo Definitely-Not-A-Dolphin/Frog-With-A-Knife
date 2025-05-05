@@ -12,7 +12,7 @@ export async function execute(interaction) {
     })
     .then((response) =>
       console.log(
-        `"${interaction.user.username}" ordered "${response.resource.message.content}".`,
+        `Pinged "${interaction.user.username}".`,
       )
     )
     .catch(console.error);

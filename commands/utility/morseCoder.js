@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
-import converse from "../../morseTable.json" with { type: "json"};
+import converse from "../commandFiles/morseTable.json" with { type: "json"};
 
 function morseEncoder(message) {
   message = message.toLowerCase();
@@ -37,6 +37,8 @@ export async function execute(interaction) {
   await interaction.reply({
     content: morseEncoder(input), withResponse: true
   })
-    .then((response) => console.log(`"${interaction.user.username}" ordered "${input} ". Replied "${response.resource.message.content}".`))
+    .then((response) => console.log(
+      `Encoded ${input} to ${response.resource.message.content} for ${interaction.user.username}.`
+    ))
     .catch(console.error);
 }
