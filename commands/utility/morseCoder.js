@@ -1,5 +1,5 @@
-import SlashCommandBuilder from "discord.js";
-import { toLatin, toMorse } from "../../morseTable.json" with { type: "json"};
+import { SlashCommandBuilder } from "discord.js";
+import converse from "../../morseTable.json" with { type: "json"};
 
 function morseEncoder(message) {
   message = message.toLowerCase();
@@ -7,7 +7,7 @@ function morseEncoder(message) {
   let newMessage = "\\";
 
   for (let i = 0; i <= message.length - 1; i++) {
-    newMessage += toMorse[message[i]];
+    newMessage += converse.toMorse[message[i]];
     if (message[i + 1] !== " ") {
       newMessage += " ";
     };

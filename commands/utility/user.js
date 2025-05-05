@@ -1,9 +1,8 @@
-import SlashCommandBuilder from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 
 export const data = new SlashCommandBuilder()
   .setName('user')
   .setDescription('Provides information about the user.');
-
 
 export async function execute(interaction) {
   // interaction.user is the object representing the User who ran the command
@@ -11,7 +10,7 @@ export async function execute(interaction) {
   await interaction.reply({
     content: `This command was run by ${interaction.user.username}, who joined on ${interaction.member.joinedAt}.`
   })
-    .then((response) => 
+    .then((response) =>
       console.log(
         `Reply sent with content "${response.resource.message.content}", ordered by "${interaction.user.username}"`
       )
