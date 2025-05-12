@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "Discord example app",
-  "main": "index.cjs",
+  "main": "index.js",
   "type": "module",
   "engines": {
     "node": ">=18.x"
