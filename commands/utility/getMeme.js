@@ -15,18 +15,6 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction) {
   const input = interaction.options.getInteger("input") - 1;
 
-  if (!(1 <= input <= memeData.array.length)) {
-    await interaction
-      .reply({
-        content: "Ja dat werkt niet zo",
-      })
-      .then((/* response */) =>
-        console.log(
-          `Gave ${interaction.user.username} an non-extistant meme (input ${input}).`,
-        ),)
-      .catch(console.error);
-  }
-
   const file = new AttachmentBuilder(
     "./commands/commandFiles/getMeme/DCBotmemes/" +
       memeData.array[input].attachment,
