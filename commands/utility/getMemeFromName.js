@@ -1,15 +1,13 @@
-import memeData from "../../commandFiles/getMeme/memes.json" with { type: "json" };
+import memeData from "../../DCBotFiles/getMeme/memes.json" with { type: "json" };
 import {
   AttachmentBuilder,
   EmbedBuilder,
   SlashCommandBuilder,
 } from "discord.js";
 
-/* let optionsObjectArray = [];
- */let optionsArray = [];
+let optionsArray = [];
 for (let i = 0; i <= memeData.array.length - 1; i++) {
-/*   optionsObjectArray.push({ name: memeData.array[i].name, value: memeData.array[i].attachment });
- */  optionsArray.push(memeData.array[i].name);
+  optionsArray.push(memeData.array[i].name);
 };
 
 export const data = new SlashCommandBuilder()
@@ -20,7 +18,17 @@ export const data = new SlashCommandBuilder()
       .setName("input")
       .setDescription("enter a meme name")
       .setRequired(true)
+      .setAutocomplete(true)
   );
+
+export async function autocomplete(interaction) {
+  const focusedValue = interaction.options.getFocused();
+  const filtered = optionsArray.filter(choice => choice.startsWith(focusedValue));
+  await interaction.respond(
+    filtered.map(choice => ({ name: choice, value: choice })),
+  );
+}
+
 
 export async function execute(interaction) {
   const input = interaction.options.getString("input");
@@ -46,7 +54,7 @@ export async function execute(interaction) {
   };
 
   const file = new AttachmentBuilder(
-    "./commands/commandFiles/getMeme/DCBotmemes/"
+    "./commandFiles/getMeme/DCBotmemes/"
     + memeData.array[i].attachment
   )
     .setName(memeData.array[i].name)

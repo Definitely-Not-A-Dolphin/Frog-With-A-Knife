@@ -9,7 +9,7 @@ export async function execute(interaction) {
   if (!command) {
     console.error(`No command matching ${interaction.commandName} was found.`);
     return;
-  }
+  };
 
   try {
     await command.autocomplete(interaction); // heb deze functie van execute naar autocomplete veranderd. dan moet je dus op die command object een autocomplete functie hebben die dan word gedraait.

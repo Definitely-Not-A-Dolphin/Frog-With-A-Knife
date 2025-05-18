@@ -1,4 +1,4 @@
-import memeData from "../../commandFiles/getMeme/memes.json" with { type: "json" };
+import memeData from "../../DCBotFiles/getMeme/memes.json" with { type: "json" };
 import {
   AttachmentBuilder,
   EmbedBuilder,
@@ -31,7 +31,7 @@ export async function execute(interaction) {
   };
 
   const file = new AttachmentBuilder(
-    "./commands/commandFiles/getMeme/DCBotmemes/"
+    "./commandFiles/getMeme/DCBotmemes/"
     + memeData.array[input - 1].attachment
   )
     .setName(memeData.array[input - 1].name)
