@@ -25,7 +25,7 @@ export async function execute(interaction) {
         content: "Out of range :(. I don't have that meme"
       })
       .then((/* response */) =>
-        console.log(`Gave ${interaction.user.username} meme not found: input: ${input}.`),)
+        console.log(`Gave ${interaction.user.username} meme #${input}.`),)
       .catch(console.error);
     return;
   };
@@ -38,7 +38,7 @@ export async function execute(interaction) {
     .setDescription(memeData.array[input - 1].description);
 
   const memeEmbed = new EmbedBuilder()
-    .setTitle(`${memeData.array[input - 1].name}.\nMeme #${input}`)
+    .setTitle(`${memeData.array[input - 1].name}\nMeme #${input}`)
     .setImage("attachment://" + memeData.array[input - 1].attachment);
 
   await interaction
@@ -48,6 +48,6 @@ export async function execute(interaction) {
       files: [file.attachment]
     })
     .then((/* response */) =>
-      console.log(`Gave ${interaction.user.username} meme #${input}.`),)
+      console.log(`Gave ${interaction.user.username} meme #${input}: "${memeData.array[input - 1].name}" from number.`),)
     .catch(console.error);
 }

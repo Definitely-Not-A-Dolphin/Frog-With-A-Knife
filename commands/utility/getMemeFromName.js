@@ -5,11 +5,11 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 
-let optionsObjectArray = [];
-let optionsArray = [];
+/* let optionsObjectArray = [];
+ */let optionsArray = [];
 for (let i = 0; i <= memeData.array.length - 1; i++) {
-  optionsObjectArray.push({ name: memeData.array[i].name, value: memeData.array[i].attachment });
-  optionsArray.push(memeData.array[i].name);
+/*   optionsObjectArray.push({ name: memeData.array[i].name, value: memeData.array[i].attachment });
+ */  optionsArray.push(memeData.array[i].name);
 };
 
 export const data = new SlashCommandBuilder()
@@ -32,29 +32,29 @@ export async function execute(interaction) {
         content: "Couldn't find the meme you were looking for, sorry :(. Maybe try again later?"
       })
       .then((/* response */) =>
-        console.log(`Gave ${interaction.user.username} meme not found: input: ${input}.`),)
+        console.log(`Couldn't give ${interaction.user.username} meme #?, input: ${input}.`),)
       .catch(console.error);
     return;
   };
 
-  let index;
+  let i;
   // Loops through memeData.array to find the matching attachment
-  for (let i = 0; i <= memeData.array.length - 1; i++) {
+  for (i = 0; i <= memeData.array.length - 1; i++) {
     if (memeData.array[i].name === input) {
-      index = i
-    }
-  }
+      break;
+    };
+  };
 
   const file = new AttachmentBuilder(
     "./commands/commandFiles/getMeme/DCBotmemes/"
-    + memeData.array[index].attachment
+    + memeData.array[i].attachment
   )
-    .setName(memeData.array[index].name)
-    .setDescription(memeData.array[index].description);
+    .setName(memeData.array[i].name)
+    .setDescription(memeData.array[i].description);
 
   const memeEmbed = new EmbedBuilder()
-    .setTitle(`${memeData.array[index].name}.\nMeme #${input}`)
-    .setImage("attachment://" + memeData.array[index].attachment);
+    .setTitle(`${memeData.array[i].name}\nMeme #${i + 1}`)
+    .setImage("attachment://" + memeData.array[i].attachment);
 
   await interaction
     .reply({
@@ -63,6 +63,6 @@ export async function execute(interaction) {
       files: [file.attachment]
     })
     .then((/* response */) =>
-      console.log(`Gave ${interaction.user.username} meme "${input}".`),)
+      console.log(`Gave ${interaction.user.username} meme #${i + 1}: "${input}" from name.`),)
     .catch(console.error);
 }
