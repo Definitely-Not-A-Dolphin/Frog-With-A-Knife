@@ -1,4 +1,4 @@
-import memeData from "../commandFiles/getMeme/memes.json" with { type: "json" };
+import memeData from "../../commandFiles/getMeme/memes.json" with { type: "json" };
 import {
   AttachmentBuilder,
   EmbedBuilder,

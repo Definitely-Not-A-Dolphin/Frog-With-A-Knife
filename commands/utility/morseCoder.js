@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
-import converse from "../commandFiles/morseTable.json" with { type: "json" };
+import converse from "../../commandFiles/morseTable.json" with { type: "json" };
 
 function morseEncoder(message) {
   message = message.toLowerCase();

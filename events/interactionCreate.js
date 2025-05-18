@@ -2,7 +2,7 @@ import { Events, MessageFlags } from "discord.js";
 
 export const name = Events.InteractionCreate;
 export async function execute(interaction) {
-  if (!interaction.isChatInputCommand()) return;
+  if (!interaction.isChatInputCommand()) { return; };
 
   const command = interaction.client.commands.get(interaction.commandName);
 
