@@ -54,7 +54,7 @@ export async function execute(interaction) {
   };
 
   const file = new AttachmentBuilder(
-    "./commandFiles/getMeme/DCBotmemes/"
+    "./DCBotFiles/getMeme/DCBotmemes/"
     + memeData.array[i].attachment
   )
     .setName(memeData.array[i].name)

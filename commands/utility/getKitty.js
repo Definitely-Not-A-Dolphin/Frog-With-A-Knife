@@ -24,8 +24,7 @@ export async function autocomplete(interaction) {
   await interaction.respond(
     filtered.map(choice => ({ name: choice, value: choice })),
   );
-}
-
+};
 
 export async function execute(interaction) {
   const input = interaction.options.getString("input");
@@ -48,7 +47,7 @@ export async function execute(interaction) {
 
   const kittyEmbed = new EmbedBuilder()
     .setTitle(input)
-    .setImage("attachment://murderousIntent.jpg")
+    .setImage("attachment://murderousIntent.jpg");
 
   await interaction
     .reply({
