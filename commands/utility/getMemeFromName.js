@@ -1,4 +1,5 @@
 import memeData from "../../DCBotFiles/getMeme/memes.json" with { type: "json" };
+import fs from "fs";
 import {
   AttachmentBuilder,
   EmbedBuilder,
@@ -29,10 +30,20 @@ export async function autocomplete(interaction) {
   );
 }
 
-
 export async function execute(interaction) {
   const input = interaction.options.getString("input");
 
+  /* const testFolder = "../../DCBotFiles/getMeme/";
+  fs.readdir(testFolder, (err, files) => {
+    files.forEach(file => {
+      const filePath = "../../DCBotFiles/getMeme/" + file;
+      if (file.includes(".json")) {
+
+        import data from filePath with {type: "json"};
+      };
+    });
+  });
+ */
   // Meme not found
   if (!optionsArray.includes(input)) {
     await interaction
