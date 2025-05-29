@@ -7,12 +7,11 @@ import {
 
 export const data = new SlashCommandBuilder()
   .setName("get-meme-number")
-  .setDescription(`Gives you one of ${memeData.array.length} memes based of a number!`)
+  .setDescription(
+    `Gives you one of ${memeData.array.length} memes based of a number!`,
+  )
   .addIntegerOption((option) =>
-    option
-      .setName("input")
-      .setDescription("enter a number")
-      .setRequired(true),
+    option.setName("input").setDescription("enter a number").setRequired(true),
   );
 
 export async function execute(interaction) {
@@ -22,17 +21,16 @@ export async function execute(interaction) {
   if (input < 0 || input > memeData.array.length) {
     await interaction
       .reply({
-        content: "Out of range :(. I don't have that meme"
+        content: "Out of range :(. I don't have that meme",
       })
       .then((/* response */) =>
         console.log(`Gave ${interaction.user.username} meme #${input}.`),)
       .catch(console.error);
     return;
-  };
+  }
 
   const file = new AttachmentBuilder(
-    "./DCBotFiles/getMeme/DCBotmemes/"
-    + memeData.array[input - 1].attachment
+    "./DCBotFiles/getMeme/DCBotmemes/" + memeData.array[input - 1].attachment,
   )
     .setName(memeData.array[input - 1].name)
     .setDescription(memeData.array[input - 1].description);
@@ -45,9 +43,11 @@ export async function execute(interaction) {
     .reply({
       withResponse: true,
       embeds: [memeEmbed],
-      files: [file.attachment]
+      files: [file.attachment],
     })
     .then((/* response */) =>
-      console.log(`Gave ${interaction.user.username} meme #${input}: "${memeData.array[input - 1].name}" from number.`),)
+      console.log(
+        `Gave ${interaction.user.username} meme #${input}: "${memeData.array[input - 1].name}" from number.`,
+      ),)
     .catch(console.error);
 }
