@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { Client, Collection, GatewayIntentBits } from 'discord.js';
-import config from "./config.json" with { type: "json"};
+import config from "../config.json" with { type: "json"};
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client: Client<boolean> = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.commands = new Collection();
 const foldersPath = path.join(import.meta.dirname, "commands");
@@ -11,13 +11,13 @@ const commandFolders = fs.readdirSync(foldersPath);
 
 for (const folder of commandFolders) {
 
-  const commandsPath = path.join(foldersPath, folder);
-  const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
+  const commandsPath: string = path.join(foldersPath, folder);
+  const commandFiles: string[] = fs.readdirSync(commandsPath).filter(file => file.endsWith(".ts"));
 
   for (const file of commandFiles) {
 
-    const filePath = path.join(commandsPath, file);
-    const command = await import(`file:///${filePath}`)
+    const filePath: string = path.join(commandsPath, file);
+    const command: any = await import(`file:///${filePath}`)
 
     if ("data" in command && "execute" in command) {
       client.commands.set(command.data.name, command);
@@ -27,12 +27,12 @@ for (const folder of commandFolders) {
   }
 };
 
-const eventsPath = path.join(import.meta.dirname, "events");
-const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith(".js"));
+const eventsPath: string = path.join(import.meta.dirname, "events");
+const eventFiles: string[] = fs.readdirSync(eventsPath).filter(file => file.endsWith(".ts"));
 
 for (const file of eventFiles) {
-  const filePath = path.join(eventsPath, file);
-  const event = await import(`file:///${filePath}`)
+  const filePath: string = path.join(eventsPath, file);
+  const event: any = await import(`file:///${filePath}`)
 
   if (event.once) {
     client.once(event.name, (...args) => event.execute(...args));

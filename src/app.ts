@@ -8,20 +8,17 @@ import {
   MessageComponentTypes,
   verifyKeyMiddleware,
 } from "discord-interactions";
-import { getRandomEmoji, DiscordRequest } from "./utils.js";
-import { getShuffledOptions, getResult } from "./game.js";
+import { getRandomEmoji } from "./utils.ts";
 
 // Create an express app
 const app = express();
 // Get port, or default to 3000
 const PORT = process.env.PORT || 3000;
-// To keep track of our active games
-const activeGames = {};
 
-/**
- * Interactions endpoint URL where Discord will send HTTP requests
- * Parse request body and verifies incoming requests using discord-interactions package
- */
+
+// Interactions endpoint URL where Discord will send HTTP requests
+// Parse request body and verifies incoming requests using discord-interactions package
+
 app.post(
   "/interactions",
   verifyKeyMiddleware(process.env.PUBLIC_KEY),
@@ -29,17 +26,15 @@ app.post(
     // Interaction id, type and data
     const { id, type, data } = req.body;
 
-    /**
-     * Handle verification requests
-     */
+    // Handle verification requests
+
     if (type === InteractionType.PING) {
       return res.send({ type: InteractionResponseType.PONG });
     }
 
-    /**
-     * Handle slash command requests
-     * See https://discord.com/developers/docs/interactions/application-commands#slash-commands
-     */
+    // Handle slash command requests
+    // See https://discord.com/developers/docs/interactions/application-commands#slash-commands
+
     if (type === InteractionType.APPLICATION_COMMAND) {
       const { name } = data;
 

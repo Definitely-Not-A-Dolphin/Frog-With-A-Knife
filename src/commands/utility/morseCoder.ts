@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
-import converse from "../../DCBotFiles/morseTable.json" with { type: "json" };
+import converse from "../../../static/morseTable.json" with { type: "json" };
 
-function morseEncoder(message) {
+function morseEncoder(message: string): string {
   message = message.toLowerCase();
 
   let newMessage = "\\";
@@ -15,7 +15,7 @@ function morseEncoder(message) {
 
   newMessage = newMessage.substring(0, newMessage.length - 1);
 
-  if (newMessage.includes("undefined", "")) {
+  if (newMessage.includes("undefined"/* , "" */)) {
     newMessage +=
       "\n" +
       "-# This translation contains characters I haven't figured out yet.";
@@ -36,7 +36,7 @@ export const data = new SlashCommandBuilder()
   );
 
 export async function execute(interaction) {
-  const input = interaction.options.getString("input");
+  const input: string = interaction.options.getString("input");
   await interaction
     .reply({
       content: morseEncoder(input),

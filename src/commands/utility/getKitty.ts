@@ -1,11 +1,11 @@
-import kittyData from "../../DCBotFiles/getKitty/kitty.json" with { type: "json" };
+import kittyData from "../../../static/getKitty/kitty.json" with { type: "json" };
 import {
   AttachmentBuilder,
   EmbedBuilder,
   SlashCommandBuilder,
 } from "discord.js";
 
-const optionsArray = ["Sizzle", "Okkie", "Willy"];
+const optionsArray: string[] = ["Sizzle", "Okkie", "Willy"];
 
 export const data = new SlashCommandBuilder()
   .setName("get-kitty")

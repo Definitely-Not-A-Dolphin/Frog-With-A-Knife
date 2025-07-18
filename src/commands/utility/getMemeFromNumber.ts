@@ -1,4 +1,4 @@
-import memeData from "../../DCBotFiles/getMeme/memes.json" with { type: "json" };
+import memeData from "../../../static/getMeme/memes.json" with { type: "json" };
 import {
   AttachmentBuilder,
   EmbedBuilder,
@@ -15,7 +15,7 @@ export const data = new SlashCommandBuilder()
   );
 
 export async function execute(interaction) {
-  const input = interaction.options.getInteger("input");
+  const input: number = interaction.options.getInteger("input");
 
   // Out of range error
   if (input < 0 || input > memeData.array.length) {

@@ -3,12 +3,13 @@ import {
   EmbedBuilder,
   SlashCommandBuilder,
 } from "discord.js";
-import memeData from "../../DCBotFiles/getMeme/memes.json" with { type: "json" };
+import memeData from "../../../static/getMeme/memes.json" with { type: "json" };
 
-let optionsArray = [];
+let optionsArray: string[] = [];
 for (let i = 0; i <= memeData.array.length - 1; i++) {
   optionsArray.push(memeData.array[i].name);
 }
+console.log(optionsArray);
 
 export const data = new SlashCommandBuilder()
   .setName("get-meme-name")
@@ -24,8 +25,8 @@ export const data = new SlashCommandBuilder()
   );
 
 export async function autocomplete(interaction) {
-  const focusedValue = interaction.options.getFocused();
-  const filtered = optionsArray.filter((choice) =>
+  const focusedValue: string = interaction.options.getFocused();
+  const filtered: string[] = optionsArray.filter((choice) =>
     choice.startsWith(focusedValue),
   );
   await interaction.respond(
@@ -34,7 +35,7 @@ export async function autocomplete(interaction) {
 }
 
 export async function execute(interaction) {
-  const input = interaction.options.getString("input");
+  const input: string = interaction.options.getString("input");
 
   // Meme not found
   if (!optionsArray.includes(input)) {
@@ -59,8 +60,7 @@ export async function execute(interaction) {
     }
   }
 
-  const file = new AttachmentBuilder()
-    .setName(memeData.array[i].name)
+  const file = new AttachmentBuilder(memeData.array[i].name)
     .setDescription(memeData.array[i].description)
     .setFile("./DCBotFiles/getMeme/DCBotmemes/" + memeData.array[i].attachment);
 

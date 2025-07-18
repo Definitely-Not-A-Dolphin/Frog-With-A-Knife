@@ -1,24 +1,24 @@
 import { REST, Routes } from "discord.js";
-import config from "./config.json" with { type: "json" };
+import config from "../config.json" with { type: "json" };
 import fs from "node:fs";
 import path from "node:path";
 
-const commands = [];
+const commands: never[] = [];
 // Grab all the command folders from the commands directory you created earlier
-const foldersPath = path.join(import.meta.dirname, "commands");
-const commandFolders = fs.readdirSync(foldersPath);
+const foldersPath: string = path.join(import.meta.dirname, "commands");
+const commandFolders: string[] = fs.readdirSync(foldersPath);
 
 for (const folder of commandFolders) {
   // Grab all the command files from the commands directory you created earlier
   const commandsPath = path.join(foldersPath, folder);
   const commandFiles = fs
     .readdirSync(commandsPath)
-    .filter((file) => file.endsWith(".js"));
+    .filter((file) => file.endsWith(".ts"));
 
   // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
   for (const file of commandFiles) {
-    const filePath = path.join(commandsPath, file);
-    const command = await import(`file:///${filePath}`);
+    const filePath: string = path.join(commandsPath, file);
+    const command: any = await import(`file:///${filePath}`);
 
     if ("data" in command && "execute" in command) {
       commands.push(command.data.toJSON());
@@ -31,7 +31,7 @@ for (const folder of commandFolders) {
 }
 
 // Construct and prepare an instance of the REST module
-const rest = new REST().setToken(config.token);
+const rest: REST = new REST().setToken(config.token);
 
 // and deploy your commands!
 (async () => {
