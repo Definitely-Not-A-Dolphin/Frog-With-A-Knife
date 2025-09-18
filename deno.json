@@ -18,13 +18,11 @@
   "lint": {
     "include": ["src/"],
     "rules": {
-      "tags": ["recommend"],
+      "tags": ["recommend", "jsr"],
       "include": [
         "camelcase",
         "egegeg",
-        "explicit-function-return-type",
-        "verbatim-module-syntax"
-      ]
+        "explicit-function-return-type"      ]
     }
   }
 }
