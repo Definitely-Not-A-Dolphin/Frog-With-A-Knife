@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import {
   Client,
   Collection,
@@ -14,6 +14,8 @@ import {
   type SlashCommand,
   SlashCommandGuard,
 } from "$src/customTypes.ts";
+
+const guildIds: string[] = ["1363979886838022176", "1417150193316528341"];
 
 const commands = [];
 // Grab all the command folders from the commands directory you created earlier
@@ -58,10 +60,6 @@ for (const folder of commandFolders) {
 
 // Construct and prepare an instance of the REST module
 const rest: REST = new REST().setToken(secrets.token);
-
-rest.put(Routes.applicationGuildCommands(secrets.clientId, "1363979886838022176"), { body: [] })
-	.then(() => console.log('Successfully deleted all guild commands.'))
-	.catch(console.error);
 
 // and deploy your commands!
 (async () => {

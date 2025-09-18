@@ -2,7 +2,6 @@ import "@std/dotenv/load";
 
 const secretKeys = [
   "clientId",
-  "guildId",
   "public_key",
   "token",
   "lastfmkey",
