@@ -24,13 +24,13 @@ export const config = configKeys.reduce<ConfigRecord>((prev, current) => {
   return prev;
 }, {} as ConfigRecord);
 
-const base_path: URL = new URL("../", import.meta.url);
-const secrets_path: URL = new URL(config.SECRETS_PATH, base_path);
+const basePath: URL = new URL("../", import.meta.url);
+const secretsPath: URL = new URL(config.SECRETS_PATH, basePath);
 
 let tSecrets: SecretRecord | undefined;
 try {
   tSecrets = (
-    await import(secrets_path.href, {
+    await import(secretsPath.href, {
       with: { type: "json" },
     })
   ).default as SecretRecord;

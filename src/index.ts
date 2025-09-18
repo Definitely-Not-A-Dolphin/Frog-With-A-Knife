@@ -9,9 +9,9 @@ import {
 } from "discord.js";
 import { secrets } from "./config.ts";
 import {
-  BotEvent,
+  type BotEvent,
   BotEventGuard,
-  SlashCommand,
+  type SlashCommand,
   SlashCommandGuard,
 } from "./customTypes.ts";
 

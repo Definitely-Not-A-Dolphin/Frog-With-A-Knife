@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import { SlashCommand, Track } from "$src/customTypes.ts";
+import type { SlashCommand, Track } from "$src/customTypes.ts";
 import { db } from "$src/db.ts";
 import { getPlayingTrack } from "$src/utils.ts";
 

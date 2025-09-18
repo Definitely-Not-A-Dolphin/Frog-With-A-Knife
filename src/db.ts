@@ -1,9 +1,9 @@
 import { Database } from "@db/sqlite";
 import { config } from "./config.ts";
 
-const base_path: URL = new URL("../", import.meta.url);
+const basePath: URL = new URL("../", import.meta.url);
 export const db: Database = new Database(
-  new URL(config.DATABASE_PATH, base_path),
+  new URL(config.DATABASE_PATH, basePath),
 );
 
 db.exec(`

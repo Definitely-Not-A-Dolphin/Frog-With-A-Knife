@@ -15,11 +15,11 @@ export function coolBanner(): void {
 }
 
 // Simple method that returns a random emoji from list
-export function randomNumber(min: number, max: number) {
+export function randomNumber(min: number, max: number): number {
   return Math.floor(Math.random() * max - min) + min;
 }
 
-export function capitalize(input: string) {
+export function capitalize(input: string): string {
   return input.charAt(0).toUpperCase() + input.slice(1);
 }
 
@@ -55,6 +55,6 @@ export async function getPlayingTrack(
     album: dataIWant[0].album["#text"],
     artist: dataIWant[0].artist["#text"],
     image: dataIWant[0].image[3]["#text"],
-    url: dataIWant[0].url
+    url: dataIWant[0].url,
   };
 }

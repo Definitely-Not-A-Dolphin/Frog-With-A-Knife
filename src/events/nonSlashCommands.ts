@@ -1,5 +1,5 @@
-import { EmbedBuilder, Events, Message, TextChannel } from "discord.js";
-import { BotEvent, Track } from "$src/customTypes.ts";
+import { EmbedBuilder, Events, type Message, TextChannel } from "discord.js";
+import type { BotEvent, Track } from "$src/customTypes.ts";
 import { db } from "$src/db.ts";
 import { getPlayingTrack } from "$src/utils.ts";
 

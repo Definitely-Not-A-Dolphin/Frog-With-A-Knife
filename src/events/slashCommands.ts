@@ -1,5 +1,5 @@
-import { Events, Interaction, MessageFlags } from "discord.js";
-import { BotEvent } from "$src/customTypes.ts";
+import { Events, type Interaction, MessageFlags } from "discord.js";
+import type { BotEvent } from "$src/customTypes.ts";
 
 const event: BotEvent = {
   type: Events.InteractionCreate,
