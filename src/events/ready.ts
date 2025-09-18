@@ -1,7 +1,11 @@
 import { Events } from "discord.js";
+import { BotEvent } from "$src/customTypes.ts";
 
-export const name = Events.ClientReady;
-export const once = true;
-export function execute(client) {
-  console.log(`Ready! Logged in as ${client.user.tag}`);
+const event: BotEvent = {
+  type: Events.ClientReady,
+  execute: (client) => {
+    console.log(`Ready! Logged in as ${client.user.tag}`);
+  },
 };
+
+export default event;
