@@ -23,8 +23,6 @@
         "camelcase",
         "egegeg",
         "explicit-function-return-type",
-        "for-direction",
-        "no-extra-boolean-cast",
         "verbatim-module-syntax"
       ]
     }
