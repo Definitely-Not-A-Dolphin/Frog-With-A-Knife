@@ -19,10 +19,7 @@
     "include": ["src/"],
     "rules": {
       "tags": ["recommend", "jsr"],
-      "include": [
-        "camelcase",
-        "egegeg",
-        "explicit-function-return-type"      ]
+      "include": ["camelcase", "egegeg", "explicit-function-return-type"]
     }
   }
 }

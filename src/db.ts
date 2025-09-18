@@ -1,5 +1,5 @@
 import { Database } from "@db/sqlite";
-import { config } from "./config.ts";
+import { config } from "$src/config.ts";
 
 const basePath: URL = new URL("../", import.meta.url);
 export const db: Database = new Database(

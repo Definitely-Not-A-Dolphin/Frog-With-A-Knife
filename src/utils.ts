@@ -1,5 +1,5 @@
-import { secrets } from "./config.ts";
-import type { lastFMData, lastFMTrack, Track } from "./customTypes.ts";
+import { secrets } from "$src/config.ts";
+import type { lastFMData, lastFMTrack, Track } from "$src/customTypes.ts";
 
 export function coolBanner(): void {
   console.log(

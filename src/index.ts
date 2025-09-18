@@ -1,5 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
+import fs from "fs";
+import path from "path";
 import {
   Client,
   Collection,
@@ -7,13 +7,13 @@ import {
   REST,
   Routes,
 } from "discord.js";
-import { secrets } from "./config.ts";
+import { secrets } from "$src/config.ts";
 import {
   type BotEvent,
   BotEventGuard,
   type SlashCommand,
   SlashCommandGuard,
-} from "./customTypes.ts";
+} from "$src/customTypes.ts";
 
 const commands = [];
 // Grab all the command folders from the commands directory you created earlier
