@@ -3,7 +3,7 @@ import type { BotEvent } from "$src/customTypes.ts";
 
 const event: BotEvent = {
   type: Events.InteractionCreate,
-  execute: (interaction) => {
+  execute: (interaction): void => {
     if (!interaction.isAutocomplete()) return;
 
     const command = interaction.client.commands.get(interaction.commandName);

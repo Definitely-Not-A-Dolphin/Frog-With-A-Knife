@@ -1,7 +1,7 @@
-import { EmbedBuilder, Events, type Message, TextChannel } from "discord.js";
+import { Events, type Message, TextChannel } from "discord.js";
 import type { BotEvent, Track } from "$src/customTypes.ts";
 import { db } from "$src/db.ts";
-import { getPlayingTrack } from "$src/utils.ts";
+import { getPlayingTrack, trackEmbedBuilder } from "$src/utils.ts";
 
 function ping(message: Message): boolean {
   if (message.content !== ".ping") return false;
@@ -46,18 +46,10 @@ async function np(message: Message): Promise<boolean> {
     return true;
   }
 
-  let iconURL = message.author.avatarURL();
-  if (!iconURL) iconURL = message.author.defaultAvatarURL;
+  const iconURL = message.author.avatarURL() ??
+    message.author.defaultAvatarURL;
 
-  const trackEmbed = new EmbedBuilder()
-    .setTitle(thing.name)
-    .setURL(thing.url)
-    .setAuthor({
-      name: "Currently playing",
-      iconURL: iconURL,
-    })
-    .setThumbnail(thing.image)
-    .setDescription(`${thing.artist} in ${thing.album}`);
+  const trackEmbed = await trackEmbedBuilder(thing, iconURL);
 
   message.reply({
     embeds: [trackEmbed],
@@ -67,7 +59,7 @@ async function np(message: Message): Promise<boolean> {
 
 const event: BotEvent = {
   type: Events.MessageCreate,
-  execute: async (message: Message) => {
+  execute: async (message: Message): Promise<void> => {
     if (!(message.channel instanceof TextChannel)) return;
 
     if (hello(message)) return;

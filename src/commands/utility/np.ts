@@ -1,7 +1,7 @@
-import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 import type { SlashCommand, Track } from "$src/customTypes.ts";
 import { db } from "$src/db.ts";
-import { getPlayingTrack } from "$src/utils.ts";
+import { getPlayingTrack, trackEmbedBuilder } from "$src/utils.ts";
 
 const slashCommand: SlashCommand = {
   data: new SlashCommandBuilder()
@@ -45,30 +45,24 @@ const slashCommand: SlashCommand = {
           content: "You are currently not listening to anything!",
           withResponse: true,
         })
-        .then((response) => console.log(response))
-        .catch(console.error);
+        .then((_response) =>
+          console.log(`${interaction.user.username} used /lastfm-np, but no music was playing`)
+        ).catch(console.error);
       return;
     }
 
-    let iconURL = interaction.user.avatarURL();
-    if (!iconURL) iconURL = interaction.user.defaultAvatarURL;
+    const iconURL = interaction.user.avatarURL() ??
+      interaction.user.defaultAvatarURL;
 
-    const trackEmbed = new EmbedBuilder()
-      .setTitle(thing.name)
-      .setURL(thing.url)
-      .setAuthor({
-        name: "Currently playing",
-        iconURL: iconURL,
-      })
-      .setThumbnail(thing.image)
-      .setDescription(`${thing.artist} in ${thing.album}`);
-
+    const trackEmbed = await trackEmbedBuilder(thing, iconURL);
     await interaction
       .reply({
         embeds: [trackEmbed],
         withResponse: true,
       })
-      .then((response) => console.log(response))
+      .then((_response) =>
+        console.log(`${interaction.user.username} used /lastfm-np`)
+      )
       .catch(console.error);
   },
 };

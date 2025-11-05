@@ -15,12 +15,14 @@ import {
   SlashCommandGuard,
 } from "$src/customTypes.ts";
 
-const guildIds: string[] = ["1363979886838022176", "1417150193316528341"];
+//const guildIds: string[] = ["1363979886838022176", "1417150193316528341"];
+
+console.log(secrets);
 
 const commands = [];
 // Grab all the command folders from the commands directory you created earlier
-const foldersPath = path.join(import.meta.dirname ?? "", "commands");
-const commandFolders = fs.readdirSync(foldersPath);
+const foldersPath: string = path.join(import.meta.dirname ?? "", "commands");
+const commandFolders: string[] = fs.readdirSync(foldersPath);
 
 const client = new Client({
   intents: [
@@ -34,13 +36,13 @@ client.commands = new Collection<string, SlashCommand>();
 
 // Grabs all files in commands/utility
 for (const folder of commandFolders) {
-  const commandsPath = path.join(foldersPath, folder);
-  const commandFiles = fs
+  const commandsPath: string = path.join(foldersPath, folder);
+  const commandFiles: string[] = fs
     .readdirSync(commandsPath)
     .filter((file) => file.endsWith(".ts"));
 
   for (const file of commandFiles) {
-    const filePath = path.join(commandsPath, file);
+    const filePath: string = path.join(commandsPath, file);
     const module = await import(`file:///${filePath}`);
 
     if (!SlashCommandGuard(module)) {
@@ -59,7 +61,7 @@ for (const folder of commandFolders) {
 }
 
 // Construct and prepare an instance of the REST module
-const rest: REST = new REST().setToken(secrets.token);
+const rest: REST = new REST().setToken(secrets.TOKEN);
 
 // and deploy your commands!
 (async () => {
@@ -69,7 +71,7 @@ const rest: REST = new REST().setToken(secrets.token);
     );
 
     // The put method is used to fully refresh all commands in the guild with the current set
-    await rest.put(Routes.applicationCommands(secrets.clientId), {
+    await rest.put(Routes.applicationCommands(secrets.CLIENTID), {
       body: commands,
     });
 
@@ -79,8 +81,8 @@ const rest: REST = new REST().setToken(secrets.token);
   }
 })();
 
-const eventsPath = path.join(import.meta.dirname ?? "", "events");
-const eventFiles = fs
+const eventsPath: string = path.join(import.meta.dirname ?? "", "events");
+const eventFiles: string[] = fs
   .readdirSync(eventsPath)
   .filter((file) => file.endsWith(".ts"));
 
@@ -100,10 +102,10 @@ for (const file of eventFiles) {
 
   if (event.once) {
     client.once(event.type as string, (...args) => event.execute(...args));
-  } else {
-    client.on(event.type as string, (...args) => event.execute(...args));
+    continue;
   }
+  client.on(event.type as string, (...args) => event.execute(...args));
 }
 
 // Dit runt
-client.login(secrets.token);
+client.login(secrets.TOKEN);

@@ -29,7 +29,7 @@ const slashCommand: SlashCommand = {
 
     await interaction
       .reply({
-        content: `Set Last.fm username to ${lastFMUsername}`,
+        content: `Set Last.fm username to _${lastFMUsername}_`,
         withResponse: true,
       })
       .then((response) => console.log(response))
