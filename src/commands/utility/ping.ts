@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
 import type { SlashCommand } from "$src/customTypes.ts";
 
-const slashCommand: SlashCommand = {
+export const ping: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName("ping")
     .setDescription("Replies with pong!"),
@@ -20,5 +20,3 @@ const slashCommand: SlashCommand = {
       .catch(console.error);
   },
 };
-
-export default slashCommand;

@@ -24,9 +24,8 @@ export type SlashCommand = {
 export const SlashCommandGuard = (
   object: object, // this checks if an object is a slashcommand
 ) =>
-  "default" in object &&
-  "data" in (object.default as object) &&
-  "execute" in (object.default as object);
+  "data" in (object as object) &&
+  "execute" in (object as object);
 
 export type BotEvent = {
   // botevent, these reside in src/events/*.ts

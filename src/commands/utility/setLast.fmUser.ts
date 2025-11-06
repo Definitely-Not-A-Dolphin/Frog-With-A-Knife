@@ -1,8 +1,9 @@
+/*
 import { SlashCommandBuilder } from "discord.js";
 import type { SlashCommand } from "$src/customTypes.ts";
 import { db } from "$src/db.ts";
 
-const slashCommand: SlashCommand = {
+export const lastFMSet: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName("lastfm-set")
     .setDescription("Set your lastfm username!")
@@ -36,5 +37,4 @@ const slashCommand: SlashCommand = {
       .catch(console.error);
   },
 };
-
-export default slashCommand;
+*/
