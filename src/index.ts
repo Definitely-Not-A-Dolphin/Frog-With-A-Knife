@@ -17,9 +17,6 @@ import {
 
 const commands = [];
 // Grab all the command folders from the commands directory you created earlier
-const foldersPath: string = path.join(import.meta.dirname ?? "", "commands");
-const commandFolders: string[] = fs.readdirSync(foldersPath);
-
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -30,31 +27,32 @@ const client = new Client({
 
 client.commands = new Collection<string, SlashCommand>();
 
-// Grabs all files in commands/utility
-for (const folder of commandFolders) {
-  const commandsPath: string = path.join(foldersPath, folder);
-  const commandFiles: string[] = fs
-    .readdirSync(commandsPath)
-    .filter((file) => file.endsWith(".ts"));
+// Grabs all files in commands/slashCommands
+const commandsPath: string = path.join(
+  import.meta.dirname ?? "",
+  "slashCommands",
+);
+const commandFiles: string[] = fs
+  .readdirSync(commandsPath)
+  .filter((file) => file.endsWith(".ts"));
 
-  for (const file of commandFiles) {
-    const filePath: string = path.join(commandsPath, file);
-    const module: object = await import(`file:///${filePath}`);
+for (const file of commandFiles) {
+  const filePath: string = path.join(commandsPath, file);
+  const module: object = await import(`file:///${filePath}`);
 
-    for (const entry of Object.entries(module)) {
-      if (!SlashCommandGuard(entry[1])) {
-        console.error(
-          `[WARNING] The module at ${filePath} is doesn't really look like a slashcommand..`,
-        );
+  for (const entry of Object.entries(module)) {
+    if (!SlashCommandGuard(entry[1])) {
+      console.error(
+        `[WARNING] The module at ${filePath} is doesn't really look like a slashcommand..`,
+      );
 
-        continue;
-      }
-
-      const command: SlashCommand = entry[1] as SlashCommand;
-
-      commands.push(command.data.toJSON());
-      client.commands.set(command.data.name, command);
+      continue;
     }
+
+    const command: SlashCommand = entry[1] as SlashCommand;
+
+    commands.push(command.data.toJSON());
+    client.commands.set(command.data.name, command);
   }
 }
 

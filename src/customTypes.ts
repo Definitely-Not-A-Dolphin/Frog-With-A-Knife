@@ -6,6 +6,7 @@ import type {
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
 } from "discord.js";
+import type { Message } from "discord.js";
 
 declare module "discord.js" {
   // Adds the type for the client.command object
@@ -24,8 +25,17 @@ export type SlashCommand = {
 export const SlashCommandGuard = (
   object: object, // this checks if an object is a slashcommand
 ) =>
-  "data" in (object as object) &&
-  "execute" in (object as object);
+  "data" in object &&
+  "execute" in object;
+
+export type NonSlashCommand = {
+  keyword: string;
+  execute: (message: Message) => void;
+};
+
+export const NonSlashCommandGuard = (
+  object: object,
+) => "keyword" in object && "execute" in object;
 
 export type BotEvent = {
   // botevent, these reside in src/events/*.ts
