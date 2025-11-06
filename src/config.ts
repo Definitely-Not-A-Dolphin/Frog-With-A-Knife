@@ -25,4 +25,4 @@ for (const key of secretKeys) {
   }
 }
 
-export { env as secrets };
+export { env };

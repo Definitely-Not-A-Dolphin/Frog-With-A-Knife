@@ -7,7 +7,7 @@ import {
   REST,
   Routes,
 } from "discord.js";
-import { secrets } from "$src/config.ts";
+import { env } from "$src/config.ts";
 import {
   type BotEvent,
   BotEventGuard,
@@ -17,7 +17,7 @@ import {
 
 //const guildIds: string[] = ["1363979886838022176", "1417150193316528341"];
 
-console.log(secrets);
+console.log(env);
 
 const commands = [];
 // Grab all the command folders from the commands directory you created earlier
@@ -61,7 +61,7 @@ for (const folder of commandFolders) {
 }
 
 // Construct and prepare an instance of the REST module
-const rest: REST = new REST().setToken(secrets.TOKEN);
+const rest: REST = new REST().setToken(env.TOKEN);
 
 // and deploy your commands!
 (async () => {
@@ -71,7 +71,7 @@ const rest: REST = new REST().setToken(secrets.TOKEN);
     );
 
     // The put method is used to fully refresh all commands in the guild with the current set
-    await rest.put(Routes.applicationCommands(secrets.CLIENTID), {
+    await rest.put(Routes.applicationCommands(env.CLIENTID), {
       body: commands,
     });
 
@@ -108,4 +108,4 @@ for (const file of eventFiles) {
 }
 
 // Dit runt
-client.login(secrets.TOKEN);
+client.login(env.TOKEN);

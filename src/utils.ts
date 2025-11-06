@@ -1,4 +1,4 @@
-import { secrets } from "$src/config.ts";
+import { env } from "$src/config.ts";
 import { getAverageColor } from "fast-average-color-node";
 import type { lastFMData, lastFMTrack, Track } from "$src/customTypes.ts";
 import { EmbedBuilder } from "discord.js";
@@ -38,7 +38,7 @@ export async function getPlayingTrack(
   username: string,
 ): Promise<boolean | Track> {
   const baseUrl =
-    `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${secrets.LASTFM_KEY}&format=json`;
+    `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${env.LASTFM_KEY}&format=json`;
 
   const response = await fetch(baseUrl);
 
