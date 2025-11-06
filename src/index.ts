@@ -30,7 +30,7 @@ client.commands = new Collection<string, SlashCommand>();
 // Grabs all files in commands/slashCommands
 const commandsPath: string = path.join(
   import.meta.dirname ?? "",
-  "slashCommands",
+  "commands",
 );
 const commandFiles: string[] = fs
   .readdirSync(commandsPath)

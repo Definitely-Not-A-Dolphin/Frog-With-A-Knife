@@ -8,15 +8,14 @@ import path from "node:path";
 import fs from "node:fs";
 
 const nonSlashCommands: NonSlashCommand[] = [];
-
-const nonSlashCommandPath: string = path.join(
+const commandPath: string = path.join(
   import.meta.dirname ?? "",
-  "../nonSlashCommands",
+  "../commands",
 );
-const nonSlashCommandFiles: string[] = fs.readdirSync(nonSlashCommandPath);
+const commandFiles: string[] = fs.readdirSync(commandPath);
 
-for (const file of nonSlashCommandFiles) {
-  const filePath = path.join(nonSlashCommandPath, file);
+for (const file of commandFiles) {
+  const filePath = path.join(commandPath, file);
   const module: object = await import(filePath);
 
   for (const entry of Object.entries(module)) {
