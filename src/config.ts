@@ -23,11 +23,6 @@ for (const key of secretKeys) {
   if (!env[key]) {
     throw new Error(`\x1b[34mMissing .env variable ${key}\x1b[0m`);
   }
-  /*
-  if (arrayCount(Object.keys(env), key) > 1) {
-    throw new Error(`\x1b[34mDuplicate .env variable ${key}\x1b[0m`);
-  }
-  */
 }
 
 export { env as secrets };
