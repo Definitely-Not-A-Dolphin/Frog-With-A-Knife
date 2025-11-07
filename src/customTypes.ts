@@ -3,10 +3,10 @@ import type {
   ChatInputCommandInteraction,
   Collection,
   Events,
+  Message,
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
 } from "discord.js";
-import type { Message } from "discord.js";
 
 declare module "discord.js" {
   // Adds the type for the client.command object
@@ -30,7 +30,7 @@ export const SlashCommandGuard = (
 
 export type NonSlashCommand = {
   keyword: string;
-  execute: (message: Message) => void;
+  execute: (message: Message) => void | Promise<void>;
 };
 
 export const NonSlashCommandGuard = (
@@ -61,7 +61,7 @@ export type Track = {
   url: string;
 };
 
-export type lastFMTrack = {
+export type LastFMTrack = {
   artist: {
     mbid: string;
     "#text": string;
@@ -87,9 +87,9 @@ export type lastFMTrack = {
   };
 };
 
-export type lastFMData = {
+export type LastFMData = {
   recenttracks: {
-    track: lastFMTrack[];
+    track: LastFMTrack[];
     "@attr": {
       user: string;
       totalPages: string;

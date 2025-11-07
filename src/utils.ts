@@ -1,7 +1,17 @@
 import { env } from "$src/config.ts";
-import { getAverageColor } from "fast-average-color-node";
-import type { lastFMData, lastFMTrack, Track } from "$src/customTypes.ts";
+import {
+  type LastFMData,
+  type LastFMTrack,
+  type NonSlashCommand,
+  NonSlashCommandGuard,
+  type SlashCommand,
+  SlashCommandGuard,
+  type Track,
+} from "$src/customTypes.ts";
 import { EmbedBuilder } from "discord.js";
+import { getAverageColor } from "fast-average-color-node";
+import fs from "node:fs";
+import path from "node:path";
 
 export function coolBanner(): void {
   console.log(
@@ -48,8 +58,8 @@ export async function getPlayingTrack(
     return false;
   }
 
-  const lastFMData: lastFMData = await response.json();
-  const dataIWant: lastFMTrack[] = lastFMData.recenttracks.track;
+  const lastFMData: LastFMData = await response.json();
+  const dataIWant: LastFMTrack[] = lastFMData.recenttracks.track;
 
   if (
     dataIWant.length === 0 || !dataIWant[0] || !dataIWant[0]["@attr"] ||
@@ -86,3 +96,48 @@ export async function trackEmbedBuilder(
     .setDescription(`**${trackPlaying.artist}** on _${trackPlaying.album}_`)
     .setColor(anotherThing);
 }
+
+const slashCommands: SlashCommand[] = [];
+const nonSlashCommands: NonSlashCommand[] = [];
+
+// Grabs all files in commands/slashCommands
+const commandsPath: string = path.join(
+  import.meta.dirname ?? "",
+  "commands",
+);
+const commandFiles: string[] = fs
+  .readdirSync(commandsPath)
+  .filter((file) => file.endsWith(".ts"));
+
+for (const file of commandFiles) {
+  console.log(path.join(commandsPath, file));
+}
+
+for (const file of commandFiles) {
+  const filePath: string = path.join(commandsPath, file);
+  console.log(`Current filePath: ${filePath}`);
+  const module: object = await import(`file:///${filePath}`);
+
+  for (const entry of Object.entries(module)) {
+    if (SlashCommandGuard(entry[1])) {
+      console.log(`Added ${entry[0]} as SlashCommand`);
+      slashCommands.push(entry[1] as SlashCommand);
+      continue;
+    }
+
+    if (NonSlashCommandGuard(entry[1])) {
+      console.log(`Added ${entry[0]} as NonSlashCommand`);
+      nonSlashCommands.push(entry[1] as NonSlashCommand);
+      continue;
+    }
+
+    console.error(
+      `[WARNING] The module at ${filePath} is doesn't really look like a command..`,
+    );
+  }
+}
+
+console.log(slashCommands);
+console.log(nonSlashCommands);
+
+export { nonSlashCommands, slashCommands };

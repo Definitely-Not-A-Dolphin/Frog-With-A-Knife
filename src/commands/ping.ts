@@ -1,5 +1,5 @@
-import { type Message, SlashCommandBuilder } from "discord.js";
 import type { NonSlashCommand, SlashCommand } from "$src/customTypes.ts";
+import { type Message, SlashCommandBuilder } from "discord.js";
 
 export const ping: NonSlashCommand = {
   keyword: ".ping",
@@ -15,7 +15,7 @@ export const slashPing: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName("ping")
     .setDescription("Replies with pong!"),
-  execute: async (interaction) => {
+  execute: async (interaction): Promise<void> => {
     const now = Date.now();
     const diff = now - interaction.createdTimestamp;
 

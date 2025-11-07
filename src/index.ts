@@ -1,5 +1,10 @@
-import fs from "node:fs";
-import path from "node:path";
+import { env } from "$src/config.ts";
+import {
+  type BotEvent,
+  BotEventGuard,
+  type SlashCommand,
+} from "./customTypes.ts";
+import { nonSlashCommands, slashCommands } from "$src/utils.ts";
 import {
   Client,
   Collection,
@@ -7,15 +12,9 @@ import {
   REST,
   Routes,
 } from "discord.js";
-import { env } from "$src/config.ts";
-import {
-  type BotEvent,
-  BotEventGuard,
-  type SlashCommand,
-  SlashCommandGuard,
-} from "$src/customTypes.ts";
+import fs from "node:fs";
+import path from "node:path";
 
-const commands = [];
 // Grab all the command folders from the commands directory you created earlier
 const client = new Client({
   intents: [
@@ -27,34 +26,14 @@ const client = new Client({
 
 client.commands = new Collection<string, SlashCommand>();
 
-// Grabs all files in commands/slashCommands
-const commandsPath: string = path.join(
-  import.meta.dirname ?? "",
-  "commands",
-);
-const commandFiles: string[] = fs
-  .readdirSync(commandsPath)
-  .filter((file) => file.endsWith(".ts"));
-
-for (const file of commandFiles) {
-  const filePath: string = path.join(commandsPath, file);
-  const module: object = await import(`file:///${filePath}`);
-
-  for (const entry of Object.entries(module)) {
-    if (!SlashCommandGuard(entry[1])) {
-      console.error(
-        `[WARNING] The module at ${filePath} is doesn't really look like a slashcommand..`,
-      );
-
-      continue;
-    }
-
-    const command: SlashCommand = entry[1] as SlashCommand;
-
-    commands.push(command.data.toJSON());
-    client.commands.set(command.data.name, command);
-  }
+const commands = [];
+for (const slashCommand of slashCommands) {
+  commands.push(slashCommand.data.toJSON());
+  client.commands.set(slashCommand.data.name, slashCommand);
 }
+
+// commands.push(command.data.toJSON());
+// client.commands.set(command.data.name, command);
 
 // Construct and prepare an instance of the REST module
 const rest: REST = new REST().setToken(env.TOKEN);
@@ -105,3 +84,5 @@ for (const file of eventFiles) {
 
 // Dit runt
 client.login(env.TOKEN);
+
+export { nonSlashCommands };

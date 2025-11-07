@@ -1,7 +1,7 @@
-import type { NonSlashCommand, SlashCommand, Track } from "$src/customTypes.ts";
-import { getPlayingTrack, trackEmbedBuilder } from "$src/utils.ts";
-import { db } from "$src/db.ts";
 import { type Message, SlashCommandBuilder } from "discord.js";
+import type { NonSlashCommand, SlashCommand, Track } from "$src/customTypes.ts";
+import { db } from "$src/db.ts";
+import { getPlayingTrack, trackEmbedBuilder } from "$src/utils.ts";
 
 export const np: NonSlashCommand = {
   keyword: ".np",
@@ -40,12 +40,13 @@ export const np: NonSlashCommand = {
   },
 };
 
+/*
 export const slashLastFMNP: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName("lastfm-np")
     .setDescription("Show what you are listening to"),
 
-  execute: async (interaction) => {
+  execute: async (interaction): Promise<void> => {
     const lastFMUsername: { "lastfm_username": string } | undefined = db
       .prepare("SELECT lastfm_username FROM lastfm WHERE user_id = ?")
       .get(interaction.user.id) ?? undefined;
@@ -105,6 +106,7 @@ export const slashLastFMNP: SlashCommand = {
       .catch(console.error);
   },
 };
+*/
 
 export const slashLastFMSet: SlashCommand = {
   data: new SlashCommandBuilder()
@@ -117,7 +119,7 @@ export const slashLastFMSet: SlashCommand = {
         .setRequired(true)
     ),
 
-  execute: async (interaction) => {
+  execute: async (interaction): Promise<void> => {
     const lastFMUsername = interaction.options.getString(
       "username",
       true,
