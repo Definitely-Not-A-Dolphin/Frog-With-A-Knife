@@ -3,7 +3,7 @@ import {
   type BotEvent,
   BotEventGuard,
   type SlashCommand,
-} from "./customTypes.ts";
+} from "$src/customTypes.ts";
 import { nonSlashCommands, slashCommands } from "$src/utils.ts";
 import {
   Client,
