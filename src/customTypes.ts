@@ -22,18 +22,16 @@ export type SlashCommand = {
   autocomplete?: (interaction: AutocompleteInteraction) => void; // optional autocomplete function
 };
 
-export const SlashCommandGuard = (
-  object: object, // this checks if an object is a slashcommand
-) => "data" in object && "execute" in object;
+export const SlashCommandGuard = (object: object) =>
+  "data" in object && "execute" in object;
 
 export type NonSlashCommand = {
   keyword: string;
   execute: (message: Message) => void | Promise<void>;
 };
 
-export const NonSlashCommandGuard = (
-  object: object,
-) => "keyword" in object && "execute" in object;
+export const NonSlashCommandGuard = (object: object) =>
+  "keyword" in object && "execute" in object;
 
 export type BotEvent = {
   // botevent, these reside in src/events/*.ts
@@ -44,9 +42,8 @@ export type BotEvent = {
   execute: (...args: any[]) => void; // Man, not my fault discordjs uses any even in their god damn type.
 };
 
-export const BotEventGuard = (
-  object: object, // again, checks if an object is a botevent
-) => "type" in object && "execute" in object;
+export const BotEventGuard = (object: object) =>
+  "type" in object && "execute" in object;
 
 export type Track = {
   name: string;

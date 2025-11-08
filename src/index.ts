@@ -38,22 +38,20 @@ for (const slashCommand of slashCommands) {
 const rest: REST = new REST().setToken(env.TOKEN);
 
 // and deploy your commands!
-(async () => {
-  try {
-    console.log(
-      `Started refreshing ${commands.length} application (/) commands.`,
-    );
+try {
+  console.log(
+    `Started refreshing ${commands.length} application (/) commands.`,
+  );
 
-    // The put method is used to fully refresh all commands in the guild with the current set
-    await rest.put(Routes.applicationCommands(env.CLIENTID), {
-      body: commands,
-    });
+  // The put method is used to fully refresh all commands in the guild with the current set
+  await rest.put(Routes.applicationCommands(env.CLIENTID), {
+    body: commands,
+  });
 
-    console.log(`Successfully reloaded application (/) commands.`);
-  } catch (error) {
-    console.error(error);
-  }
-})();
+  console.log(`Successfully reloaded application (/) commands.`);
+} catch (error) {
+  console.error(error);
+}
 
 const eventsPath: string = path.join(import.meta.dirname ?? "", "events");
 const eventFiles: string[] = fs

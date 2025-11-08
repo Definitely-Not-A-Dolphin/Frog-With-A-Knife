@@ -1,12 +1,14 @@
 import { Events, type Interaction, MessageFlags } from "discord.js";
-import type { BotEvent } from "$src/customTypes.ts";
+import type { BotEvent, SlashCommand } from "$src/customTypes.ts";
 
 export const slashCommandEvent: BotEvent = {
   type: Events.InteractionCreate,
   execute: async (interaction: Interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
-    const command = interaction.client.commands.get(interaction.commandName);
+    const command: SlashCommand | undefined = interaction.client.commands.get(
+      interaction.commandName,
+    );
 
     if (!command) {
       console.error(

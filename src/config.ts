@@ -1,19 +1,19 @@
 import { load } from "@std/dotenv";
 
-const secretKeys = [
-  "CLIENTID",
-  "PUBLIC_KEY",
-  "TOKEN",
-  "LASTFM_KEY",
-  "DATABASE_PATH",
-] as const;
-
 type Thing =
   | "CLIENTID"
   | "PUBLIC_KEY"
   | "TOKEN"
   | "LASTFM_KEY"
   | "DATABASE_PATH";
+
+const secretKeys: Thing[] = [
+  "CLIENTID",
+  "PUBLIC_KEY",
+  "TOKEN",
+  "LASTFM_KEY",
+  "DATABASE_PATH",
+] as const;
 
 const env: Record<Thing, string> = await load({
   export: true,

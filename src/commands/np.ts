@@ -1,7 +1,13 @@
 import type { NonSlashCommand, SlashCommand, Track } from "$src/customTypes.ts";
 import { db } from "$src/db.ts";
 import { getPlayingTrack, trackEmbedBuilder } from "$src/utils.ts";
-import { type Message, SlashCommandBuilder } from "discord.js";
+import {
+  type CacheType,
+  type ChatInputCommandInteraction,
+  type EmbedBuilder,
+  type Message,
+  SlashCommandBuilder,
+} from "discord.js";
 
 export const np: NonSlashCommand = {
   keyword: ".np",
@@ -11,6 +17,9 @@ export const np: NonSlashCommand = {
       .get(message.author.id) ?? undefined;
 
     if (!lastFMUsername) {
+      console.log(
+        `\x1b[30m > \x1b[0m ${message.author.username} forgot to set their LastFMUsername`,
+      );
       message.reply("You need to set a username first!");
       return;
     }
@@ -20,19 +29,25 @@ export const np: NonSlashCommand = {
     );
 
     if (thing === false) {
+      console.log(
+        `\x1b[30m > \x1b[0m Something went wrong while fetching ${message.author.username}'s LastFM data`,
+      );
       message.reply("Something went wrong fetching your data :/");
       return;
     }
 
     if (thing === true) {
+      console.log(
+        `\x1b[30m > \x1b[0m ${message.author.username} used /lastfm-np, but no music was playing`,
+      );
       message.reply("You are currently not listening to anything!");
       return;
     }
 
-    const iconURL = message.author.avatarURL() ??
+    const iconURL: string = message.author.avatarURL() ??
       message.author.defaultAvatarURL;
 
-    const trackEmbed = await trackEmbedBuilder(thing, iconURL);
+    const trackEmbed: EmbedBuilder = await trackEmbedBuilder(thing, iconURL);
 
     message.reply({
       embeds: [trackEmbed],
@@ -44,8 +59,9 @@ export const slashLastFMNP: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName("lastfm-np")
     .setDescription("Show what you are listening to"),
-
-  execute: async (interaction): Promise<void> => {
+  execute: async (
+    interaction: ChatInputCommandInteraction<CacheType>,
+  ): Promise<void> => {
     const lastFMUsername: { "lastfm_username": string } | undefined = db
       .prepare("SELECT lastfm_username FROM lastfm WHERE user_id = ?")
       .get(interaction.user.id) ?? undefined;
@@ -56,7 +72,11 @@ export const slashLastFMNP: SlashCommand = {
           content: "You need to set a username first!",
           withResponse: true,
         })
-        .then((response) => console.log(response))
+        .then(() =>
+          console.log(
+            `\x1b[31m > \x1b[0m ${interaction.user.username} forgot to set their LastFMUsername`,
+          )
+        )
         .catch(console.error);
       return;
     }
@@ -71,7 +91,11 @@ export const slashLastFMNP: SlashCommand = {
           content: "Something went wrong fetching your data :/",
           withResponse: true,
         })
-        .then((response) => console.log(response))
+        .then(() =>
+          console.log(
+            `\x1b[31m > \x1b[0m Something went wrong while fetching ${interaction.user.username}'s LastFM data`,
+          )
+        )
         .catch(console.error);
       return;
     }
@@ -82,25 +106,27 @@ export const slashLastFMNP: SlashCommand = {
           content: "You are currently not listening to anything!",
           withResponse: true,
         })
-        .then((_response) =>
+        .then(() =>
           console.log(
-            `${interaction.user.username} used /lastfm-np, but no music was playing`,
+            `\x1b[31m > \x1b[0m ${interaction.user.username} used /lastfm-np, but no music was playing`,
           )
         ).catch(console.error);
       return;
     }
 
-    const iconURL = interaction.user.avatarURL() ??
+    const iconURL: string = interaction.user.avatarURL() ??
       interaction.user.defaultAvatarURL;
 
-    const trackEmbed = await trackEmbedBuilder(thing, iconURL);
+    const trackEmbed: EmbedBuilder = await trackEmbedBuilder(thing, iconURL);
     await interaction
       .reply({
         embeds: [trackEmbed],
         withResponse: true,
       })
-      .then((_response) =>
-        console.log(`${interaction.user.username} used /lastfm-np`)
+      .then(() =>
+        console.log(
+          `\x1b[31m > \x1b[0m ${interaction.user.username} used /lastfm-np`,
+        )
       )
       .catch(console.error);
   },
@@ -116,8 +142,9 @@ export const slashLastFMSet: SlashCommand = {
         .setDescription("Enter your lastfm username!")
         .setRequired(true)
     ),
-
-  execute: async (interaction): Promise<void> => {
+  execute: async (
+    interaction: ChatInputCommandInteraction<CacheType>,
+  ): Promise<void> => {
     const lastFMUsername = interaction.options.getString(
       "username",
       true,
@@ -136,7 +163,11 @@ export const slashLastFMSet: SlashCommand = {
         content: `Set Last.fm username to _${lastFMUsername}_`,
         withResponse: true,
       })
-      .then((response) => console.log(response))
+      .then(() =>
+        console.log(
+          `\x1b[31m > \x1b[0m Set ${interaction.user.username}'s lastFM username as ${lastFMUsername}`,
+        )
+      )
       .catch(console.error);
   },
 };
