@@ -1,6 +1,6 @@
 import { Events, type Message, TextChannel } from "discord.js";
 import type { BotEvent } from "$src/customTypes.ts";
-import { nonSlashCommands } from "$src/utils.ts";
+import { nonSlashCommands } from "$src/collectCommands.ts";
 
 const event: BotEvent = {
   type: Events.MessageCreate,

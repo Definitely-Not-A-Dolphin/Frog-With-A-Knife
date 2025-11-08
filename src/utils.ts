@@ -1,11 +1,7 @@
-import {
-  type NonSlashCommand,
-  NonSlashCommandGuard,
-  type SlashCommand,
-  SlashCommandGuard,
-} from "$src/customTypes.ts";
-import fs from "node:fs";
-import path from "node:path";
+import type { LastFMData, LastFMTrack, Track } from "$src/customTypes.ts";
+import { EmbedBuilder } from "discord.js";
+import { env } from "$src/config.ts";
+import { getAverageColor } from "fast-average-color-node";
 
 export function coolBanner(): void {
   console.log(
@@ -38,47 +34,55 @@ export function getRandomEmoji(): string {
   return smileys[randomNumber(0, smileys.length)];
 }
 
-const slashCommands: SlashCommand[] = [];
-const nonSlashCommands: NonSlashCommand[] = [];
+export async function getPlayingTrack(
+  username: string,
+): Promise<boolean | Track> {
+  const baseUrl =
+    `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${env.LASTFM_KEY}&format=json`;
 
-// Grabs all files in commands/slashCommands
-const commandsPath: string = path.join(
-  import.meta.dirname ?? "",
-  "commands",
-);
-const commandFiles: string[] = fs
-  .readdirSync(commandsPath)
-  .filter((file) => file.endsWith(".ts"));
+  const response = await fetch(baseUrl);
 
-for (const file of commandFiles) {
-  console.log(path.join(commandsPath, file));
-}
-
-for (const file of commandFiles) {
-  const filePath: string = path.join(commandsPath, file);
-  console.log(`Current filePath: ${filePath}`);
-  const module: object = await import(`file:///${filePath}`);
-
-  for (const entry of Object.entries(module)) {
-    if (SlashCommandGuard(entry[1])) {
-      console.log(`Added ${entry[0]} as SlashCommand`);
-      slashCommands.push(entry[1] as SlashCommand);
-      continue;
-    }
-
-    if (NonSlashCommandGuard(entry[1])) {
-      console.log(`Added ${entry[0]} as NonSlashCommand`);
-      nonSlashCommands.push(entry[1] as NonSlashCommand);
-      continue;
-    }
-
-    console.error(
-      `[WARNING] The module at ${filePath} is doesn't really look like a command..`,
-    );
+  if (!response.ok) {
+    console.log(`Last.fm response code: ${response.status}`);
+    console.log(response.url);
+    return false;
   }
+
+  const lastFMData: LastFMData = await response.json();
+  const dataIWant: LastFMTrack[] = lastFMData.recenttracks.track;
+
+  if (
+    dataIWant.length === 0 || !dataIWant[0] || !dataIWant[0]["@attr"] ||
+    !dataIWant[0]["@attr"].nowplaying
+  ) return true;
+
+  return {
+    name: dataIWant[0].name,
+    album: dataIWant[0].album["#text"],
+    artist: dataIWant[0].artist["#text"],
+    image: dataIWant[0].image[3]["#text"],
+    url: dataIWant[0].url,
+  };
 }
 
-console.log(slashCommands);
-console.log(nonSlashCommands);
-
-export { nonSlashCommands, slashCommands };
+export async function trackEmbedBuilder(
+  trackPlaying: Track,
+  pfp: string,
+): Promise<EmbedBuilder> {
+  const avgColor = await getAverageColor(trackPlaying.image);
+  const anotherThing: [red: number, green: number, blue: number] = [
+    avgColor.value[0],
+    avgColor.value[1],
+    avgColor.value[2],
+  ];
+  return new EmbedBuilder()
+    .setTitle(trackPlaying.name)
+    .setURL(trackPlaying.url)
+    .setAuthor({
+      name: "Currently playing",
+      iconURL: pfp,
+    })
+    .setThumbnail(trackPlaying.image)
+    .setDescription(`**${trackPlaying.artist}** on _${trackPlaying.album}_`)
+    .setColor(anotherThing);
+}

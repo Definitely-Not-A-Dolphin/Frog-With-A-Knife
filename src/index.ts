@@ -4,7 +4,7 @@ import {
   BotEventGuard,
   type SlashCommand,
 } from "$src/customTypes.ts";
-import { nonSlashCommands, slashCommands } from "$src/utils.ts";
+import { nonSlashCommands, slashCommands } from "$src/collectCommands.ts";
 import {
   Client,
   Collection,

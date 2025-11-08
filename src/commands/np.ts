@@ -1,69 +1,7 @@
-import { env } from "$src/config.ts";
-import { EmbedBuilder, type Message, SlashCommandBuilder } from "discord.js";
-import { getAverageColor } from "fast-average-color-node";
-import type {
-  LastFMData,
-  LastFMTrack,
-  NonSlashCommand,
-  SlashCommand,
-  Track,
-} from "$src/customTypes.ts";
+import type { NonSlashCommand, SlashCommand, Track } from "$src/customTypes.ts";
 import { db } from "$src/db.ts";
-
-//import { getPlayingTrack, trackEmbedBuilder } from "$src/utils.ts";
-
-export async function getPlayingTrack(
-  username: string,
-): Promise<boolean | Track> {
-  const baseUrl =
-    `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${env.LASTFM_KEY}&format=json`;
-
-  const response = await fetch(baseUrl);
-
-  if (!response.ok) {
-    console.log(`Last.fm response code: ${response.status}`);
-    console.log(response.url);
-    return false;
-  }
-
-  const lastFMData: LastFMData = await response.json();
-  const dataIWant: LastFMTrack[] = lastFMData.recenttracks.track;
-
-  if (
-    dataIWant.length === 0 || !dataIWant[0] || !dataIWant[0]["@attr"] ||
-    !dataIWant[0]["@attr"].nowplaying
-  ) return true;
-
-  return {
-    name: dataIWant[0].name,
-    album: dataIWant[0].album["#text"],
-    artist: dataIWant[0].artist["#text"],
-    image: dataIWant[0].image[3]["#text"],
-    url: dataIWant[0].url,
-  };
-}
-
-export async function trackEmbedBuilder(
-  trackPlaying: Track,
-  pfp: string,
-): Promise<EmbedBuilder> {
-  const avgColor = await getAverageColor(trackPlaying.image);
-  const anotherThing: [red: number, green: number, blue: number] = [
-    avgColor.value[0],
-    avgColor.value[1],
-    avgColor.value[2],
-  ];
-  return new EmbedBuilder()
-    .setTitle(trackPlaying.name)
-    .setURL(trackPlaying.url)
-    .setAuthor({
-      name: "Currently playing",
-      iconURL: pfp,
-    })
-    .setThumbnail(trackPlaying.image)
-    .setDescription(`**${trackPlaying.artist}** on _${trackPlaying.album}_`)
-    .setColor(anotherThing);
-}
+import { getPlayingTrack, trackEmbedBuilder } from "$src/utils.ts";
+import { type Message, SlashCommandBuilder } from "discord.js";
 
 export const np: NonSlashCommand = {
   keyword: ".np",
