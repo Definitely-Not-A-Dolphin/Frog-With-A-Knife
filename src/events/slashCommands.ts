@@ -1,7 +1,7 @@
 import { Events, type Interaction, MessageFlags } from "discord.js";
 import type { BotEvent } from "$src/customTypes.ts";
 
-const event: BotEvent = {
+export const slashCommandEvent: BotEvent = {
   type: Events.InteractionCreate,
   execute: async (interaction: Interaction) => {
     if (!interaction.isChatInputCommand()) return;
@@ -33,5 +33,3 @@ const event: BotEvent = {
     }
   },
 };
-
-export default event;

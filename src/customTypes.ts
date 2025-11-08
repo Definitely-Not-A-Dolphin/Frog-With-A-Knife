@@ -24,9 +24,7 @@ export type SlashCommand = {
 
 export const SlashCommandGuard = (
   object: object, // this checks if an object is a slashcommand
-) =>
-  "data" in object &&
-  "execute" in object;
+) => "data" in object && "execute" in object;
 
 export type NonSlashCommand = {
   keyword: string;
@@ -48,10 +46,7 @@ export type BotEvent = {
 
 export const BotEventGuard = (
   object: object, // again, checks if an object is a botevent
-) =>
-  "default" in object &&
-  "type" in (object.default as object) &&
-  "execute" in (object.default as object);
+) => "type" in object && "execute" in object;
 
 export type Track = {
   name: string;

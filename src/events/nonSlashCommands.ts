@@ -2,7 +2,7 @@ import { Events, type Message, TextChannel } from "discord.js";
 import type { BotEvent } from "$src/customTypes.ts";
 import { nonSlashCommands } from "$src/collectCommands.ts";
 
-const event: BotEvent = {
+export const nonSlashCommandEvent: BotEvent = {
   type: Events.MessageCreate,
   execute: (message: Message): void => {
     if (!(message.channel instanceof TextChannel)) return;
@@ -14,5 +14,3 @@ const event: BotEvent = {
     }
   },
 };
-
-export default event;

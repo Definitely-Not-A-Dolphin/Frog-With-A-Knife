@@ -4,8 +4,7 @@ import { type Message, SlashCommandBuilder } from "discord.js";
 export const ping: NonSlashCommand = {
   keyword: ".ping",
   execute: (message: Message): void => {
-    const now = Date.now();
-    const diff = now - message.createdTimestamp;
+    const diff = Date.now() - message.createdTimestamp;
     console.log(`Pinged ${message.author.username} via message.`);
     message.reply(`Pong! Latency: ${diff}ms`);
   },
@@ -16,9 +15,7 @@ export const slashPing: SlashCommand = {
     .setName("ping")
     .setDescription("Replies with pong!"),
   execute: async (interaction): Promise<void> => {
-    const now = Date.now();
-    const diff = now - interaction.createdTimestamp;
-
+    const diff = Date.now() - interaction.createdTimestamp;
     await interaction
       .reply({
         content: `Pong! Latency: ${diff}ms`,

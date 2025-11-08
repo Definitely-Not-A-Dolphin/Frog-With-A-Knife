@@ -4,12 +4,13 @@ import {
   BotEventGuard,
   type SlashCommand,
 } from "$src/customTypes.ts";
-import { nonSlashCommands, slashCommands } from "$src/collectCommands.ts";
+import { slashCommands } from "$src/collectCommands.ts";
 import {
   Client,
   Collection,
   GatewayIntentBits,
   REST,
+  type RESTPostAPIChatInputApplicationCommandsJSONBody,
   Routes,
 } from "discord.js";
 import fs from "node:fs";
@@ -26,14 +27,12 @@ const client = new Client({
 
 client.commands = new Collection<string, SlashCommand>();
 
-const commands = [];
+// This type name is fucking brilliant
+const commands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
 for (const slashCommand of slashCommands) {
   commands.push(slashCommand.data.toJSON());
   client.commands.set(slashCommand.data.name, slashCommand);
 }
-
-// commands.push(command.data.toJSON());
-// client.commands.set(command.data.name, command);
 
 // Construct and prepare an instance of the REST module
 const rest: REST = new REST().setToken(env.TOKEN);
@@ -63,26 +62,26 @@ const eventFiles: string[] = fs
 
 for (const file of eventFiles) {
   const filePath: string = path.join(eventsPath, file);
-  const module = await import(`file:///${filePath}`);
+  const module: object = await import(`file:///${filePath}`);
 
-  if (!BotEventGuard(module)) {
+  for (const entry of Object.entries(module)) {
+    if (BotEventGuard(entry[1])) {
+      const event: BotEvent = entry[1] as BotEvent;
+
+      if (event.once) {
+        client.once(event.type as string, (...args) => event.execute(...args));
+        continue;
+      }
+      client.on(event.type as string, (...args) => event.execute(...args));
+
+      continue;
+    }
+
     console.error(
       `[WARNING] The module at ${filePath} is doesn't really look like an event..`,
     );
-
-    continue;
   }
-
-  const event: BotEvent = module.default as BotEvent;
-
-  if (event.once) {
-    client.once(event.type as string, (...args) => event.execute(...args));
-    continue;
-  }
-  client.on(event.type as string, (...args) => event.execute(...args));
 }
 
 // Dit runt
 client.login(env.TOKEN);
-
-export { nonSlashCommands };
