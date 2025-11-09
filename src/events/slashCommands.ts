@@ -26,12 +26,12 @@ export const slashCommandEvent: BotEvent = {
           content: "There was an error while executing this command!",
           flags: MessageFlags.Ephemeral,
         });
-      } else {
-        await interaction.reply({
-          content: "There was an error while executing this command!",
-          flags: MessageFlags.Ephemeral,
-        });
+        return;
       }
+      await interaction.reply({
+        content: "There was an error while executing this command!",
+        flags: MessageFlags.Ephemeral,
+      });
     }
   },
 };

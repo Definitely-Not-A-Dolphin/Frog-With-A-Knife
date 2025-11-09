@@ -40,6 +40,11 @@ for (const file of commandFiles) {
   }
 }
 
-console.log(slashCommands, nonSlashCommands);
+console.log(
+  "\x1b[34mSlashCommands: \x1b[0m\n",
+  slashCommands,
+  "\x1b[34m\nNonSlashCommands: \x1b[0m\n",
+  nonSlashCommands,
+);
 
 export { nonSlashCommands, slashCommands };

@@ -18,7 +18,7 @@ export const np: NonSlashCommand = {
 
     if (!lastFMUsername) {
       console.log(
-        `\x1b[30m > \x1b[0m ${message.author.username} forgot to set their LastFMUsername`,
+        `\x1b[36m > \x1b[0m ${message.author.username} forgot to set their LastFMUsername`,
       );
       message.reply("You need to set a username first!");
       return;
@@ -30,7 +30,7 @@ export const np: NonSlashCommand = {
 
     if (thing === false) {
       console.log(
-        `\x1b[30m > \x1b[0m Something went wrong while fetching ${message.author.username}'s LastFM data`,
+        `\x1b[36m > \x1b[0m Something went wrong while fetching ${message.author.username}'s LastFM data`,
       );
       message.reply("Something went wrong fetching your data :/");
       return;
@@ -38,7 +38,7 @@ export const np: NonSlashCommand = {
 
     if (thing === true) {
       console.log(
-        `\x1b[30m > \x1b[0m ${message.author.username} used /lastfm-np, but no music was playing`,
+        `\x1b[36m > \x1b[0m ${message.author.username} used /lastfm-np, but no music was playing`,
       );
       message.reply("You are currently not listening to anything!");
       return;
@@ -116,8 +116,8 @@ export const slashLastFMNP: SlashCommand = {
 
     const iconURL: string = interaction.user.avatarURL() ??
       interaction.user.defaultAvatarURL;
-
     const trackEmbed: EmbedBuilder = await trackEmbedBuilder(thing, iconURL);
+
     await interaction
       .reply({
         embeds: [trackEmbed],
@@ -145,7 +145,7 @@ export const slashLastFMSet: SlashCommand = {
   execute: async (
     interaction: ChatInputCommandInteraction<CacheType>,
   ): Promise<void> => {
-    const lastFMUsername = interaction.options.getString(
+    const lastFMUsername: string = interaction.options.getString(
       "username",
       true,
     );

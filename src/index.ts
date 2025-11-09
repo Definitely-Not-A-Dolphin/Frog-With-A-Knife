@@ -17,7 +17,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 // Grab all the command folders from the commands directory you created earlier
-const client = new Client({
+const client: Client<boolean> = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
@@ -70,6 +70,7 @@ for (const file of eventFiles) {
         client.once(event.type as string, (...args) => event.execute(...args));
         continue;
       }
+
       client.on(event.type as string, (...args) => event.execute(...args));
 
       continue;
