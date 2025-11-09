@@ -1,7 +1,7 @@
-import { secrets } from "$src/config.ts";
-import { getAverageColor } from "fast-average-color-node";
-import type { lastFMData, lastFMTrack, Track } from "$src/customTypes.ts";
+import type { LastFMData, LastFMTrack, Track } from "$src/customTypes.ts";
 import { EmbedBuilder } from "discord.js";
+import { env } from "$src/config.ts";
+import { getAverageColor } from "fast-average-color-node";
 
 export function coolBanner(): void {
   console.log(
@@ -38,7 +38,7 @@ export async function getPlayingTrack(
   username: string,
 ): Promise<boolean | Track> {
   const baseUrl =
-    `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${secrets.LASTFM_KEY}&format=json`;
+    `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${env.LASTFM_KEY}&format=json`;
 
   const response = await fetch(baseUrl);
 
@@ -48,8 +48,8 @@ export async function getPlayingTrack(
     return false;
   }
 
-  const lastFMData: lastFMData = await response.json();
-  const dataIWant: lastFMTrack[] = lastFMData.recenttracks.track;
+  const lastFMData: LastFMData = await response.json();
+  const dataIWant: LastFMTrack[] = lastFMData.recenttracks.track;
 
   if (
     dataIWant.length === 0 || !dataIWant[0] || !dataIWant[0]["@attr"] ||

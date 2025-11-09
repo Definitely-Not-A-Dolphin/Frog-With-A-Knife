@@ -3,6 +3,7 @@ import type {
   ChatInputCommandInteraction,
   Collection,
   Events,
+  Message,
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
 } from "discord.js";
@@ -21,28 +22,28 @@ export type SlashCommand = {
   autocomplete?: (interaction: AutocompleteInteraction) => void; // optional autocomplete function
 };
 
-export const SlashCommandGuard = (
-  object: object, // this checks if an object is a slashcommand
-) =>
-  "default" in object &&
-  "data" in (object.default as object) &&
-  "execute" in (object.default as object);
+export const SlashCommandGuard = (object: object) =>
+  "data" in object && "execute" in object;
+
+export type NonSlashCommand = {
+  keyword: string;
+  execute: (message: Message) => void | Promise<void>;
+};
+
+export const NonSlashCommandGuard = (object: object) =>
+  "keyword" in object && "execute" in object;
 
 export type BotEvent = {
   // botevent, these reside in src/events/*.ts
   type: Events;
   once?: boolean;
-
   // deno-lint-ignore no-explicit-any
-  execute: (...args: any[]) => void; // Man, not my fault discordjs uses any even in their god damn type.
+  execute: (...args: any[]) => void;
+  // Man, not my fault discordjs uses any even in their god damn type.
 };
 
-export const BotEventGuard = (
-  object: object, // again, checks if an object is a botevent
-) =>
-  "default" in object &&
-  "type" in (object.default as object) &&
-  "execute" in (object.default as object);
+export const BotEventGuard = (object: object) =>
+  "type" in object && "execute" in object;
 
 export type Track = {
   name: string;
@@ -52,7 +53,7 @@ export type Track = {
   url: string;
 };
 
-export type lastFMTrack = {
+export type LastFMTrack = {
   artist: {
     mbid: string;
     "#text": string;
@@ -78,9 +79,9 @@ export type lastFMTrack = {
   };
 };
 
-export type lastFMData = {
+export type LastFMData = {
   recenttracks: {
-    track: lastFMTrack[];
+    track: LastFMTrack[];
     "@attr": {
       user: string;
       totalPages: string;

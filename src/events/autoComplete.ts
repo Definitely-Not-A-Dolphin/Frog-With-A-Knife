@@ -1,7 +1,7 @@
 import { Events } from "discord.js";
 import type { BotEvent } from "$src/customTypes.ts";
 
-const event: BotEvent = {
+export const autoCompleteEvent: BotEvent = {
   type: Events.InteractionCreate,
   execute: (interaction): void => {
     if (!interaction.isAutocomplete()) return;
@@ -29,5 +29,3 @@ const event: BotEvent = {
     }
   },
 };
-
-export default event;
