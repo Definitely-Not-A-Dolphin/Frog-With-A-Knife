@@ -22,10 +22,10 @@ export function randomNumber(min: number, max: number): number {
 }
 
 export function arrayCount<T>(thing: T[], element: T): number {
-  let count = 0;
-  thing.forEach((x) => {
-    if (x === element) count++;
-  });
+  let count: number = 0;
+  for (const anotherThing of thing) {
+    if (anotherThing === element) count++;
+  }
   return count;
 }
 
@@ -40,7 +40,7 @@ export async function getPlayingTrack(
   const baseUrl: string =
     `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${env.LASTFM_KEY}&format=json`;
 
-  const response = await fetch(baseUrl);
+  const response: Response = await fetch(baseUrl);
 
   if (!response.ok) {
     console.log(
@@ -80,6 +80,7 @@ export async function trackEmbedBuilder(
     avgColor.value[1],
     avgColor.value[2],
   ];
+
   return new EmbedBuilder()
     .setTitle(trackPlaying.name)
     .setURL(trackPlaying.url)

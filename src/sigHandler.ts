@@ -2,10 +2,10 @@ import type { MaybePromiseVoid } from "./customTypes.ts";
 
 let handlers: (() => MaybePromiseVoid)[] = [];
 
-export const addSigListener = (fun: () => MaybePromiseVoid) => {
+export const addSigListener = (fun: () => MaybePromiseVoid): void => {
   handlers.push(fun);
 };
-export const removeSigListener = (fun: () => MaybePromiseVoid) => {
+export const removeSigListener = (fun: () => MaybePromiseVoid): void => {
   handlers = handlers.filter((v) => v === fun);
 };
 
@@ -21,5 +21,5 @@ const sigHandler = async () => {
 if (Deno.build.os !== "windows") {
   Deno.addSignalListener("SIGTERM", sigHandler);
 }
-
+// Windows momentje
 Deno.addSignalListener("SIGINT", sigHandler);

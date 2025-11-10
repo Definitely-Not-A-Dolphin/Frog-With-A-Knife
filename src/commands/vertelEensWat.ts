@@ -9,9 +9,12 @@ import { Octokit } from "octokit";
 import { env } from "$src/config.ts";
 
 export const vertelEensWat: NonSlashCommand = {
+  listed: true,
   name: "Vertel eens wat",
+  description: "Een paar leuke feitjes",
+  trigger: /(V|v)ertel (een|i)s wat over jezelf/g,
   match: (message: Message) =>
-    message.content === "Vertel eens wat over jezelf",
+    Boolean(RegExp(vertelEensWat.trigger).exec(message.content)),
   execute: async (message: Message): Promise<void> => {
     const octokit: Octokit = new Octokit({
       auth: env.GITHUB_TOKEN,
@@ -46,9 +49,9 @@ export const vertelEensWat: NonSlashCommand = {
     for (const language of Object.entries(rawLanguageData.data)) {
       const thing: number = Math.floor(Number(language[1]) / totalChar * 1000)
         / 10;
-      if (thing === 0) {
-        continue; // Equivalent of break as long as github doesn't switch the descending order of languages
-      }
+      if (thing === 0) continue;
+      // Equivalent of break as long as github doesn't switch the descending order of languages
+
       languageData[language[0]] = thing;
     }
 

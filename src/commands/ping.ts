@@ -7,7 +7,10 @@ import {
 } from "discord.js";
 
 export const ping: NonSlashCommand = {
+  listed: true,
   name: ".ping",
+  description: "Ping yourself NOW",
+  trigger: ".ping",
   match: (message: Message) => message.content === ".ping",
   execute: (message: Message): void => {
     const diff: number = Date.now() - message.createdTimestamp;
