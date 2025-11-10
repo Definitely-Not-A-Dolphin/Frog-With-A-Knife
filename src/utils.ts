@@ -5,14 +5,14 @@ import { getAverageColor } from "fast-average-color-node";
 
 export function coolBanner(): void {
   console.log(
-    " ______                __          ___ _   _                  _  __      _  __      \n" +
-      "|  ____|               \\ \\        / (_) | | |         /\\     | |/ /     (_)/ _|    \n" +
-      "| |__ _ __ ___   __ _   \\ \\  /\\  / / _| |_| |__      /  \\    | ' / _ __  _| |_ ___ \n" +
-      "|  __| '__/ _ \\ / _` |   \\ \\/  \\/ / | | __| '_ \\    / /\\ \\   |  < | '_ \\| |  _/ _ \\\n" +
-      "| |  | | | (_) | (_| |    \\  /\\  /  | | |_| | | |  / ____ \\  | . \\| | | | | ||  __/\n" +
-      "|_|  |_|  \\___/ \\__, |     \\/  \\/   |_|\\__|_| |_| /_/    \\_\\ |_|\\_\\_| |_|_|_| \\___|\n" +
-      "                 __/ |                                                             \n" +
-      "                |___/                                                              \n",
+    " ______                __          ___ _   _                  _  __      _  __      \n"
+      + "|  ____|               \\ \\        / (_) | | |         /\\     | |/ /     (_)/ _|    \n"
+      + "| |__ _ __ ___   __ _   \\ \\  /\\  / / _| |_| |__      /  \\    | ' / _ __  _| |_ ___ \n"
+      + "|  __| '__/ _ \\ / _` |   \\ \\/  \\/ / | | __| '_ \\    / /\\ \\   |  < | '_ \\| |  _/ _ \\\n"
+      + "| |  | | | (_) | (_| |    \\  /\\  /  | | |_| | | |  / ____ \\  | . \\| | | | | ||  __/\n"
+      + "|_|  |_|  \\___/ \\__, |     \\/  \\/   |_|\\__|_| |_| /_/    \\_\\ |_|\\_\\_| |_|_|_| \\___|\n"
+      + "                 __/ |                                                             \n"
+      + "                |___/                                                              \n",
   );
 }
 
@@ -37,14 +37,17 @@ export function getRandomEmoji(): string {
 export async function getPlayingTrack(
   username: string,
 ): Promise<boolean | Track> {
-  const baseUrl =
+  const baseUrl: string =
     `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${env.LASTFM_KEY}&format=json`;
 
   const response = await fetch(baseUrl);
 
   if (!response.ok) {
-    console.log(`Last.fm response code: ${response.status}`);
-    console.log(response.url);
+    console.log(
+      `Last.fm response code: ${response.status}`,
+      "\n",
+      response.url,
+    );
     return false;
   }
 
@@ -52,8 +55,8 @@ export async function getPlayingTrack(
   const dataIWant: LastFMTrack[] = lastFMData.recenttracks.track;
 
   if (
-    dataIWant.length === 0 || !dataIWant[0] || !dataIWant[0]["@attr"] ||
-    !dataIWant[0]["@attr"].nowplaying
+    dataIWant.length === 0 || !dataIWant[0] || !dataIWant[0]["@attr"]
+    || !dataIWant[0]["@attr"].nowplaying
   ) return true;
 
   return {
@@ -69,7 +72,9 @@ export async function trackEmbedBuilder(
   trackPlaying: Track,
   pfp: string,
 ): Promise<EmbedBuilder> {
-  const avgColor = await getAverageColor(trackPlaying.image);
+  const avgColor = await getAverageColor(
+    trackPlaying.image,
+  );
   const anotherThing: [red: number, green: number, blue: number] = [
     avgColor.value[0],
     avgColor.value[1],

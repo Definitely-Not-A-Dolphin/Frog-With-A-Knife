@@ -8,7 +8,7 @@ export const nonSlashCommandEvent: BotEvent = {
     if (!(message.channel instanceof TextChannel)) return;
 
     for (const nonSlashCommand of nonSlashCommands) {
-      if (message.content === nonSlashCommand.keyword) {
+      if (nonSlashCommand.match(message)) {
         nonSlashCommand.execute(message);
       }
     }

@@ -72,7 +72,6 @@ for (const file of eventFiles) {
       }
 
       client.on(event.type as string, (...args) => event.execute(...args));
-
       continue;
     }
 

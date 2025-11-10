@@ -7,7 +7,8 @@ import {
 } from "discord.js";
 
 export const ping: NonSlashCommand = {
-  keyword: ".ping",
+  name: ".ping",
+  match: (message: Message) => message.content === ".ping",
   execute: (message: Message): void => {
     const diff: number = Date.now() - message.createdTimestamp;
     console.log(

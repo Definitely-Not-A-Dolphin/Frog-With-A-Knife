@@ -1,12 +1,14 @@
-import { Events } from "discord.js";
-import type { BotEvent } from "$src/customTypes.ts";
+import { Events, type Interaction } from "discord.js";
+import type { BotEvent, SlashCommand } from "$src/customTypes.ts";
 
 export const autoCompleteEvent: BotEvent = {
   type: Events.InteractionCreate,
-  execute: (interaction): void => {
+  execute: (interaction: Interaction): void => {
     if (!interaction.isAutocomplete()) return;
 
-    const command = interaction.client.commands.get(interaction.commandName);
+    const command: SlashCommand | undefined = interaction.client.commands.get(
+      interaction.commandName,
+    );
 
     if (!command) {
       console.error(

@@ -20,6 +20,7 @@
     "file-system": "npm:file-system@^2.2.2",
     "fs": "npm:fs@^0.0.1-security",
     "node-emoji": "npm:node-emoji@^2.2.0",
+    "octokit": "npm:octokit@^5.0.5",
     "path": "npm:path@^0.12.7"
   },
   "lint": {
@@ -33,5 +34,12 @@
         "no-eval"
       ]
     }
+  },
+  "fmt": {
+    "bracePosition": "sameLine",
+    "singleQuote": false,
+    "semiColons": true,
+    "operatorPosition": "nextLine",
+    "useBraces": "whenNotSingleLine"
   }
 }

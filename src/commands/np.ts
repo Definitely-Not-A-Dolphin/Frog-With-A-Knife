@@ -10,7 +10,8 @@ import {
 } from "discord.js";
 
 export const np: NonSlashCommand = {
-  keyword: ".np",
+  name: ".np",
+  match: (message: Message) => message.content === ".np",
   execute: async (message: Message): Promise<void> => {
     const lastFMUsername: { "lastfm_username": string } | undefined = db
       .prepare("SELECT lastfm_username FROM lastfm WHERE user_id = ?")
@@ -44,8 +45,8 @@ export const np: NonSlashCommand = {
       return;
     }
 
-    const iconURL: string = message.author.avatarURL() ??
-      message.author.defaultAvatarURL;
+    const iconURL: string = message.author.avatarURL()
+      ?? message.author.defaultAvatarURL;
 
     const trackEmbed: EmbedBuilder = await trackEmbedBuilder(thing, iconURL);
 
@@ -114,8 +115,8 @@ export const slashLastFMNP: SlashCommand = {
       return;
     }
 
-    const iconURL: string = interaction.user.avatarURL() ??
-      interaction.user.defaultAvatarURL;
+    const iconURL: string = interaction.user.avatarURL()
+      ?? interaction.user.defaultAvatarURL;
     const trackEmbed: EmbedBuilder = await trackEmbedBuilder(thing, iconURL);
 
     await interaction

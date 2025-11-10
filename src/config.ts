@@ -5,7 +5,8 @@ type Thing =
   | "PUBLIC_KEY"
   | "TOKEN"
   | "LASTFM_KEY"
-  | "DATABASE_PATH";
+  | "DATABASE_PATH"
+  | "GITHUB_TOKEN";
 
 const secretKeys: Thing[] = [
   "CLIENTID",
@@ -13,6 +14,7 @@ const secretKeys: Thing[] = [
   "TOKEN",
   "LASTFM_KEY",
   "DATABASE_PATH",
+  "GITHUB_TOKEN",
 ] as const;
 
 const env: Record<Thing, string> = await load({
