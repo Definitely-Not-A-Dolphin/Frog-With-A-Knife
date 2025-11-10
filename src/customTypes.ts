@@ -26,20 +26,12 @@ export const SlashCommandGuard = (object: object) =>
   "data" in object && "execute" in object;
 
 export type NonSlashCommand = {
-  listed: boolean;
-  name: string;
-  description: string;
-  trigger: string | RegExp;
   match: (message: Message) => boolean;
   execute: (message: Message) => MaybePromiseVoid;
 };
 
 export const NonSlashCommandGuard = (object: object) =>
-  "listed" in object
-  && "name" in object
-  && "discription" in object
-  && "trigger" in object
-  && "match" in object
+  "match" in object
   && "execute" in object;
 
 export type BotEvent = {

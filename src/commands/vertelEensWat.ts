@@ -9,12 +9,8 @@ import { Octokit } from "octokit";
 import { env } from "$src/config.ts";
 
 export const vertelEensWat: NonSlashCommand = {
-  listed: true,
-  name: "Vertel eens wat",
-  description: "Een paar leuke feitjes",
-  trigger: /(V|v)ertel (een|i)s wat over jezelf/g,
   match: (message: Message) =>
-    Boolean(RegExp(vertelEensWat.trigger).exec(message.content)),
+    Boolean(/(V|v)ertel (een|i)s wat over jezelf/g.exec(message.content)),
   execute: async (message: Message): Promise<void> => {
     const octokit: Octokit = new Octokit({
       auth: env.GITHUB_TOKEN,

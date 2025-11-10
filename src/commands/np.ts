@@ -10,11 +10,7 @@ import {
 } from "discord.js";
 
 export const np: NonSlashCommand = {
-  listed: true,
-  name: ".np",
-  description: "Show what you are listening to!",
-  trigger: ".np",
-  match: (message: Message) => message.content === np.trigger,
+  match: (message: Message) => message.content === "Show what you are listening to!",
   execute: async (message: Message): Promise<void> => {
     const lastFMUsername: { "lastfm_username": string } | undefined = db
       .prepare("SELECT lastfm_username FROM lastfm WHERE user_id = ?")

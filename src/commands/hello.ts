@@ -2,10 +2,6 @@ import type { NonSlashCommand } from "$src/customTypes.ts";
 import type { Message } from "discord.js";
 
 export const hello: NonSlashCommand = {
-  listed: false,
-  name: "Wie pingt mij!?",
-  description: "Wie pingt mij!?",
-  trigger: "<@1363950316562944090>",
   match: (message: Message) =>
     message.content.includes("<@1363950316562944090>")
     || message.content.includes("<!1363950316562944090>"),
