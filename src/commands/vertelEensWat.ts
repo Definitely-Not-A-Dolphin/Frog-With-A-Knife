@@ -42,6 +42,7 @@ export const vertelEensWat: NonSlashCommand = {
     for (const language of Object.entries(rawLanguageData.data)) {
       totalChar += Number(language[1]);
     }
+
     for (const language of Object.entries(rawLanguageData.data)) {
       const thing: number = Math.floor(Number(language[1]) / totalChar * 1000)
         / 10;

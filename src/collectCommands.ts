@@ -17,7 +17,7 @@ const commandsPath: string = path.join(
 );
 const commandFiles: string[] = fs
   .readdirSync(commandsPath)
-  .filter((file) => file.endsWith(".ts"));
+  .filter((file: string) => file.endsWith(".ts"));
 
 for (const file of commandFiles) {
   const filePath: string = path.join(commandsPath, file);

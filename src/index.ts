@@ -49,14 +49,14 @@ try {
   });
 
   console.log(`Successfully reloaded application (/) commands.`);
-} catch (error) {
+} catch (error: unknown) {
   console.error(error);
 }
 
 const eventsPath: string = path.join(import.meta.dirname ?? "", "events");
 const eventFiles: string[] = fs
   .readdirSync(eventsPath)
-  .filter((file) => file.endsWith(".ts"));
+  .filter((file: string) => file.endsWith(".ts"));
 
 for (const file of eventFiles) {
   const filePath: string = path.join(eventsPath, file);

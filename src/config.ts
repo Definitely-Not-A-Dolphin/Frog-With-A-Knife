@@ -22,9 +22,7 @@ const env: Record<Thing, string> = await load({
 });
 
 for (const key of secretKeys) {
-  if (!env[key]) {
-    throw new Error(`\x1b[34mMissing .env variable ${key}\x1b[0m`);
-  }
+  if (!env[key]) throw new Error(`\x1b[34mMissing .env variable ${key}\x1b[0m`);
 }
 
 console.log("\x1b[34m.env values:\x1b[0m");

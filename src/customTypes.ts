@@ -28,7 +28,7 @@ export const SlashCommandGuard = (object: object) =>
 export type NonSlashCommand = {
   name: string;
   match: (message: Message) => boolean;
-  execute: (message: Message) => void | Promise<void>;
+  execute: (message: Message) => MaybePromiseVoid;
 };
 
 export const NonSlashCommandGuard = (object: object) =>
@@ -44,6 +44,8 @@ export type BotEvent = {
 
 export const BotEventGuard = (object: object) =>
   "type" in object && "execute" in object;
+
+export type MaybePromiseVoid = void | Promise<void>;
 
 export type Track = {
   name: string;
