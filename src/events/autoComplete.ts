@@ -1,5 +1,5 @@
+import type { BotEvent, SlashCommand } from "../customTypes.ts";
 import { Events, type Interaction } from "discord.js";
-import type { BotEvent, SlashCommand } from "$src/customTypes.ts";
 
 export const autoCompleteEvent: BotEvent = {
   type: Events.InteractionCreate,

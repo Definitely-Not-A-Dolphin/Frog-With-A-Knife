@@ -25,14 +25,13 @@ export const slashPing: SlashCommand = {
     interaction: ChatInputCommandInteraction<CacheType>,
   ): Promise<void> => {
     const diff: number = Date.now() - interaction.createdTimestamp;
+
+    console.log(`\x1b[31m > \x1b[0m Pinged "${interaction.user.username}".`);
     await interaction
       .reply({
         content: `Pong! Latency: ${diff}ms`,
         withResponse: true,
       })
-      .then(() =>
-        console.log(`\x1b[31m > \x1b[0m Pinged "${interaction.user.username}".`)
-      )
       .catch(console.error);
   },
 };

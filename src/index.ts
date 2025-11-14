@@ -1,10 +1,10 @@
-import { env } from "$src/config.ts";
+import { slashCommands } from "./collectCommands.ts";
 import {
   type BotEvent,
   BotEventGuard,
   type SlashCommand,
-} from "$src/customTypes.ts";
-import { slashCommands } from "$src/collectCommands.ts";
+} from "./customTypes.ts";
+import { env } from "./env.ts";
 import {
   Client,
   Collection,

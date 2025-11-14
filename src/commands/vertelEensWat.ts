@@ -3,10 +3,10 @@ import type {
   Language,
   NonSlashCommand,
   OctokitResponse,
-} from "$src/customTypes.ts";
+} from "../customTypes.ts";
+import { env } from "../env.ts";
 import type { Message } from "discord.js";
 import { Octokit } from "octokit";
-import { env } from "$src/config.ts";
 
 export const vertelEensWat: NonSlashCommand = {
   match: (message: Message) =>

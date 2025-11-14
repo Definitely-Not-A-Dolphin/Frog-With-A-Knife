@@ -7,7 +7,7 @@ export const hello: NonSlashCommand = {
     || message.content.includes("<!1363950316562944090>"),
   execute: (message: Message): void => {
     console.log(
-      `\x1b[36m > \x1b[0m Said hello to ${message.author.username}!`,
+      `\x1b[36m > \x1b[0m Got pinged by ${message.author.username}!`,
     );
     message.reply(`Wie pingt mij!?`);
   },

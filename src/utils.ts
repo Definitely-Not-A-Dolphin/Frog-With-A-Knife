@@ -1,6 +1,5 @@
-import type { LastFMData, LastFMTrack, Track } from "$src/customTypes.ts";
+import type { Track } from "./customTypes.ts";
 import { EmbedBuilder } from "discord.js";
-import { env } from "$src/config.ts";
 import { getAverageColor } from "fast-average-color-node";
 
 export function coolBanner(): void {
@@ -32,40 +31,6 @@ export function arrayCount<T>(thing: T[], element: T): number {
 export function getRandomEmoji(): string {
   const smileys: string[] = [":)", ":D", ":3", ":P"];
   return smileys[randomNumber(0, smileys.length)];
-}
-
-export async function getPlayingTrack(
-  username: string,
-): Promise<boolean | Track> {
-  const baseUrl: string =
-    `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${env.LASTFM_KEY}&format=json`;
-
-  const response: Response = await fetch(baseUrl);
-
-  if (!response.ok) {
-    console.log(
-      `Last.fm response code: ${response.status}`,
-      "\n",
-      response.url,
-    );
-    return false;
-  }
-
-  const lastFMData: LastFMData = await response.json();
-  const dataIWant: LastFMTrack[] = lastFMData.recenttracks.track;
-
-  if (
-    dataIWant.length === 0 || !dataIWant[0] || !dataIWant[0]["@attr"]
-    || !dataIWant[0]["@attr"].nowplaying
-  ) return true;
-
-  return {
-    name: dataIWant[0].name,
-    album: dataIWant[0].album["#text"],
-    artist: dataIWant[0].artist["#text"],
-    image: dataIWant[0].image[3]["#text"],
-    url: dataIWant[0].url,
-  };
 }
 
 export async function trackEmbedBuilder(
