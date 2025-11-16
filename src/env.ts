@@ -1,14 +1,6 @@
 import { load } from "@std/dotenv";
 
-type Thing =
-  | "CLIENTID"
-  | "PUBLIC_KEY"
-  | "TOKEN"
-  | "LASTFM_KEY"
-  | "DATABASE_PATH"
-  | "GITHUB_TOKEN";
-
-const secretKeys: Thing[] = [
+const secretKeys = [
   "CLIENTID",
   "PUBLIC_KEY",
   "TOKEN",
@@ -17,8 +9,9 @@ const secretKeys: Thing[] = [
   "GITHUB_TOKEN",
 ] as const;
 
-const env: Record<Thing, string> = await load({
+const env: Record<string, string> = await load({
   export: true,
+  //envPath: "../Frog-With-A-Knife-Token/.env.prod"
 });
 
 for (const key of secretKeys) {

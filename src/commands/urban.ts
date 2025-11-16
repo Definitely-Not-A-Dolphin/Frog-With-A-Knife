@@ -1,16 +1,29 @@
-import { type Message, EmbedBuilder } from "discord.js";
-import type {
-  NonSlashCommand,
-  UrbanDictionaryEntry,
-  UrbanDictionaryResponse,
-} from "../customTypes.ts";
+import { EmbedBuilder, type Message } from "discord.js";
+import type { NonSlashCommand } from "../customTypes.ts";
+
+export type UrbanDictionaryEntry = {
+  author: string;
+  current_vote: string;
+  defid: number;
+  definition: string;
+  example: string;
+  permalink: string;
+  thumbs_down: number;
+  thumbs_up: number;
+  word: string;
+  written_on: string;
+};
+
+export type UrbanDictionaryResponse = {
+  list: UrbanDictionaryEntry[];
+};
 
 export const urbanDictionary: NonSlashCommand = {
   match: (message: Message) =>
     message.content.split(" ")[0] === ".ud"
     || message.content.split(" ")[0] === ".urban",
   execute: async (message: Message): Promise<void> => {
-    const word: string = message.content.split(" ")[1];
+    const word = message.content.split(" ")[1];
 
     if (!word) {
       message.reply("geef dan ook een woord jij vage kennis");

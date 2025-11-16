@@ -1,15 +1,16 @@
-import type {
-  //type CacheType,
-  //type ChatInputCommandInteraction,
-  EmbedBuilder,
-  Message,
-  //SlashCommandBuilder,
+import {
+  type CacheType,
+  type ChatInputCommandInteraction,
+  type EmbedBuilder,
+  type Message,
+  SlashCommandBuilder,
+  type SlashCommandStringOption,
 } from "discord.js";
 import type {
   LastFMData,
   LastFMTrack,
   NonSlashCommand,
-  //SlashCommand,
+  SlashCommand,
   Track,
 } from "../customTypes.ts";
 import { db } from "../db.ts";
@@ -17,40 +18,24 @@ import { env } from "../env.ts";
 import { trackEmbedBuilder } from "../utils.ts";
 
 export const lastFMnp: NonSlashCommand = {
-  match: (message: Message) => message.content.split(" ")[0] === ".np",
+  match: (message: Message) => message.content === ".np",
   execute: async (message: Message): Promise<void> => {
-    let lastFMUsername = message.content.split(" ").slice(1).join();
+    const lastFMUsername: { lastfm_username: string | undefined } = db.prepare(
+      "SELECT lastfm_username FROM lastfm WHERE user_id = ?",
+    ).get(message.author.id) ?? { lastfm_username: undefined };
 
-    // Check of er een arg is
-    if (lastFMUsername === "") {
-      const thing: { lastfm_username: string | undefined } = db.prepare(
-        "SELECT lastfm_username FROM lastfm WHERE user_id = ?",
-      ).get(message.author.id) ?? { lastfm_username: undefined };
-
-      // als thing undefined is, is er geen username in de db
-      if (thing.lastfm_username === undefined) {
-        console.log(
-          `\x1b[36m > \x1b[0m ${message.author.username} used /lastfm-np, but forgot to set their username`,
-        );
-        message.reply("You need to set a username first!");
-        return;
-      }
-
-      lastFMUsername = thing.lastfm_username;
-    } else if (
-      db.prepare(
-        "SELECT user_id FROM lastfm WHERE lastfm_username = ?",
-      ).get(lastFMUsername) === undefined
-    ) {
+    if (!lastFMUsername.lastfm_username) {
       console.log(
-        `\x1b[36m > \x1b[0m ${message.author.username} used /lastfm-np, but gave an invalid username`,
+        `\x1b[36m > \x1b[0m ${message.author.username} used /lastfm-np, forgot to set their username`,
       );
-      message.reply("Could not find someone with that username!");
+      message.reply(
+        "You need to set a username first!",
+      );
       return;
     }
 
     const baseUrl: string =
-      `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${lastFMUsername}&api_key=${env.LASTFM_KEY}&format=json`;
+      `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${lastFMUsername.lastfm_username}&api_key=${env.LASTFM_KEY}&format=json`;
     const response: Response = await fetch(baseUrl);
 
     if (!response.ok) {
@@ -139,7 +124,6 @@ export const lastFMSet: NonSlashCommand = {
   },
 };
 
-/*
 export const slashLastFMnp: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName("lastfm-np")
@@ -147,38 +131,33 @@ export const slashLastFMnp: SlashCommand = {
   execute: async (
     interaction: ChatInputCommandInteraction<CacheType>,
   ): Promise<void> => {
-    const lastFMUsername: { "lastfm_username": string | undefined } = db
-      .prepare("SELECT lastfm_username FROM lastfm WHERE user_id = ?")
-      .get(interaction.user.id) ?? { "lastfm_username": undefined };
+    const lastFMUsername: { lastfm_username: string | undefined } = db.prepare(
+      "SELECT lastfm_username FROM lastfm WHERE user_id = ?",
+    ).get(interaction.user.id) ?? { lastfm_username: undefined };
 
-    if (!lastFMUsername["lastfm_username"]) {
+    if (!lastFMUsername.lastfm_username) {
       console.log(
-        `\x1b[31m > \x1b[0m ${interaction.user.username} used /lastfm-np, but forgot to set their username`,
+        `\x1b[36m > \x1b[0m ${interaction.user.username} used /lastfm-np, forgot to set their username`,
       );
-      await interaction
-        .reply({
-          content: "Y",
-          withResponse: true,
-        })
-        .catch(console.error);
+      await interaction.reply(
+        "You need to set a username first!",
+      ).catch(
+        (err) => console.error(err),
+      );
       return;
     }
 
     const baseUrl: string =
-      `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${lastFMUsername}&api_key=${env.LASTFM_KEY}&format=json`;
+      `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${lastFMUsername.lastfm_username}&api_key=${env.LASTFM_KEY}&format=json`;
     const response: Response = await fetch(baseUrl);
 
     if (!response.ok) {
       console.log(
         `\x1b[31m > \x1b[0m ${interaction.user.username} used /lastfm-np, but something went wrong`,
       );
-      console.error("\x1b[32m \t> \x1b[0m Resonse Status: " + response.status);
-      await interaction
-        .reply({
-          content: "Er ging iets mis owo :3",
-          withResponse: true,
-        })
-        .catch(console.error);
+      await interaction.reply("Er ging iets mis owo :3").catch(
+        (err) => console.error(err),
+      );
       return;
     }
 
@@ -189,17 +168,13 @@ export const slashLastFMnp: SlashCommand = {
       dataIWant.length === 0 || !dataIWant[0] || !dataIWant[0]["@attr"]
       || !dataIWant[0]["@attr"].nowplaying
     ) {
-      await interaction
-        .reply({
-          content: "No track is currently playing!",
-          withResponse: true,
-        })
-        .then(() =>
-          console.log(
-            `\x1b[31m > \x1b[0m ${interaction.user.username} used /lastfm-np, but no music was playing`,
-          )
-        )
-        .catch(console.error);
+      console.log(
+        `\x1b[31m > \x1b[0m ${interaction.user.username} used /lastfm-np, but no music was playing`,
+      );
+      await interaction.reply("No track is currently playing!")
+        .catch(
+          (err) => console.error(err),
+        );
       return;
     }
 
@@ -219,17 +194,14 @@ export const slashLastFMnp: SlashCommand = {
       pfpURL,
     );
 
-    await interaction
-      .reply({
-        embeds: [trackEmbed],
-        withResponse: true,
-      })
-      .then(() =>
-        console.log(
-          `\x1b[31m > \x1b[0m ${interaction.user.username} used /lastfm-np`,
-        )
-      )
-      .catch(console.error);
+    console.log(
+      `\x1b[36m > \x1b[0m ${interaction.user.username} used /lastfm-np`,
+    );
+    await interaction.reply({
+      embeds: [trackEmbed],
+    }).catch(
+      (err) => console.error(err),
+    );
   },
 };
 
@@ -237,7 +209,7 @@ export const slashLastFMSet: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName("lastfm-set")
     .setDescription("Set your lastfm username!")
-    .addStringOption((option) =>
+    .addStringOption((option: SlashCommandStringOption) =>
       option
         .setName("username")
         .setDescription("Enter your lastfm username!")
@@ -259,17 +231,15 @@ export const slashLastFMSet: SlashCommand = {
       "INSERT INTO lastfm (user_id, lastfm_username) VALUES (?, ?)",
     ).get(interaction.user.id, lastFMUsername);
 
+    console.log(
+      `\x1b[31m > \x1b[0m ${interaction.user.username} used /lastfm-set username=${lastFMUsername}`,
+    );
     await interaction
       .reply({
         content: `Set Last.fm username to _${lastFMUsername}_`,
         withResponse: true,
-      })
-      .then(() =>
-        console.log(
-          `\x1b[31m > \x1b[0m ${interaction.user.username} used /lastfm-set username=${lastFMUsername}`,
-        )
-      )
-      .catch(console.error);
+      }).catch(
+        (err) => console.error(err),
+      );
   },
 };
-*/

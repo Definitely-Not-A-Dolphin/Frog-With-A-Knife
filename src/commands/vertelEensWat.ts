@@ -1,3 +1,5 @@
+import type { Message } from "discord.js";
+import { Octokit } from "octokit";
 import type {
   GitHubRepository,
   Language,
@@ -5,12 +7,10 @@ import type {
   OctokitResponse,
 } from "../customTypes.ts";
 import { env } from "../env.ts";
-import type { Message } from "discord.js";
-import { Octokit } from "octokit";
 
 export const vertelEensWat: NonSlashCommand = {
   match: (message: Message) =>
-    Boolean(/(V|v)ertel (een|i)s wat over jezelf/g.exec(message.content)),
+    Boolean(message.content.match(/(V|v)ertel (een|i)s wat over jezelf/g)),
   execute: async (message: Message): Promise<void> => {
     const octokit: Octokit = new Octokit({
       auth: env.GITHUB_TOKEN,

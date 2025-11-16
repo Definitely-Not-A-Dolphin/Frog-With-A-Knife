@@ -1,6 +1,6 @@
-import type { Track } from "./customTypes.ts";
 import { EmbedBuilder } from "discord.js";
 import { getAverageColor } from "fast-average-color-node";
+import type { Track } from "./customTypes.ts";
 
 export function coolBanner(): void {
   console.log(
@@ -18,14 +18,6 @@ export function coolBanner(): void {
 // Simple method that returns a random emoji from list
 export function randomNumber(min: number, max: number): number {
   return Math.floor(Math.random() * max - min) + min;
-}
-
-export function arrayCount<T>(thing: T[], element: T): number {
-  let count: number = 0;
-  for (const anotherThing of thing) {
-    if (anotherThing === element) count++;
-  }
-  return count;
 }
 
 export function getRandomEmoji(): string {

@@ -1,5 +1,5 @@
-import { env } from "./env.ts";
 import { Database } from "@db/sqlite";
+import { env } from "./env.ts";
 import { addSigListener } from "./sigHandler.ts";
 
 const basePath: URL = new URL("../", import.meta.url);
@@ -14,9 +14,17 @@ const closeListener = (): void => {
 
 addSigListener(closeListener);
 
-db.exec(`
-        CREATE TABLE IF NOT EXISTS lastfm (
-        user_id TEXT PRIMARY KEY,
-        lastfm_username TEXT KEY
-        )
-    `);
+db.sql`
+  CREATE TABLE IF NOT EXISTS lastfm (
+    user_id TEXT PRIMARY KEY,
+    lastfm_username TEXT KEY
+  );
+
+  CREATE TABLE IF NOT EXISTS quotes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    what TEXT KEY,
+    who TEXT KEY,
+    date TEXT KEY,
+    context TEXT KEY
+  );
+`;

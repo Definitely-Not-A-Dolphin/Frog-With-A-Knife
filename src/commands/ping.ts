@@ -1,4 +1,4 @@
-import type { NonSlashCommand, SlashCommand } from "$src/customTypes.ts";
+import type { NonSlashCommand, SlashCommand } from "../customTypes.ts";
 import {
   type CacheType,
   type ChatInputCommandInteraction,
@@ -9,7 +9,7 @@ import {
 export const ping: NonSlashCommand = {
   match: (message: Message) => message.content === ".ping",
   execute: (message: Message): void => {
-    const diff: number = Date.now() - message.createdTimestamp;
+    const diff = Date.now() - message.createdTimestamp;
     console.log(
       `\x1b[36m > \x1b[0m Pinged ${message.author.username}.`,
     );
@@ -24,7 +24,7 @@ export const slashPing: SlashCommand = {
   execute: async (
     interaction: ChatInputCommandInteraction<CacheType>,
   ): Promise<void> => {
-    const diff: number = Date.now() - interaction.createdTimestamp;
+    const diff = Date.now() - interaction.createdTimestamp;
 
     console.log(`\x1b[31m > \x1b[0m Pinged "${interaction.user.username}".`);
     await interaction
