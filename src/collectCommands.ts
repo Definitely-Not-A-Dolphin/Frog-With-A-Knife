@@ -11,7 +11,7 @@ const nonSlashCommands: NonSlashCommand[] = [];
 // Grabs all files in commands/
 const commandFiles = Deno
   .readDirSync("src/commands/")
-  .filter((file: Deno.DirEntry) => file.name.endsWith(".ts"));
+  .filter((file) => file.name.endsWith(".ts"));
 
 for (const commandFile of commandFiles) {
   const module = await import(`./commands/${commandFile.name}`) as object;

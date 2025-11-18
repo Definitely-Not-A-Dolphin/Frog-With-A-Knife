@@ -22,11 +22,11 @@ export const urbanDictionary: NonSlashCommand = {
   match: (message: Message) =>
     message.content.split(" ")[0] === ".ud"
     || message.content.split(" ")[0] === ".urban",
-  execute: async (message: Message): Promise<void> => {
+  execute: async (message: Message) => {
     const word = message.content.split(" ")[1];
 
     if (!word) {
-      message.reply("geef dan ook een woord jij vage kennis");
+      await message.reply("geef dan ook een woord jij vage kennis");
       return;
     }
 
@@ -35,20 +35,20 @@ export const urbanDictionary: NonSlashCommand = {
     );
 
     if (!response.ok) {
-      message.reply("Oopsie, something went wrong");
+      await message.reply("Oopsie, something went wrong");
       return;
     }
 
     const responseData: UrbanDictionaryResponse = await response.json();
 
     if (!(responseData.list && responseData.list[0])) {
-      message.reply("Definition not found :\\");
+      await message.reply("Definition not found :\\");
       return;
     }
 
     const dataIWant: UrbanDictionaryEntry = responseData.list[0];
 
-    const udEmbed: EmbedBuilder = new EmbedBuilder()
+    const udEmbed = new EmbedBuilder()
       .setTitle(dataIWant.word)
       .setDescription(dataIWant.definition)
       .setURL(dataIWant.permalink)
@@ -59,7 +59,7 @@ export const urbanDictionary: NonSlashCommand = {
       .setThumbnail("https://cdn.elisaado.com/ud_logo.jpeg")
       .setColor(0xf2fd60);
 
-    message.reply({
+    await message.reply({
       embeds: [udEmbed],
     });
   },

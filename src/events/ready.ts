@@ -1,5 +1,5 @@
+import type { BotEvent } from "../customTypes.ts";
 import { ActivityType, type Client, Events } from "discord.js";
-import type { BotEvent } from "$src/customTypes.ts";
 import { getRandomEmoji } from "../utils.ts";
 
 export const readyEvent: BotEvent = {

@@ -1,31 +1,36 @@
 import type { BotEvent, SlashCommand } from "../customTypes.ts";
 import { Events, type Interaction } from "discord.js";
+import { slashCommands } from "../collectCommands.ts";
+
+const slashCommandsRecord: Record<string, SlashCommand> = {};
+for (const slashCommand of slashCommands) {
+  slashCommandsRecord[slashCommand.data.name] = slashCommand;
+}
 
 export const autoCompleteEvent: BotEvent = {
   type: Events.InteractionCreate,
   execute: (interaction: Interaction): void => {
     if (!interaction.isAutocomplete()) return;
 
-    const command: SlashCommand | undefined = interaction.client.commands.get(
-      interaction.commandName,
-    );
+    const slashCommand: SlashCommand | undefined =
+      slashCommandsRecord[interaction.commandName];
 
-    if (!command) {
+    if (!slashCommand) {
       console.error(
         `No command matching ${interaction.commandName} was found.`,
       );
       return;
     }
 
-    if (!command.autocomplete) {
+    if (!slashCommand.autocomplete) {
       console.error(
-        `This command ('${command.data.name}) hasn't implemented autocomplete!`,
+        `This command ('${slashCommand.data.name}) hasn't implemented autocomplete!`,
       );
       return;
     }
 
     try {
-      command.autocomplete(interaction);
+      slashCommand.autocomplete(interaction);
     } catch (error) {
       console.error(error);
     }

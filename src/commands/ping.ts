@@ -1,19 +1,14 @@
+import { type Message, SlashCommandBuilder } from "discord.js";
 import type { NonSlashCommand, SlashCommand } from "../customTypes.ts";
-import {
-  type CacheType,
-  type ChatInputCommandInteraction,
-  type Message,
-  SlashCommandBuilder,
-} from "discord.js";
 
 export const ping: NonSlashCommand = {
   match: (message: Message) => message.content === ".ping",
-  execute: (message: Message): void => {
+  execute: async (message: Message) => {
     const diff = Date.now() - message.createdTimestamp;
     console.log(
       `\x1b[36m > \x1b[0m Pinged ${message.author.username}.`,
     );
-    message.reply(`Pong! Latency: ${diff}ms`);
+    await message.reply(`Pong! Latency: ${diff}ms`);
   },
 };
 
@@ -21,9 +16,7 @@ export const slashPing: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName("ping")
     .setDescription("Replies with pong!"),
-  execute: async (
-    interaction: ChatInputCommandInteraction<CacheType>,
-  ): Promise<void> => {
+  execute: async (interaction) => {
     const diff = Date.now() - interaction.createdTimestamp;
 
     console.log(`\x1b[31m > \x1b[0m Pinged "${interaction.user.username}".`);

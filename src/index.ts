@@ -1,22 +1,17 @@
 import {
   Client,
-  Collection,
   GatewayIntentBits,
   REST,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
   Routes,
 } from "discord.js";
 import { slashCommands } from "./collectCommands.ts";
-import {
-  type BotEvent,
-  botEventGuard,
-  type SlashCommand,
-} from "./customTypes.ts";
+import { type BotEvent, botEventGuard } from "./customTypes.ts";
 import { env } from "./env.ts";
 import { coolBanner } from "./utils.ts";
 
 // Grab all the command folders from the commands directory you created earlier
-const client: Client<boolean> = new Client({
+const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
@@ -24,13 +19,10 @@ const client: Client<boolean> = new Client({
   ],
 });
 
-client.commands = new Collection<string, SlashCommand>();
-
 // This type name is fucking brilliant
 const commands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
 for (const slashCommand of slashCommands) {
   commands.push(slashCommand.data.toJSON());
-  client.commands.set(slashCommand.data.name, slashCommand);
 }
 
 // Construct and prepare an instance of the REST module

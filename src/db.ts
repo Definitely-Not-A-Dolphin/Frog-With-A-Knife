@@ -7,7 +7,7 @@ export const db: Database = new Database(
   new URL(env.DATABASE_PATH, basePath),
 );
 
-const closeListener = (): void => {
+const closeListener = () => {
   console.log("Closing DB");
   db.close();
 };
@@ -18,13 +18,5 @@ db.sql`
   CREATE TABLE IF NOT EXISTS lastfm (
     user_id TEXT PRIMARY KEY,
     lastfm_username TEXT KEY
-  );
-
-  CREATE TABLE IF NOT EXISTS quotes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    what TEXT KEY,
-    who TEXT KEY,
-    date TEXT KEY,
-    context TEXT KEY
   );
 `;
