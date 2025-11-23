@@ -13,10 +13,10 @@ export function coolBanner(): void {
 
 // Simple method that returns a random emoji from list
 export function randomNumber(min: number, max: number): number {
-  return Math.floor(Math.random() * max - min) + min;
+  return Math.floor(Math.random() * max - min + 1) + min;
 }
 
 export function getRandomEmoji(): string {
   const smileys: string[] = [":)", ":D", ":3", ":P"];
-  return smileys[randomNumber(0, smileys.length)];
+  return smileys[randomNumber(0, smileys.length - 1)];
 }
