@@ -17,8 +17,12 @@ export const slashCommandGuard = (object: object) =>
   "data" in object && "execute" in object;
 
 export type NonSlashCommand = {
+  name: string;
+  command: string | RegExp;
+  description: string;
+  showInHelp: boolean;
   match: (message: Message) => boolean;
-  execute: (message: Message) => MaybePromiseVoid;
+  execute: (message: Message) => Promise<string | void>;
 };
 
 export const nonSlashCommandGuard = (object: object) =>
@@ -29,13 +33,13 @@ export type BotEvent = {
   once?: boolean;
   // deno-lint-ignore no-explicit-any
   execute: (...args: any[]) => void;
+  // Unfortunately, we have to use any here, because the parameters of Events can be everything
 };
 
 export const botEventGuard = (object: object) =>
   "type" in object && "execute" in object;
 
 export type MaybePromiseVoid = void | Promise<void>;
-
 
 export type Track = {
   name: string;

@@ -1,8 +1,10 @@
 import {
+  EmbedBuilder,
   type Message,
   SlashCommandBuilder,
   type SlashCommandStringOption,
 } from "discord.js";
+import { getAverageColor } from "fast-average-color-node";
 import type {
   LastFMData,
   LastFMTrack,
@@ -12,24 +14,44 @@ import type {
 } from "../customTypes.ts";
 import { db } from "../db.ts";
 import { env } from "../env.ts";
-import { trackEmbedBuilder } from "../utils.ts";
+
+export async function trackEmbedBuilder(
+  trackPlaying: Track,
+  pfp: string,
+): Promise<EmbedBuilder> {
+  const averageColor = (await getAverageColor(
+    trackPlaying.image,
+  )).hex as `#${string}`;
+
+  return new EmbedBuilder()
+    .setTitle(trackPlaying.name)
+    .setURL(trackPlaying.url)
+    .setAuthor({
+      name: "Currently playing",
+      iconURL: pfp,
+    })
+    .setThumbnail(trackPlaying.image)
+    .setDescription(`**${trackPlaying.artist}** on _${trackPlaying.album}_`)
+    .setColor(averageColor);
+}
 
 export const lastFMnp: NonSlashCommand = {
-  match: (message: Message) => message.content === ".np",
+  name: "np",
+  command: ".np",
+  description: "Show your currently playing track!",
+  showInHelp: true,
+  match: (message: Message) => message.content === lastFMnp.command,
   execute: async (message: Message) => {
     const lastFMUsername: string | null = db
-      .sql`SELECT lastfm_username FROM lastfm WHERE user_id = ${message.author.id}`[
+      .sql`SELECT lastfmUsername FROM lastfm WHERE userId = ${message.author.id}`[
         0
-      ].lastfm_username;
+      ]?.lastfmUsername;
 
     if (!lastFMUsername) {
-      console.log(
-        `\x1b[36m > \x1b[0m ${message.author.username} used /lastfm-np, forgot to set their username`,
-      );
       await message.reply(
         "You need to set a username first!",
       );
-      return;
+      return `${message.author.username} used .np, forgot to set their username`;
     }
 
     const baseUrl =
@@ -37,11 +59,8 @@ export const lastFMnp: NonSlashCommand = {
     const response: Response = await fetch(baseUrl);
 
     if (!response.ok) {
-      console.log(
-        `\x1b[36m > \x1b[0m ${message.author.username} used /lastfm-np, but something went wrong`,
-      );
       await message.reply("Er ging iets mis owo :3");
-      return;
+      return `${message.author.username} used .np, but something went wrong`;
     }
 
     const lastFMData: LastFMData = await response.json();
@@ -51,11 +70,8 @@ export const lastFMnp: NonSlashCommand = {
       dataIWant.length === 0 || !dataIWant[0] || !dataIWant[0]["@attr"]
       || !dataIWant[0]["@attr"].nowplaying
     ) {
-      console.log(
-        `\x1b[36m > \x1b[0m ${message.author.username} used /lastfm-np, but no music was playing`,
-      );
       await message.reply("No track is currently playing!");
-      return;
+      return `${message.author.username} used .np, but no music was playing`;
     }
 
     const nowPlaying: Track = {
@@ -71,48 +87,45 @@ export const lastFMnp: NonSlashCommand = {
 
     const trackEmbed = await trackEmbedBuilder(nowPlaying, pfpURL);
 
-    console.log(
-      `\x1b[36m > \x1b[0m ${message.author.username} used /lastfm-np`,
-    );
     await message.reply({
       embeds: [trackEmbed],
     });
+    return `${message.author.username} used .np`;
   },
 };
 
 export const lastFMSet: NonSlashCommand = {
-  match: (message: Message) => message.content.split(" ")[0] === ".lastFMSet",
+  name: "lastFMSet",
+  command: "lastFMSet",
+  description: "Set your lastFM username!",
+  showInHelp: true,
+  match: (message: Message) =>
+    message.content.split(" ")[0] === lastFMSet.command,
   execute: async (message: Message) => {
     const lastFMUsername = message.content.split(" ").slice(1).join();
 
     if (lastFMUsername === "") {
-      console.log(
-        `\x1b[36m > \x1b[0m ${message.author.username} used /lastfm-set, but no username was supplied`,
-      );
       await message.reply("Dan moet je ook wel een username geven slimmerik");
-      return;
+      return `${message.author.username} used .lastFMSet [], but no username was supplied`;
     }
 
     try {
-      db.sql`DELETE FROM lastfm WHERE user_id = ${message.author.id}`;
+      db.sql`DELETE FROM lastfm WHERE userId = ${message.author.id}`;
 
       db.sql`
-        INSERT INTO lastfm (user_id, lastfm_username) VALUES (${message.author.id}, ${lastFMUsername})`;
+        INSERT INTO lastfm (userId, lastfmUsername) VALUES (${message.author.id}, ${lastFMUsername})`;
     } catch (err) {
-      console.log(
-        `\x1b[36m > \x1b[0m ${message.author.username} used /lastfm-set, but something went wrong`,
-      );
       console.error(err);
-      await message.reply("Something went wrong!");
-      return;
+      await message
+        .reply("Something went wrong!")
+        .catch((err) => console.error(err));
+      return `${message.author.username} used .lastFMSet [${lastFMUsername}], but something went wrong`;
     }
 
     await message.reply(
       `Je nieuwe username is ${lastFMUsername}, geniet er maar van`,
     );
-    console.log(
-      `\x1b[36m > \x1b[0m ${message.author.username} used /lastFMSet, new username is ${lastFMUsername}`,
-    );
+    return `${message.author.username} used .lastFMSet [${lastFMUsername}]`;
   },
 };
 
@@ -122,19 +135,17 @@ export const slashLastFMnp: SlashCommand = {
     .setDescription("Show what you are listening to"),
   execute: async (interaction) => {
     const lastFMUsername: string | null = db
-      .sql`SELECT lastfm_username FROM lastfm WHERE user_id = ${interaction.user.id}`[
+      .sql`SELECT lastfmUsername FROM lastfm WHERE userId = ${interaction.user.id}`[
         0
-      ].lastfm_username;
+      ]?.lastfmUsername;
 
     if (!lastFMUsername) {
       console.log(
         `\x1b[36m > \x1b[0m ${interaction.user.username} used /lastfm-np, forgot to set their username`,
       );
-      await interaction.reply(
-        "You need to set a username first!",
-      ).catch(
-        (err) => console.error(err),
-      );
+      await interaction
+        .reply("You need to set a username first!")
+        .catch((err) => console.error(err));
       return;
     }
 
@@ -146,9 +157,9 @@ export const slashLastFMnp: SlashCommand = {
       console.log(
         `\x1b[31m > \x1b[0m ${interaction.user.username} used /lastfm-np, but something went wrong`,
       );
-      await interaction.reply("Er ging iets mis owo :3").catch(
-        (err) => console.error(err),
-      );
+      await interaction
+        .reply("Er ging iets mis owo :3")
+        .catch((err) => console.error(err));
       return;
     }
 
@@ -162,10 +173,9 @@ export const slashLastFMnp: SlashCommand = {
       console.log(
         `\x1b[31m > \x1b[0m ${interaction.user.username} used /lastfm-np, but no music was playing`,
       );
-      await interaction.reply("No track is currently playing!")
-        .catch(
-          (err) => console.error(err),
-        );
+      await interaction
+        .reply("No track is currently playing!")
+        .catch((err) => console.error(err));
       return;
     }
 
@@ -212,10 +222,16 @@ export const slashLastFMSet: SlashCommand = {
       true,
     );
 
-    db.sql`
-      DELETE FROM lastfm WHERE user_id = ${interaction.user.id};
-      INSERT INTO lastfm (user_id, lastfm_username) VALUES (${interaction.user.id}, ${lastFMUsername})
-    `;
+    try {
+      db.sql`
+        DELETE FROM lastfm WHERE userId = ${interaction.user.id};
+      `;
+      db.sql`
+        INSERT INTO lastfm (userId, lastfmUsername) VALUES (${interaction.user.id}, ${lastFMUsername})
+      `;
+    } catch (err) {
+      console.error(err);
+    }
 
     console.log(
       `\x1b[31m > \x1b[0m ${interaction.user.username} used /lastfm-set username=${lastFMUsername}`,

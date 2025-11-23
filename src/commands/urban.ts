@@ -19,15 +19,18 @@ export type UrbanDictionaryResponse = {
 };
 
 export const urbanDictionary: NonSlashCommand = {
+  name: "urban dictionary",
+  command: /\.u(d|rban)/i,
+  description: "get a definition from the urban dictionary",
+  showInHelp: true,
   match: (message: Message) =>
-    message.content.split(" ")[0] === ".ud"
-    || message.content.split(" ")[0] === ".urban",
+    Boolean(message.content.split(" ")[0].match(urbanDictionary.name)),
   execute: async (message: Message) => {
     const word = message.content.split(" ")[1];
 
     if (!word) {
       await message.reply("geef dan ook een woord jij vage kennis");
-      return;
+      return `${message.author.username} used .ud [], but failed to supply a word`;
     }
 
     const response: Response = await fetch(
@@ -36,14 +39,14 @@ export const urbanDictionary: NonSlashCommand = {
 
     if (!response.ok) {
       await message.reply("Oopsie, something went wrong");
-      return;
+      return `${message.author.username} used .ud ${word}, but something went wrong`;
     }
 
     const responseData: UrbanDictionaryResponse = await response.json();
 
     if (!(responseData.list && responseData.list[0])) {
       await message.reply("Definition not found :\\");
-      return;
+      return `${message.author.username} used .ud [${word}], but no definition was found`;
     }
 
     const dataIWant: UrbanDictionaryEntry = responseData.list[0];
@@ -62,5 +65,6 @@ export const urbanDictionary: NonSlashCommand = {
     await message.reply({
       embeds: [udEmbed],
     });
+    return `${message.author.username} used .ud [${word}]`;
   },
 };

@@ -16,7 +16,14 @@ addSigListener(closeListener);
 
 db.sql`
   CREATE TABLE IF NOT EXISTS lastfm (
-    user_id TEXT PRIMARY KEY,
-    lastfm_username TEXT KEY
+    userId TEXT PRIMARY KEY,
+    lastfmUsername TEXT KEY
+  );
+`;
+
+db.sql`
+  CREATE TABLE IF NOT EXISTS kitty (
+    userId TEXT PRIMARY KEY,
+    kittyCount INTEGER KEY
   );
 `;

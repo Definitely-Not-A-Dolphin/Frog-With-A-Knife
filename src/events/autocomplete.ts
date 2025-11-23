@@ -9,7 +9,7 @@ for (const slashCommand of slashCommands) {
 
 export const autoCompleteEvent: BotEvent = {
   type: Events.InteractionCreate,
-  execute: (interaction: Interaction): void => {
+  execute: (interaction: Interaction) => {
     if (!interaction.isAutocomplete()) return;
 
     const slashCommand: SlashCommand | undefined =

@@ -4,11 +4,14 @@ import { Events, type Message, TextChannel } from "discord.js";
 
 export const nonSlashCommandEvent: BotEvent = {
   type: Events.MessageCreate,
-  execute: (message: Message): void => {
+  execute: async (message: Message) => {
     if (!(message.channel instanceof TextChannel)) return;
 
     for (const nonSlashCommand of nonSlashCommands) {
-      if (nonSlashCommand.match(message)) nonSlashCommand.execute(message);
+      if (nonSlashCommand.match(message)) {
+        const logMessage = await nonSlashCommand.execute(message);
+        console.log(`\x1b[36m > \x1b[0m ${logMessage}`);
+      }
     }
   },
 };

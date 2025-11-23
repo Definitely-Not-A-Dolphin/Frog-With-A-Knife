@@ -1,3 +1,4 @@
+import type { Message } from "discord.js";
 import {
   type NonSlashCommand,
   nonSlashCommandGuard,
@@ -32,6 +33,25 @@ for (const commandFile of commandFiles) {
     );
   }
 }
+
+nonSlashCommands.push({
+  name: "help",
+  description: "check all available commands",
+  command: ".help",
+  showInHelp: true,
+  match: (message: Message) => message.content === ".help",
+  execute: async (message: Message) => {
+    let returnMessage = "";
+    for (const nonSlashCommand of nonSlashCommands) {
+      if (nonSlashCommand.showInHelp) {
+        returnMessage +=
+          `**${nonSlashCommand.name}** (\`\`${nonSlashCommand.command.toString()}\`\`): ${nonSlashCommand.description}\n`;
+      }
+    }
+    await message.reply(returnMessage);
+    return `${message.author.username} used .help`;
+  },
+});
 
 console.log(
   "\x1b[34mSlashCommands: \x1b[0m\n",
