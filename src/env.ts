@@ -6,12 +6,11 @@ const secretKeys = [
   "TOKEN",
   "LASTFM_KEY",
   "DATABASE_PATH",
-  "GITHUB_TOKEN",
 ] as const;
 
 const env: Record<string, string> = await load({
   export: true,
-  envPath: "../Frog-With-A-Knife-Token/.env.prod"
+//envPath: "../Frog-With-A-Knife-Token/.env.prod"
 });
 
 for (const key of secretKeys) {
