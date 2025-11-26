@@ -1,5 +1,5 @@
 import { type Message, SlashCommandBuilder } from "discord.js";
-import type { NonSlashCommand, SlashCommand } from "../customTypes.ts";
+import type { NonSlashCommand, SlashCommand } from "../types.ts";
 
 export const ping: NonSlashCommand = {
   name: "ping",
@@ -22,12 +22,12 @@ export const slashPing: SlashCommand = {
   execute: async (interaction) => {
     const diff = Date.now() - interaction.createdTimestamp;
 
-    console.log(`\x1b[31m > \x1b[0m Pinged "${interaction.user.username}".`);
     await interaction
       .reply({
         content: `Pong! Latency: ${diff}ms`,
         withResponse: true,
       })
       .catch((err) => console.error(err));
+    return `${interaction.user.username} used .ping, ping was ${diff}`;
   },
 };

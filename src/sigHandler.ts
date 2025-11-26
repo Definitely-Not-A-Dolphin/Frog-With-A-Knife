@@ -1,4 +1,4 @@
-import type { MaybePromiseVoid } from "./customTypes.ts";
+import type { MaybePromiseVoid } from "./types.ts";
 
 let handlers: (() => MaybePromiseVoid)[] = [];
 
@@ -12,9 +12,7 @@ export const removeSigListener = (fun: () => MaybePromiseVoid): void => {
 
 const sigHandler = async () => {
   console.log("Shutting down...");
-  for (const handler of handlers) {
-    await handler();
-  }
+  for (const handler of handlers) await handler();
 
   Deno.exit();
 };

@@ -1,5 +1,5 @@
 import { EmbedBuilder, type Message } from "discord.js";
-import type { NonSlashCommand } from "../customTypes.ts";
+import type { NonSlashCommand } from "../types.ts";
 
 export type UrbanDictionaryEntry = {
   author: string;
@@ -44,7 +44,7 @@ export const urbanDictionary: NonSlashCommand = {
 
     const responseData: UrbanDictionaryResponse = await response.json();
 
-    if (!(responseData.list && responseData.list[0])) {
+    if (!responseData.list[0]) {
       await message.reply("Definition not found :\\");
       return `${message.author.username} used .ud [${word}], but no definition was found`;
     }

@@ -11,7 +11,7 @@ import type {
   NonSlashCommand,
   SlashCommand,
   Track,
-} from "../customTypes.ts";
+} from "../types.ts";
 import { db } from "../db.ts";
 import { env } from "../env.ts";
 
@@ -51,7 +51,7 @@ export const lastFMnp: NonSlashCommand = {
       await message.reply(
         "You need to set a username first!",
       );
-      return `${message.author.username} used .np, forgot to set their username`;
+      return `${message.author.username} used .np, but forgot to set their username`;
     }
 
     const baseUrl =
@@ -140,13 +140,10 @@ export const slashLastFMnp: SlashCommand = {
       ]?.lastfmUsername;
 
     if (!lastFMUsername) {
-      console.log(
-        `\x1b[36m > \x1b[0m ${interaction.user.username} used /lastfm-np, forgot to set their username`,
-      );
       await interaction
         .reply("You need to set a username first!")
         .catch((err) => console.error(err));
-      return;
+      return `${interaction.user.username} used /lastfm-np, but forgot to set their username`;
     }
 
     const baseUrl =
@@ -154,13 +151,10 @@ export const slashLastFMnp: SlashCommand = {
     const response: Response = await fetch(baseUrl);
 
     if (!response.ok) {
-      console.log(
-        `\x1b[31m > \x1b[0m ${interaction.user.username} used /lastfm-np, but something went wrong`,
-      );
       await interaction
         .reply("Er ging iets mis owo :3")
         .catch((err) => console.error(err));
-      return;
+      return `${interaction.user.username} used /lastfm-np, but something went wrong`;
     }
 
     const lastFMData: LastFMData = await response.json();
@@ -170,13 +164,10 @@ export const slashLastFMnp: SlashCommand = {
       dataIWant.length === 0 || !dataIWant[0] || !dataIWant[0]["@attr"]
       || !dataIWant[0]["@attr"].nowplaying
     ) {
-      console.log(
-        `\x1b[31m > \x1b[0m ${interaction.user.username} used /lastfm-np, but no music was playing`,
-      );
       await interaction
         .reply("No track is currently playing!")
         .catch((err) => console.error(err));
-      return;
+      return `${interaction.user.username} used /lastfm-np, but no music was playing`;
     }
 
     const nowPlaying: Track = {
@@ -195,14 +186,12 @@ export const slashLastFMnp: SlashCommand = {
       pfpURL,
     );
 
-    console.log(
-      `\x1b[36m > \x1b[0m ${interaction.user.username} used /lastfm-np`,
-    );
     await interaction.reply({
       embeds: [trackEmbed],
     }).catch(
       (err) => console.error(err),
     );
+    return `${interaction.user.username} used /lastfm-np`;
   },
 };
 
@@ -217,10 +206,7 @@ export const slashLastFMSet: SlashCommand = {
         .setRequired(true)
     ),
   execute: async (interaction) => {
-    const lastFMUsername = interaction.options.getString(
-      "username",
-      true,
-    );
+    const lastFMUsername = interaction.options.getString("username", true);
 
     try {
       db.sql`
@@ -233,9 +219,6 @@ export const slashLastFMSet: SlashCommand = {
       console.error(err);
     }
 
-    console.log(
-      `\x1b[31m > \x1b[0m ${interaction.user.username} used /lastfm-set username=${lastFMUsername}`,
-    );
     await interaction
       .reply({
         content: `Set Last.fm username to _${lastFMUsername}_`,
@@ -243,5 +226,6 @@ export const slashLastFMSet: SlashCommand = {
       }).catch(
         (err) => console.error(err),
       );
+    return `${interaction.user.username} used /lastfm-set [${lastFMUsername}]`;
   },
 };

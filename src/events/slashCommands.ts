@@ -1,5 +1,5 @@
 import { Events, type Interaction, MessageFlags } from "discord.js";
-import type { BotEvent, SlashCommand } from "../customTypes.ts";
+import type { BotEvent, SlashCommand } from "../types.ts";
 import { slashCommands } from "../collectCommands.ts";
 
 const slashCommandsRecord: Record<string, SlashCommand> = {};
@@ -23,7 +23,8 @@ export const slashCommandEvent: BotEvent = {
     }
 
     try {
-      command.execute(interaction);
+      const returnMessage = await command.execute(interaction);
+      console.log(`\x1b[36m > \x1b[0m ${returnMessage}`);
     } catch (error) {
       console.error(error);
       if (interaction.replied || interaction.deferred) {

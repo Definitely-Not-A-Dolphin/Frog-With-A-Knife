@@ -1,5 +1,5 @@
 import { type Message, MessageFlags } from "discord.js";
-import type { NonSlashCommand } from "../customTypes.ts";
+import type { NonSlashCommand } from "../types.ts";
 import { db } from "../db.ts";
 
 export const kitty: NonSlashCommand = {
@@ -56,12 +56,12 @@ export const kittyStats: NonSlashCommand = {
 
     let longestUsernameLength = 0;
     for (const key of Object.keys(kittyCount)) {
-      const x = members.get(key);
-      if (!x) continue;
+      const member = members.get(key);
+      if (!member) continue;
       if (
-        longestUsernameLength < x.displayName.length
+        longestUsernameLength < member.displayName.length
       ) {
-        longestUsernameLength = x.displayName.length;
+        longestUsernameLength = member.displayName.length;
       }
     }
 

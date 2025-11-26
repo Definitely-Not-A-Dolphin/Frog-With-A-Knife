@@ -4,7 +4,7 @@ import {
   nonSlashCommandGuard,
   type SlashCommand,
   slashCommandGuard,
-} from "./customTypes.ts";
+} from "./types.ts";
 
 const slashCommands: SlashCommand[] = [];
 const nonSlashCommands: NonSlashCommand[] = [];

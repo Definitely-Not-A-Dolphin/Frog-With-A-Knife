@@ -6,7 +6,7 @@ import {
   Routes,
 } from "discord.js";
 import { slashCommands } from "./collectCommands.ts";
-import { type BotEvent, botEventGuard } from "./customTypes.ts";
+import { type BotEvent, botEventGuard } from "./types.ts";
 import { env } from "./env.ts";
 import { coolBanner } from "./utils.ts";
 
@@ -33,9 +33,7 @@ console.log(
 );
 
 try {
-  await rest.put(Routes.applicationCommands(env.CLIENTID), {
-    body: commands,
-  });
+  await rest.put(Routes.applicationCommands(env.CLIENTID), { body: commands });
 
   console.log(`Successfully reloaded application (/) commands.`);
 } catch (error) {

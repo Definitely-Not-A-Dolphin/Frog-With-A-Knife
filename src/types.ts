@@ -9,7 +9,7 @@ import type {
 
 export type SlashCommand = {
   data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
-  execute: (interaction: ChatInputCommandInteraction) => void;
+  execute: (interaction: ChatInputCommandInteraction) => Promise<string>;
   autocomplete?: (interaction: AutocompleteInteraction) => void;
 };
 
@@ -33,7 +33,6 @@ export type BotEvent = {
   once?: boolean;
   // deno-lint-ignore no-explicit-any
   execute: (...args: any[]) => void;
-  // Unfortunately, we have to use any here, because the parameters of Events can be everything
 };
 
 export const botEventGuard = (object: object) =>

@@ -1,4 +1,4 @@
-import type { BotEvent, SlashCommand } from "../customTypes.ts";
+import type { BotEvent, SlashCommand } from "../types.ts";
 import { Events, type Interaction } from "discord.js";
 import { slashCommands } from "../collectCommands.ts";
 

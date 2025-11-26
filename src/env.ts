@@ -10,7 +10,7 @@ const secretKeys = [
 
 const env: Record<string, string> = await load({
   export: true,
-//envPath: "../Frog-With-A-Knife-Token/.env.prod"
+  //envPath: "../Frog-With-A-Knife-Token/.env.prod"
 });
 
 for (const key of secretKeys) {

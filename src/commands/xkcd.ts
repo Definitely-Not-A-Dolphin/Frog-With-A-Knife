@@ -1,5 +1,5 @@
 import { EmbedBuilder, type Message, SlashCommandBuilder } from "discord.js";
-import type { NonSlashCommand, SlashCommand } from "../customTypes.ts";
+import type { NonSlashCommand, SlashCommand } from "../types.ts";
 
 type XKCDData = {
   month: string;
@@ -26,7 +26,7 @@ export const xkcd: NonSlashCommand = {
     const xkcdResponse = await fetch(
       entry
         ? `https://xkcd.com/${entry}/info.0.json`
-        : `https://xkcd.com/info.0.json`,
+        : "https://xkcd.com/info.0.json",
     );
 
     if (!xkcdResponse.ok) {
@@ -37,12 +37,10 @@ export const xkcd: NonSlashCommand = {
     const xkcdData: XKCDData = await xkcdResponse.json();
     const xkcdEmbed = new EmbedBuilder()
       .setTitle(xkcdData.title)
-      .setThumbnail(xkcdData.img)
+      .setImage(xkcdData.img)
       .setDescription(xkcdData.alt);
 
-    await message.reply({
-      embeds: [xkcdEmbed],
-    });
+    await message.reply({ embeds: [xkcdEmbed] });
     return `${message.author.username} user .xkcd [${entry}]`;
   },
 };
@@ -66,7 +64,7 @@ export const slashPing: SlashCommand = {
 
     if (!xkcdResponse.ok) {
       await interaction.reply("Ja daar ging iets mis");
-      return;
+      return `${interaction.user.username} used .xkcd [${entry}], but something went wrong`;
     }
 
     const xkcdData: XKCDData = await xkcdResponse.json();
@@ -80,5 +78,6 @@ export const slashPing: SlashCommand = {
         embeds: [xkcdEmbed],
       })
       .catch((err) => console.error(err));
+    return `${interaction.user.username} user .xkcd [${entry}]`;
   },
 };
