@@ -1,6 +1,6 @@
-import type { BotEvent, SlashCommand } from "../types.ts";
 import { Events, type Interaction } from "discord.js";
 import { slashCommands } from "../collectCommands.ts";
+import type { BotEvent, SlashCommand } from "../types.ts";
 
 const slashCommandsRecord: Record<string, SlashCommand> = {};
 for (const slashCommand of slashCommands) {

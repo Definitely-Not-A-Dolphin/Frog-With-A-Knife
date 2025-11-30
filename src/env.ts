@@ -1,8 +1,7 @@
 import { load } from "@std/dotenv";
 
-const secretKeys = [
+const requiredKeys = [
   "CLIENTID",
-  "PUBLIC_KEY",
   "TOKEN",
   "LASTFM_KEY",
   "DATABASE_PATH",
@@ -10,11 +9,10 @@ const secretKeys = [
 
 const env: Record<string, string> = await load({
   export: true,
-  //envPath: "../Frog-With-A-Knife-Token/.env.prod"
 });
 
-for (const key of secretKeys) {
-  if (!env[key]) throw new Error(`\x1b[34mMissing .env variable ${key}\x1b[0m`);
+for (const key of requiredKeys) {
+  if (!env[`${`${key}`}`]) throw new Error(`\x1b[34mMissing .env variable ${key}\x1b[0m`);
 }
 
 console.log("\x1b[34m.env values:\x1b[0m");

@@ -1,6 +1,6 @@
 import { type Message, MessageFlags } from "discord.js";
-import type { NonSlashCommand } from "../types.ts";
 import { db } from "../db.ts";
+import type { NonSlashCommand } from "../types.ts";
 
 export const kitty: NonSlashCommand = {
   name: ":3",

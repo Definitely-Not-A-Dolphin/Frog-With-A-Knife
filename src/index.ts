@@ -6,8 +6,8 @@ import {
   Routes,
 } from "discord.js";
 import { slashCommands } from "./collectCommands.ts";
-import { type BotEvent, botEventGuard } from "./types.ts";
 import { env } from "./env.ts";
+import { type BotEvent, botEventGuard } from "./types.ts";
 import { coolBanner } from "./utils.ts";
 
 // Grab all the command folders from the commands directory you created earlier
