@@ -1,5 +1,4 @@
 import type {
-  AutocompleteInteraction,
   ChatInputCommandInteraction,
   Events,
   Message,
@@ -10,7 +9,6 @@ import type {
 export type SlashCommand = {
   data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
   execute: (interaction: ChatInputCommandInteraction) => Promise<string>;
-  autocomplete?: (interaction: AutocompleteInteraction) => void;
 };
 
 export const slashCommandGuard = (object: object) =>

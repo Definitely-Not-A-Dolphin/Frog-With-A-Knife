@@ -7,12 +7,14 @@ const requiredKeys = [
   "DATABASE_PATH",
 ] as const;
 
-const env: Record<string, string> = await load({
+const env = await load({
   export: true,
 });
 
 for (const key of requiredKeys) {
-  if (!env[`${`${key}`}`]) throw new Error(`\x1b[34mMissing .env variable ${key}\x1b[0m`);
+  if (!env[`${`${key}`}`]) {
+    throw new Error(`\x1b[34mMissing .env variable ${key}\x1b[0m`);
+  }
 }
 
 console.log("\x1b[34m.env values:\x1b[0m");

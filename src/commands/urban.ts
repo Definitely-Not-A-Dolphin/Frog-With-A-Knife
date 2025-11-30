@@ -1,4 +1,4 @@
-import { EmbedBuilder, type Message } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import type { NonSlashCommand } from "../types.ts";
 
 export type UrbanDictionaryEntry = {
@@ -23,9 +23,9 @@ export const urbanDictionary: NonSlashCommand = {
   command: /\.u(d|rban)/i,
   description: "get a definition from the urban dictionary",
   showInHelp: true,
-  match: (message: Message) =>
+  match: (message) =>
     Boolean(message.content.split(" ")[0].match(urbanDictionary.name)),
-  execute: async (message: Message) => {
+  execute: async (message) => {
     const word = message.content.split(" ")[1];
 
     if (!word) {

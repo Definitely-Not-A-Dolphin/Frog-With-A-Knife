@@ -1,4 +1,4 @@
-import { EmbedBuilder, type Message, SlashCommandBuilder } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import type { NonSlashCommand, SlashCommand } from "../types.ts";
 
 type XKCDData = {
@@ -20,8 +20,8 @@ export const xkcd: NonSlashCommand = {
   command: ".xkcd",
   description: "get an xkcd comic",
   showInHelp: true,
-  match: (message: Message) => message.content.split(" ")[0] === xkcd.command,
-  execute: async (message: Message) => {
+  match: (message) => message.content.split(" ")[0] === xkcd.command,
+  execute: async (message) => {
     const entry = message.content.split(" ")[1];
     const xkcdResponse = await fetch(
       entry

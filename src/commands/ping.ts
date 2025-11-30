@@ -1,4 +1,4 @@
-import { type Message, SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 import type { NonSlashCommand, SlashCommand } from "../types.ts";
 
 export const ping: NonSlashCommand = {
@@ -6,8 +6,8 @@ export const ping: NonSlashCommand = {
   command: ".ping",
   description: "ping pong",
   showInHelp: true,
-  match: (message: Message) => message.content === ping.command,
-  execute: async (message: Message) => {
+  match: (message) => message.content === ping.command,
+  execute: async (message) => {
     const diff = Date.now() - message.createdTimestamp;
 
     await message.reply(`Pong! Latency: ${diff}ms`);

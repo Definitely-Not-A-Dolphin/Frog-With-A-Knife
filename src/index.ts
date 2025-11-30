@@ -32,13 +32,11 @@ console.log(
   `Started refreshing ${commands.length} application (/) commands.`,
 );
 
-try {
-  await rest.put(Routes.applicationCommands(env.CLIENTID), { body: commands });
+await rest
+  .put(Routes.applicationCommands(env.CLIENTID), { body: commands })
+  .catch((err) => console.error(err));
 
-  console.log(`Successfully reloaded application (/) commands.`);
-} catch (error) {
-  console.error(error);
-}
+console.log(`Successfully reloaded application (/) commands.`);
 
 const eventFiles = Deno
   .readDirSync("src/events")

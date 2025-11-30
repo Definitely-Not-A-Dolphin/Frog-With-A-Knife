@@ -3,7 +3,7 @@ import { env } from "./env.ts";
 import { addSigListener } from "./sigHandler.ts";
 
 const basePath = new URL("../", import.meta.url);
-export const db: Database = new Database(
+export const db = new Database(
   new URL(env.DATABASE_PATH, basePath),
 );
 

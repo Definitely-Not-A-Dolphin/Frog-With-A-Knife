@@ -1,4 +1,3 @@
-import type { Message } from "discord.js";
 import {
   type NonSlashCommand,
   nonSlashCommandGuard,
@@ -9,7 +8,6 @@ import {
 const slashCommands: SlashCommand[] = [];
 const nonSlashCommands: NonSlashCommand[] = [];
 
-// Grabs all files in commands/
 const commandFiles = Deno
   .readDirSync("src/commands/")
   .filter((file) => file.name.endsWith(".ts"));
@@ -39,8 +37,8 @@ nonSlashCommands.push({
   description: "check all available commands",
   command: ".help",
   showInHelp: true,
-  match: (message: Message) => message.content === ".help",
-  execute: async (message: Message) => {
+  match: (message) => message.content === ".help",
+  execute: async (message) => {
     let returnMessage = "";
     for (const nonSlashCommand of nonSlashCommands) {
       if (nonSlashCommand.showInHelp) {

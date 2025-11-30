@@ -1,4 +1,4 @@
-import { type Message, MessageFlags } from "discord.js";
+import { MessageFlags } from "discord.js";
 import { db } from "../db.ts";
 import type { NonSlashCommand } from "../types.ts";
 
@@ -7,10 +7,10 @@ export const kitty: NonSlashCommand = {
   command: ":3",
   description: "oh nothing",
   showInHelp: false,
-  match: (message: Message) =>
+  match: (message) =>
     message.content.includes(":3") && message.content !== ":3stats"
     && !message.author.bot,
-  execute: async (message: Message) => {
+  execute: async (message) => {
     let kittyCount: number | undefined = db.sql`
       SELECT * FROM kitty WHERE userId = ${message.author.id};
     `[0]?.kittyCount;
@@ -35,12 +35,15 @@ export const kittyStats: NonSlashCommand = {
   command: ":3stats",
   description: "Check the :3stats",
   showInHelp: true,
-  match: (message: Message) => message.content === kittyStats.command,
-  execute: async (message: Message) => {
+  match: (message) => message.content === kittyStats.command,
+  execute: async (message) => {
     if (!message.guild) return;
 
-    const rawKittyCount: Record<string, number>[] = db.sql`
-      SELECT * FROM kitty WHERE userId = ${message.author.id}`;
+    const rawKittyCount = db.sql`
+      SELECT * FROM kitty WHERE userId = ${message.author.id}` as Record<
+      string,
+      number
+    >[];
 
     let kittyCount: Record<string, number> = {};
     for (const entry of rawKittyCount) {
@@ -57,20 +60,20 @@ export const kittyStats: NonSlashCommand = {
     let longestUsernameLength = 0;
     for (const key of Object.keys(kittyCount)) {
       const member = members.get(key);
-      if (!member) continue;
       if (
-        longestUsernameLength < member.displayName.length
-      ) {
-        longestUsernameLength = member.displayName.length;
-      }
+        member
+        && longestUsernameLength < member.displayName.length
+      ) longestUsernameLength = member.displayName.length;
     }
 
     let replyMessage = "# :3 stats\n```\n";
     for (const [id, count] of Object.entries(kittyCount)) {
       const name = members.get(id)?.displayName;
-      if (!name) continue;
-      replyMessage += name + " ".repeat(longestUsernameLength - name.length + 4)
-        + `: ${count}\n`;
+      if (name) {
+        replyMessage += name
+          + " ".repeat(longestUsernameLength - name.length + 4)
+          + `: ${count}\n`;
+      }
     }
 
     replyMessage += "```";

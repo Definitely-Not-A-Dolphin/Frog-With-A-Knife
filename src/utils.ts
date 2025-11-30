@@ -10,7 +10,6 @@ export const coolBanner = () =>
       + "                |___/                                                              \n",
   );
 
-// Simple method that returns a random emoji from list
 export const randomNumber = (min: number, max: number) =>
   Math.floor(Math.random() * max - min + 1) + min;
 

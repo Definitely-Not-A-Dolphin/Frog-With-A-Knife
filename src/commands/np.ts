@@ -1,6 +1,5 @@
 import {
   EmbedBuilder,
-  type Message,
   SlashCommandBuilder,
   type SlashCommandStringOption,
 } from "discord.js";
@@ -40,8 +39,8 @@ export const lastFMnp: NonSlashCommand = {
   command: ".np",
   description: "Show your currently playing track!",
   showInHelp: true,
-  match: (message: Message) => message.content === lastFMnp.command,
-  execute: async (message: Message) => {
+  match: (message) => message.content === lastFMnp.command,
+  execute: async (message) => {
     const lastFMUsername: string | null = db
       .sql`SELECT lastfmUsername FROM lastfm WHERE userId = ${message.author.id}`[
         0
@@ -99,9 +98,9 @@ export const lastFMSet: NonSlashCommand = {
   command: "lastFMSet",
   description: "Set your lastFM username!",
   showInHelp: true,
-  match: (message: Message) =>
+  match: (message) =>
     message.content.split(" ")[0] === lastFMSet.command,
-  execute: async (message: Message) => {
+  execute: async (message) => {
     const lastFMUsername = message.content.split(" ").slice(1).join();
 
     if (lastFMUsername === "") {
