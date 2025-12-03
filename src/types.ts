@@ -1,9 +1,10 @@
-import type {
-  ChatInputCommandInteraction,
+import {
+  type ChatInputCommandInteraction,
+  type ClientEvents,
   Events,
-  Message,
-  SlashCommandBuilder,
-  SlashCommandOptionsOnlyBuilder,
+  type Message,
+  type SlashCommandBuilder,
+  type SlashCommandOptionsOnlyBuilder,
 } from "discord.js";
 
 export type SlashCommand = {
@@ -26,15 +27,15 @@ export type NonSlashCommand = {
 export const nonSlashCommandGuard = (object: object) =>
   "match" in object && "execute" in object;
 
-export type BotEvent = {
-  type: Events;
+export type BotEvent<T extends keyof ClientEvents> = {
+  type: T;
   once?: boolean;
-  // deno-lint-ignore no-explicit-any
-  execute: (...args: any[]) => void;
+  execute: (...args: ClientEvents[T]) => void;
 };
 
 export const botEventGuard = (object: object) =>
-  "type" in object && "execute" in object;
+  "type" in object && "execute" in object
+  && Object.values(Events).includes(object.type as Events);
 
 export type MaybePromiseVoid = void | Promise<void>;
 

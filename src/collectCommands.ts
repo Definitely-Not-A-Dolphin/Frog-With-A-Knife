@@ -1,3 +1,4 @@
+import { SlashCommandBuilder } from "discord.js";
 import {
   type NonSlashCommand,
   nonSlashCommandGuard,
@@ -32,6 +33,14 @@ for (const commandFile of commandFiles) {
   }
 }
 
+let helpMessage = "";
+for (const nonSlashCommand of nonSlashCommands) {
+  if (nonSlashCommand.showInHelp) {
+    helpMessage +=
+      `**${nonSlashCommand.name}** (\`\`${nonSlashCommand.command.toString()}\`\`): ${nonSlashCommand.description}\n`;
+  }
+}
+
 nonSlashCommands.push({
   name: "help",
   description: "check all available commands",
@@ -39,15 +48,23 @@ nonSlashCommands.push({
   showInHelp: true,
   match: (message) => message.content === ".help",
   execute: async (message) => {
-    let returnMessage = "";
-    for (const nonSlashCommand of nonSlashCommands) {
-      if (nonSlashCommand.showInHelp) {
-        returnMessage +=
-          `**${nonSlashCommand.name}** (\`\`${nonSlashCommand.command.toString()}\`\`): ${nonSlashCommand.description}\n`;
-      }
-    }
-    await message.reply(returnMessage);
+    await message.reply({ content: helpMessage });
     return `${message.author.username} used .help`;
+  },
+});
+
+slashCommands.push({
+  data: new SlashCommandBuilder()
+    .setName("ping")
+    .setDescription("Replies with pong!"),
+  execute: async (interaction) => {
+    await interaction
+      .reply({
+        content: helpMessage,
+        withResponse: true,
+      })
+      .catch((err) => console.error(err));
+    return `${interaction.user.username} used .help`;
   },
 });
 

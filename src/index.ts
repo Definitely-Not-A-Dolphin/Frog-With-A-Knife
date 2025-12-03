@@ -10,7 +10,6 @@ import { env } from "./env.ts";
 import { type BotEvent, botEventGuard } from "./types.ts";
 import { coolBanner } from "./utils.ts";
 
-// Grab all the command folders from the commands directory you created earlier
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -25,7 +24,6 @@ for (const slashCommand of slashCommands) {
   commands.push(slashCommand.data.toJSON());
 }
 
-// Construct and prepare an instance of the REST module
 const rest = new REST().setToken(env.TOKEN);
 
 console.log(
@@ -54,14 +52,13 @@ for (const eventFile of eventFiles) {
       continue;
     }
 
-    const event = entry as BotEvent;
+    const event = entry as BotEvent<typeof entry.type>;
 
     if (event.once) {
       client.once(event.type as string, (...args) => event.execute(...args));
-      continue;
+    } else {
+      client.on(event.type as string, (...args) => event.execute(...args));
     }
-
-    client.on(event.type as string, (...args) => event.execute(...args));
   }
 }
 

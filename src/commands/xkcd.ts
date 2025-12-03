@@ -45,7 +45,7 @@ export const xkcd: NonSlashCommand = {
   },
 };
 
-export const slashPing: SlashCommand = {
+export const slashxkcd: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName("xkcd")
     .setDescription("Replies with pong!")

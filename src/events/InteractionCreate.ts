@@ -7,7 +7,7 @@ for (const slashCommand of slashCommands) {
   slashCommandsRecord[slashCommand.data.name] = slashCommand;
 }
 
-export const slashCommandEvent: BotEvent = {
+export const slashCommandEvent: BotEvent<Events.InteractionCreate> = {
   type: Events.InteractionCreate,
   execute: async (interaction: Interaction) => {
     if (!interaction.isChatInputCommand()) return;
@@ -27,13 +27,6 @@ export const slashCommandEvent: BotEvent = {
       console.log(`\x1b[36m > \x1b[0m ${returnMessage}`);
     } catch (error) {
       console.error(error);
-      if (interaction.replied || interaction.deferred) {
-        await interaction.followUp({
-          content: "There was an error while executing this command!",
-          flags: MessageFlags.Ephemeral,
-        });
-        return;
-      }
       await interaction.reply({
         content: "There was an error while executing this command!",
         flags: MessageFlags.Ephemeral,

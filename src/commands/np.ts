@@ -55,7 +55,7 @@ export const lastFMnp: NonSlashCommand = {
 
     const baseUrl =
       `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${lastFMUsername}&api_key=${env.LASTFM_KEY}&format=json`;
-    const response: Response = await fetch(baseUrl);
+    const response = await fetch(baseUrl);
 
     if (!response.ok) {
       await message.reply("Er ging iets mis owo :3");
