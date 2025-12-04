@@ -2,7 +2,7 @@ import { Events, type Message, TextChannel } from "discord.js";
 import { nonSlashCommands } from "../collectCommands.ts";
 import type { BotEvent } from "../types.ts";
 
-export const nonSlashCommandEvent: BotEvent<Events.MessageCreate> = {
+export const messageCreateEvent: BotEvent<Events.MessageCreate> = {
   type: Events.MessageCreate,
   execute: async (message: Message) => {
     if (!(message.channel instanceof TextChannel)) return;

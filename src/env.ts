@@ -9,6 +9,7 @@ const requiredKeys = [
 
 const env = await load({
   export: true,
+  envPath: "../Frog-With-A-Knife-Token/.env.prod",
 });
 
 for (const key of requiredKeys) {

@@ -13,6 +13,7 @@ import { coolBanner } from "./utils.ts";
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
   ],
@@ -64,4 +65,4 @@ for (const eventFile of eventFiles) {
 
 // Dit runt
 client.login(env.TOKEN);
-coolBanner();
+console.log(coolBanner);

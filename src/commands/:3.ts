@@ -19,6 +19,7 @@ export const kitty: NonSlashCommand = {
       db.sql`INSERT INTO kitty (userId, kittyCount) VALUES (${message.author.id}, 0);`;
       kittyCount = 0;
     }
+
     db.sql`
       UPDATE kitty
       SET kittyCount = ${kittyCount + 1}

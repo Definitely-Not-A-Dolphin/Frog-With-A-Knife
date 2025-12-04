@@ -1,4 +1,8 @@
-import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import {
+  EmbedBuilder,
+  InteractionContextType,
+  SlashCommandBuilder,
+} from "discord.js";
 import type { NonSlashCommand, SlashCommand } from "../types.ts";
 
 type XKCDData = {
@@ -53,7 +57,11 @@ export const slashxkcd: SlashCommand = {
       option
         .setName("entry")
         .setDescription("Give an xkcd entry")
-    ),
+    ).setContexts([
+      InteractionContextType.BotDM,
+      InteractionContextType.Guild,
+      InteractionContextType.PrivateChannel,
+    ]),
   execute: async (interaction) => {
     const entry = interaction.options.getInteger("entry");
     const xkcdResponse = await fetch(

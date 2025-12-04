@@ -55,7 +55,7 @@ nonSlashCommands.push({
 
 slashCommands.push({
   data: new SlashCommandBuilder()
-    .setName("ping")
+    .setName("help")
     .setDescription("Replies with pong!"),
   execute: async (interaction) => {
     await interaction

@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder, InteractionContextType } from "discord.js";
 import type { NonSlashCommand, SlashCommand } from "../types.ts";
 
 export const ping: NonSlashCommand = {
@@ -18,7 +18,12 @@ export const ping: NonSlashCommand = {
 export const slashPing: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName("ping")
-    .setDescription("Replies with pong!"),
+    .setDescription("Replies with pong!")
+    .setContexts([
+      InteractionContextType.BotDM,
+      InteractionContextType.Guild,
+      InteractionContextType.PrivateChannel,
+    ]),
   execute: async (interaction) => {
     const diff = Date.now() - interaction.createdTimestamp;
 

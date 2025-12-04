@@ -1,5 +1,6 @@
 import {
   EmbedBuilder,
+  InteractionContextType,
   SlashCommandBuilder,
   type SlashCommandStringOption,
 } from "discord.js";
@@ -14,15 +15,11 @@ import type {
   Track,
 } from "../types.ts";
 
-export async function trackEmbedBuilder(
+export const trackEmbedBuilder = async (
   trackPlaying: Track,
   pfp: string,
-): Promise<EmbedBuilder> {
-  const averageColor = (await getAverageColor(
-    trackPlaying.image,
-  )).hex as `#${string}`;
-
-  return new EmbedBuilder()
+) =>
+  new EmbedBuilder()
     .setTitle(trackPlaying.name)
     .setURL(trackPlaying.url)
     .setAuthor({
@@ -31,8 +28,11 @@ export async function trackEmbedBuilder(
     })
     .setThumbnail(trackPlaying.image)
     .setDescription(`**${trackPlaying.artist}** on _${trackPlaying.album}_`)
-    .setColor(averageColor);
-}
+    .setColor(
+      (await getAverageColor(
+        trackPlaying.image,
+      )).hex as `#${string}`,
+    );
 
 export const lastFMnp: NonSlashCommand = {
   name: "np",
@@ -63,22 +63,19 @@ export const lastFMnp: NonSlashCommand = {
     }
 
     const lastFMData: LastFMData = await response.json();
-    const dataIWant: LastFMTrack[] = lastFMData.recenttracks.track;
+    const nowPlayingTrack: LastFMTrack[] = lastFMData.recenttracks.track;
 
-    if (
-      dataIWant.length === 0 || !dataIWant[0] || !dataIWant[0]["@attr"]
-      || !dataIWant[0]["@attr"].nowplaying
-    ) {
+    if (!nowPlayingTrack?.[0]?.["@attr"]?.nowplaying) {
       await message.reply("No track is currently playing!");
       return `${message.author.username} used .np, but no music was playing`;
     }
 
     const nowPlaying: Track = {
-      name: dataIWant[0].name,
-      album: dataIWant[0].album["#text"],
-      artist: dataIWant[0].artist["#text"],
-      image: dataIWant[0].image[3]["#text"],
-      url: dataIWant[0].url,
+      name: nowPlayingTrack[0].name,
+      album: nowPlayingTrack[0].album["#text"],
+      artist: nowPlayingTrack[0].artist["#text"],
+      image: nowPlayingTrack[0].image[3]["#text"],
+      url: nowPlayingTrack[0].url,
     };
 
     const pfpURL = message.author.avatarURL()
@@ -98,8 +95,7 @@ export const lastFMSet: NonSlashCommand = {
   command: "lastFMSet",
   description: "Set your lastFM username!",
   showInHelp: true,
-  match: (message) =>
-    message.content.split(" ")[0] === lastFMSet.command,
+  match: (message) => message.content.split(" ")[0] === lastFMSet.command,
   execute: async (message) => {
     const lastFMUsername = message.content.split(" ").slice(1).join();
 
@@ -131,7 +127,12 @@ export const lastFMSet: NonSlashCommand = {
 export const slashLastFMnp: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName("lastfm-np")
-    .setDescription("Show what you are listening to"),
+    .setDescription("Show what you are listening to")
+    .setContexts([
+      InteractionContextType.BotDM,
+      InteractionContextType.Guild,
+      InteractionContextType.PrivateChannel,
+    ]),
   execute: async (interaction) => {
     const lastFMUsername: string | null = db
       .sql`SELECT lastfmUsername FROM lastfm WHERE userId = ${interaction.user.id}`[
@@ -140,7 +141,10 @@ export const slashLastFMnp: SlashCommand = {
 
     if (!lastFMUsername) {
       await interaction
-        .reply("You need to set a username first!")
+        .reply({
+          content: "You need to set a username first!",
+          withResponse: true,
+        })
         .catch((err) => console.error(err));
       return `${interaction.user.username} used /lastfm-np, but forgot to set their username`;
     }
@@ -151,30 +155,33 @@ export const slashLastFMnp: SlashCommand = {
 
     if (!response.ok) {
       await interaction
-        .reply("Er ging iets mis owo :3")
+        .reply({
+          content: "Er ging iets mis owo :3",
+          withResponse: true,
+        })
         .catch((err) => console.error(err));
       return `${interaction.user.username} used /lastfm-np, but something went wrong`;
     }
 
     const lastFMData: LastFMData = await response.json();
-    const dataIWant: LastFMTrack[] = lastFMData.recenttracks.track;
+    const nowPlayingTrack: LastFMTrack[] = lastFMData.recenttracks.track;
 
-    if (
-      dataIWant.length === 0 || !dataIWant[0] || !dataIWant[0]["@attr"]
-      || !dataIWant[0]["@attr"].nowplaying
-    ) {
+    if (!nowPlayingTrack?.[0]?.["@attr"]?.nowplaying) {
       await interaction
-        .reply("No track is currently playing!")
+        .reply({
+          content: "No track is currently playing!",
+          withResponse: true,
+        })
         .catch((err) => console.error(err));
       return `${interaction.user.username} used /lastfm-np, but no music was playing`;
     }
 
     const nowPlaying: Track = {
-      name: dataIWant[0].name,
-      album: dataIWant[0].album["#text"],
-      artist: dataIWant[0].artist["#text"],
-      image: dataIWant[0].image[3]["#text"],
-      url: dataIWant[0].url,
+      name: nowPlayingTrack[0].name,
+      album: nowPlayingTrack[0].album["#text"],
+      artist: nowPlayingTrack[0].artist["#text"],
+      image: nowPlayingTrack[0].image[3]["#text"],
+      url: nowPlayingTrack[0].url,
     };
 
     const pfpURL = interaction.user.avatarURL()
@@ -187,6 +194,7 @@ export const slashLastFMnp: SlashCommand = {
 
     await interaction.reply({
       embeds: [trackEmbed],
+      withResponse: true,
     }).catch(
       (err) => console.error(err),
     );
@@ -203,7 +211,12 @@ export const slashLastFMSet: SlashCommand = {
         .setName("username")
         .setDescription("Enter your lastfm username!")
         .setRequired(true)
-    ),
+    )
+    .setContexts([
+      InteractionContextType.BotDM,
+      InteractionContextType.Guild,
+      InteractionContextType.PrivateChannel,
+    ]),
   execute: async (interaction) => {
     const lastFMUsername = interaction.options.getString("username", true);
 
