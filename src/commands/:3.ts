@@ -41,7 +41,7 @@ export const kittyStats: NonSlashCommand = {
     if (!message.guild) return;
 
     const rawKittyCount = db.sql`
-      SELECT * FROM kitty WHERE userId = ${message.author.id}` as Record<
+      SELECT * FROM kitty` as Record<
       string,
       number
     >[];

@@ -92,7 +92,7 @@ export const lastFMnp: NonSlashCommand = {
 
 export const lastFMSet: NonSlashCommand = {
   name: "lastFMSet",
-  command: "lastFMSet",
+  command: ".lastFMSet",
   description: "Set your lastFM username!",
   showInHelp: true,
   match: (message) => message.content.split(" ")[0] === lastFMSet.command,
