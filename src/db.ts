@@ -7,12 +7,10 @@ export const db = new Database(
   new URL(env.DATABASE_PATH, basePath),
 );
 
-const closeListener = () => {
+addSigListener(() => {
   console.log("Closing DB");
   db.close();
-};
-
-addSigListener(closeListener);
+});
 
 db.sql`
   CREATE TABLE IF NOT EXISTS lastfm (

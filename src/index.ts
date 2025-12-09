@@ -1,6 +1,4 @@
 import {
-  Client,
-  GatewayIntentBits,
   REST,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
   Routes,
@@ -9,15 +7,7 @@ import { slashCommands } from "./collectCommands.ts";
 import { env } from "./env.ts";
 import { type BotEvent, botEventGuard } from "./types.ts";
 import { coolBanner } from "./utils.ts";
-
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-  ],
-});
+import { client } from "./client.ts";
 
 // This type name is fucking brilliant
 const commands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];

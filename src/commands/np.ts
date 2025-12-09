@@ -36,7 +36,7 @@ export const trackEmbedBuilder = async (
 
 export const lastFMnp: NonSlashCommand = {
   name: "np",
-  command: ".np",
+  command: ";np",
   description: "Show your currently playing track!",
   showInHelp: true,
   match: (message) => message.content === lastFMnp.command,
@@ -92,7 +92,7 @@ export const lastFMnp: NonSlashCommand = {
 
 export const lastFMSet: NonSlashCommand = {
   name: "lastFMSet",
-  command: ".lastFMSet",
+  command: ";lastFMSet",
   description: "Set your lastFM username!",
   showInHelp: true,
   match: (message) => message.content.split(" ")[0] === lastFMSet.command,

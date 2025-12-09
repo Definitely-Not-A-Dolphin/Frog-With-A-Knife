@@ -1,9 +1,9 @@
-import { SlashCommandBuilder, InteractionContextType } from "discord.js";
+import { InteractionContextType, SlashCommandBuilder } from "discord.js";
 import type { NonSlashCommand, SlashCommand } from "../types.ts";
 
 export const ping: NonSlashCommand = {
   name: "ping",
-  command: ".ping",
+  command: ";ping",
   description: "ping pong",
   showInHelp: true,
   match: (message) => message.content === ping.command,

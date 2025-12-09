@@ -44,7 +44,7 @@ for (const nonSlashCommand of nonSlashCommands) {
 nonSlashCommands.push({
   name: "help",
   description: "check all available commands",
-  command: ".help",
+  command: ";help",
   showInHelp: true,
   match: (message) => message.content === ".help",
   execute: async (message) => {
@@ -55,7 +55,7 @@ nonSlashCommands.push({
 
 slashCommands.push({
   data: new SlashCommandBuilder()
-    .setName("help")
+    .setName(";help")
     .setDescription("Replies with pong!"),
   execute: async (interaction) => {
     await interaction

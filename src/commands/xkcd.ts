@@ -21,7 +21,7 @@ type XKCDData = {
 
 export const xkcd: NonSlashCommand = {
   name: "xkcd",
-  command: ".xkcd",
+  command: ";xkcd",
   description: "get an xkcd comic",
   showInHelp: true,
   match: (message) => message.content.split(" ")[0] === xkcd.command,
@@ -45,7 +45,7 @@ export const xkcd: NonSlashCommand = {
       .setDescription(xkcdData.alt);
 
     await message.reply({ embeds: [xkcdEmbed] });
-    return `${message.author.username} user .xkcd [${entry}]`;
+    return `${message.author.username} used .xkcd [${entry}]`;
   },
 };
 

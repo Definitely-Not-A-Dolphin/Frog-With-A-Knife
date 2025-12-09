@@ -20,44 +20,45 @@ export type UrbanDictionaryResponse = {
 
 export const urbanDictionary: NonSlashCommand = {
   name: "urban dictionary",
-  command: /\.u(d|rban)/i,
+  command: /;u(d|rban)/i,
   description: "get a definition from the urban dictionary",
   showInHelp: true,
   match: (message) =>
     Boolean(message.content.split(" ")[0].match(urbanDictionary.name)),
   execute: async (message) => {
-    const word = message.content.split(" ")[1];
+    const givenWord = message.content.split(" ")[1];
 
-    if (!word) {
+    if (!givenWord) {
       await message.reply("geef dan ook een woord jij vage kennis");
       return `${message.author.username} used .ud [], but failed to supply a word`;
     }
 
-    const response: Response = await fetch(
-      `https://api.urbandictionary.com/v0/define?term=${word}`,
+    const urbanDictionaryResponse: Response = await fetch(
+      `https://api.urbandictionary.com/v0/define?term=${givenWord}`,
     );
 
-    if (!response.ok) {
+    if (!urbanDictionaryResponse.ok) {
       await message.reply("Oopsie, something went wrong");
-      return `${message.author.username} used .ud ${word}, but something went wrong`;
+      return `${message.author.username} used .ud ${givenWord}, but something went wrong`;
     }
 
-    const responseData: UrbanDictionaryResponse = await response.json();
+    const responseData: UrbanDictionaryResponse = await urbanDictionaryResponse
+      .json();
 
     if (!responseData.list[0]) {
       await message.reply("Definition not found :\\");
-      return `${message.author.username} used .ud [${word}], but no definition was found`;
+      return `${message.author.username} used .ud [${givenWord}], but no definition was found`;
     }
 
-    const dataIWant: UrbanDictionaryEntry = responseData.list[0];
+    const { author, definition, permalink, thumbs_down, thumbs_up, word }:
+      UrbanDictionaryEntry = responseData.list[0];
 
     const udEmbed = new EmbedBuilder()
-      .setTitle(dataIWant.word)
-      .setDescription(dataIWant.definition)
-      .setURL(dataIWant.permalink)
+      .setTitle(word)
+      .setDescription(definition)
+      .setURL(permalink)
       .setFooter({
-        text:
-          `By ${dataIWant.author}\n👍 ${dataIWant.thumbs_up} | 👎 ${dataIWant.thumbs_down}`,
+        text: `By ${author}\n👍 ${thumbs_up} | 👎 ${thumbs_down}`,
       })
       .setThumbnail("https://cdn.elisaado.com/ud_logo.jpeg")
       .setColor(0xf2fd60);
