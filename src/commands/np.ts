@@ -65,7 +65,7 @@ export const lastFMnp: NonSlashCommand = {
     const lastFMData: LastFMData = await response.json();
     const nowPlayingTrack: LastFMTrack[] = lastFMData.recenttracks.track;
 
-    if (!nowPlayingTrack?.[0]?.["@attr"]?.nowplaying) {
+    if (!nowPlayingTrack[0]["@attr"]?.nowplaying) {
       await message.reply("No track is currently playing!");
       return `${message.author.username} used .np, but no music was playing`;
     }

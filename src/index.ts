@@ -3,11 +3,11 @@ import {
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
   Routes,
 } from "discord.js";
+import { client } from "./client.ts";
 import { slashCommands } from "./collectCommands.ts";
 import { env } from "./env.ts";
 import { type BotEvent, botEventGuard } from "./types.ts";
 import { coolBanner } from "./utils.ts";
-import { client } from "./client.ts";
 
 // This type name is fucking brilliant
 const commands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
@@ -53,6 +53,5 @@ for (const eventFile of eventFiles) {
   }
 }
 
-// Dit runt
 client.login(env.TOKEN);
 console.log(coolBanner);
