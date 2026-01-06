@@ -1,5 +1,5 @@
-import type { NonSlashCommand } from "../types.ts";
 import { client } from "../client.ts";
+import type { NonSlashCommand } from "../types.ts";
 
 // uniflex thank you for this code, i don't know regex well enough to do this completely on my own :)
 

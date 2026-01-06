@@ -15,7 +15,7 @@ import type {
   Track,
 } from "../types.ts";
 
-export const trackEmbedBuilder = async (
+const trackEmbedBuilder = async (
   trackPlaying: Track,
   pfp: string,
 ) =>
@@ -164,9 +164,9 @@ export const slashLastFMnp: SlashCommand = {
     }
 
     const lastFMData: LastFMData = await response.json();
-    const nowPlayingTrack: LastFMTrack[] = lastFMData.recenttracks.track;
+    const nowPlayingTrack: LastFMTrack = lastFMData.recenttracks.track?.[0];
 
-    if (!nowPlayingTrack?.[0]?.["@attr"]?.nowplaying) {
+    if (!nowPlayingTrack["@attr"]?.nowplaying) {
       await interaction
         .reply({
           content: "No track is currently playing!",
@@ -177,11 +177,11 @@ export const slashLastFMnp: SlashCommand = {
     }
 
     const nowPlaying: Track = {
-      name: nowPlayingTrack[0].name,
-      album: nowPlayingTrack[0].album["#text"],
-      artist: nowPlayingTrack[0].artist["#text"],
-      image: nowPlayingTrack[0].image[3]["#text"],
-      url: nowPlayingTrack[0].url,
+      name: nowPlayingTrack.name,
+      album: nowPlayingTrack.album["#text"],
+      artist: nowPlayingTrack.artist["#text"],
+      image: nowPlayingTrack.image[3]["#text"],
+      url: nowPlayingTrack.url,
     };
 
     const pfpURL = interaction.user.avatarURL()
@@ -195,9 +195,7 @@ export const slashLastFMnp: SlashCommand = {
     await interaction.reply({
       embeds: [trackEmbed],
       withResponse: true,
-    }).catch(
-      (err) => console.error(err),
-    );
+    }).catch((err) => console.error(err));
     return `${interaction.user.username} used /lastfm-np`;
   },
 };
