@@ -20,5 +20,5 @@ do
   deno run prod
 
   echo "getting eepy";
-  sleep 10s;
+  sleep 1h;
 done
