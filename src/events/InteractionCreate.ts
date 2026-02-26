@@ -19,7 +19,6 @@ export const interactionCreateEvent: BotEvent<Events.InteractionCreate> = {
     }
 
     try {
-      await interaction.deferReply();
       const returnMessage = await command.execute(interaction);
       console.log(`\x1b[36m > \x1b[0m ${returnMessage}`);
     } catch (error) {
