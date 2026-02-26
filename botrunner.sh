@@ -1,20 +1,18 @@
 while :
 do
-  cd ~/Documents/Projects/Frog-With-A-Knife-Token;
+  cd ../Frog-With-A-Knife-Token;
   echo "git pull secrets";
   git pull;
 
-  cd ../;
+  cd ../Frog-With-A-Knife;
   echo "Copying secrets";
-  cp Frog-With-A-Knife-Token/.env.prod ../Frog-With-A-Knife/.env;
+  cp ../Frog-With-A-Knife-Token/.env.prod .env;
 
-  cd Frog-With-A-Knife;
   echo "git pull code";
   git pull;
 
   echo "deno i --jsr; deno i --npm;";
-  deno i --jsr;
-  deno i --npm;
+  deno install;
 
   echo "deno run prod"
   deno run prod
