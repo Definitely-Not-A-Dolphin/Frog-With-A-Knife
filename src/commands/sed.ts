@@ -1,4 +1,3 @@
-import { client } from "../client.ts";
 import type { NonSlashCommand } from "../types.ts";
 
 // uniflex thank you for this code, i don't know regex well enough to do this completely on my own :)
@@ -11,9 +10,7 @@ export const sed: NonSlashCommand = {
   match: (message) => Boolean(message.content.match(sed.command)),
   execute: async (message) => {
     if (
-      !(message.reference
-        && message.reference.messageId
-        && message.author.id !== client.user.id)
+      !(message.reference && message.reference.messageId && !message.author.bot)
     ) {
       await message.reply("Something went wrong :(");
       return `${message.author.username} used ${message.content}`;
@@ -21,8 +18,7 @@ export const sed: NonSlashCommand = {
 
     const match = message.content.match(
       /^`?\;sed`?\/`?((?:\\.|[^\/])*)\/((?:\\.|[^\/])*?)(\/(.*?))?`?$/,
-    );
-    if (!match) return `What the fuck happened?`;
+    ) as RegExpMatchArray;
     const [, find, replace, , options] = match;
 
     if (
@@ -39,7 +35,7 @@ export const sed: NonSlashCommand = {
       message.reference.messageId,
     );
 
-    if (!(reply && reply.author.id !== client.user.id)) {
+    if (!reply || reply.author.bot) {
       await message.reply("Something went wrong :(");
       return `${message.author.username} used ;sed, but something went wrong`;
     }

@@ -5,7 +5,7 @@ import {
 } from "discord.js";
 import type { NonSlashCommand, SlashCommand } from "../types.ts";
 
-type XKCDData = {
+interface XKCDData {
   month: string;
   num: number;
   link: string;
@@ -17,7 +17,7 @@ type XKCDData = {
   img: string;
   title: string;
   day: string;
-};
+}
 
 export const xkcd: NonSlashCommand = {
   name: "xkcd",

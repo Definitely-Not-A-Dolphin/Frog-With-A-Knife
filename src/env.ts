@@ -5,12 +5,10 @@ const requiredKeys = [
   "TOKEN",
   "LASTFM_KEY",
   "DATABASE_PATH",
+  "MIPO_CHANNELS",
 ] as const;
 
-const env = await load({
-  export: true,
-  envPath: ".env",
-});
+const env = await load();
 
 for (const key of requiredKeys) {
   if (!env[key]) throw new Error(`\x1b[34mMissing .env variable ${key}\x1b[0m`);
@@ -25,4 +23,4 @@ for (const [key, value] of Object.entries(env)) {
   );
 }
 
-export { env };
+export default env;

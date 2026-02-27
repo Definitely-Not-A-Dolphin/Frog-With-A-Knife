@@ -15,3 +15,10 @@ export function getRandomEmoji(): string {
   const smileys = [":)", ":D", ":3", ":P"] as const;
   return smileys[randomNumber(0, smileys.length - 1)];
 }
+
+// Source - https://stackoverflow.com/a/39914235
+// Posted by Dan Dascalescu, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-02-27, License - CC BY-SA 4.0
+
+export const sleep = async (ms: number) =>
+  await new Promise((resolve) => setTimeout(resolve, ms));

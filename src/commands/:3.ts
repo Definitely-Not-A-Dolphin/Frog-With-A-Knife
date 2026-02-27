@@ -1,6 +1,13 @@
 import { MessageFlags } from "discord.js";
-import { db } from "../db.ts";
+import db from "../db.ts";
 import type { NonSlashCommand } from "../types.ts";
+
+interface MeowEntry {
+  meowId: number;
+  userId: string;
+  guildId: string;
+  timestamp: string;
+}
 
 export const kitty: NonSlashCommand = {
   name: ":3",
@@ -11,19 +18,9 @@ export const kitty: NonSlashCommand = {
     message.content.includes(":3") && message.content !== ":3stats"
     && !message.author.bot,
   execute: async (message) => {
-    let kittyCount: number | undefined = db.sql`
-      SELECT * FROM kitty WHERE userId = ${message.author.id};
-    `[0]?.kittyCount;
-
-    if (kittyCount === undefined) {
-      db.sql`INSERT INTO kitty (userId, kittyCount) VALUES (${message.author.id}, 0);`;
-      kittyCount = 0;
-    }
-
     db.sql`
-      UPDATE kitty
-      SET kittyCount = ${kittyCount + 1}
-      WHERE userId = ${message.author.id}
+      INSERT INTO meow (userId, guildId, timestamp)
+      VALUES (${message.author.id}, ${message.guild?.id ?? 0}, ${Date.now()});
     `;
 
     await message.reply(":3");
@@ -40,41 +37,49 @@ export const kittyStats: NonSlashCommand = {
   execute: async (message) => {
     if (!message.guild) return;
 
-    const rawKittyCount = db.sql`
-      SELECT * FROM kitty` as Record<
-      string,
-      number
-    >[];
+    const rawMeowData = db.sql`
+      SELECT * FROM meow
+      WHERE guildId = ${message.guild.id}
+    ` as MeowEntry[];
 
-    let kittyCount: Record<string, number> = {};
-    for (const entry of rawKittyCount) {
-      kittyCount[entry.userId] = entry.kittyCount;
-    }
-    kittyCount = Object.fromEntries(
-      Object.entries(kittyCount).sort((a, b) => b[1] - a[1]),
+    console.log(rawMeowData);
+
+    const userIds = rawMeowData.map((entry) => entry.userId) as string[];
+
+    // Maps userId to displayName
+    const members = Object.fromEntries(
+      (await message.guild.members.fetch({
+        user: userIds,
+      })).map((member) => [member.id, member.displayName]),
     );
 
-    const members = await message.guild.members.fetch({
-      user: Object.keys(kittyCount),
-    });
+    let meowData: Record<string, number> = {};
 
-    let longestUsernameLength = 0;
-    for (const key of Object.keys(kittyCount)) {
-      const member = members.get(key);
-      if (
-        member
-        && longestUsernameLength < member.displayName.length
-      ) longestUsernameLength = member.displayName.length;
+    for (const { userId } of rawMeowData) {
+      const displayName = members[userId];
+      if (meowData[displayName]) meowData[displayName] += 1;
+      else meowData[displayName] = 1;
+    }
+
+    // Sorts it
+    meowData = Object.fromEntries(
+      Object.entries(meowData).sort((a, b) => b[1] - a[1]),
+    );
+
+    let highestCount = "0";
+    for (const count of Object.values(meowData)) {
+      if (count > Number(highestCount)) highestCount = String(count);
     }
 
     let replyMessage = "# :3 stats\n```\n";
-    for (const [id, count] of Object.entries(kittyCount)) {
-      const name = members.get(id)?.displayName;
-      if (name) {
-        replyMessage += name
-          + " ".repeat(longestUsernameLength - name.length + 4)
-          + `: ${count}\n`;
-      }
+
+    let first = true;
+    for (const [name, count] of Object.entries(meowData)) {
+      replyMessage += `${first ? "╭" : "├"}─ ${count}${
+        " ".repeat(highestCount.length - String(count).length + 1)
+      }: ${name}\n`;
+
+      first = false;
     }
 
     replyMessage += "```";

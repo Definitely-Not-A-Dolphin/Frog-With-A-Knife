@@ -4,6 +4,7 @@ import type { BotEvent, SlashCommand } from "../types.ts";
 
 export const interactionCreateEvent: BotEvent<Events.InteractionCreate> = {
   type: Events.InteractionCreate,
+  once: false,
   execute: async (interaction: Interaction) => {
     if (!interaction.isChatInputCommand()) return;
 

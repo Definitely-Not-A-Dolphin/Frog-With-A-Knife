@@ -4,6 +4,7 @@ import type { BotEvent } from "../types.ts";
 
 export const messageCreateEvent: BotEvent<Events.MessageCreate> = {
   type: Events.MessageCreate,
+  once: false,
   execute: async (message: Message) => {
     if (!(message.channel instanceof TextChannel)) return;
 

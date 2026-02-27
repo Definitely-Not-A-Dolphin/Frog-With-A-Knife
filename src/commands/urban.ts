@@ -1,7 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 import type { NonSlashCommand } from "../types.ts";
 
-export type UrbanDictionaryEntry = {
+interface UrbanDictionaryEntry {
   author: string;
   current_vote: string;
   defid: number;
@@ -12,11 +12,11 @@ export type UrbanDictionaryEntry = {
   thumbs_up: number;
   word: string;
   written_on: string;
-};
+}
 
-export type UrbanDictionaryResponse = {
+interface UrbanDictionaryResponse {
   list: UrbanDictionaryEntry[];
-};
+}
 
 export const urbanDictionary: NonSlashCommand = {
   name: "urban dictionary",

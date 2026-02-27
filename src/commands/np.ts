@@ -5,8 +5,8 @@ import {
   type SlashCommandStringOption,
 } from "discord.js";
 import { getAverageColor } from "fast-average-color-node";
-import { db } from "../db.ts";
-import { env } from "../env.ts";
+import db from "../db.ts";
+import env from "../env.ts";
 import type {
   LastFMData,
   LastFMTrack,

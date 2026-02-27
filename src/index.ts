@@ -1,13 +1,23 @@
 import {
+  Client,
+  GatewayIntentBits,
   REST,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
   Routes,
 } from "discord.js";
-import { client } from "./client.ts";
 import { slashCommands } from "./collectCommands.ts";
-import { env } from "./env.ts";
+import env from "./env.ts";
 import { type BotEvent, botEventGuard } from "./types.ts";
 import { coolBanner } from "./utils.ts";
+
+const client = new Client<true>({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
+});
 
 // This type name is fucking brilliant
 const commands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];

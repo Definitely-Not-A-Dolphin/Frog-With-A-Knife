@@ -11,11 +11,11 @@ do
   echo "git pull code";
   git pull;
 
-  echo "deno i --jsr; deno i --npm;";
+  echo "deno install";
   deno install;
 
-  echo "deno run prod"
-  deno run prod
+  echo "deno run prod";
+  deno run prod;
 
   echo "getting eepy";
   sleep 1h;

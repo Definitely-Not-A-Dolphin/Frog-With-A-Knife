@@ -39,15 +39,15 @@ export const botEventGuard = (object: object) =>
 
 export type MaybePromiseVoid = void | Promise<void>;
 
-export type Track = {
+export interface Track {
   name: string;
   album: string;
   artist: string;
   image: string;
   url: string;
-};
+}
 
-export type LastFMTrack = {
+export interface LastFMTrack {
   artist: {
     mbid: string;
     "#text": string;
@@ -71,9 +71,9 @@ export type LastFMTrack = {
   "@attr"?: {
     nowplaying: boolean;
   };
-};
+}
 
-export type LastFMData = {
+export interface LastFMData {
   recenttracks: {
     track: LastFMTrack[];
     "@attr": {
@@ -84,4 +84,18 @@ export type LastFMData = {
       total: string;
     };
   };
-};
+}
+
+export interface MipoEntry {
+  mipoId: number;
+  userId: string;
+  guildId: string;
+  timestamp: number;
+}
+
+export interface MipointEntry {
+  mipointId: number;
+  userId: string;
+  guildId: string;
+  timestamp: number;
+}

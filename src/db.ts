@@ -1,11 +1,8 @@
 import { Database } from "@db/sqlite";
-import { env } from "./env.ts";
+import env from "./env.ts";
 import { addSigListener } from "./sigHandler.ts";
 
-const basePath = new URL("../", import.meta.url);
-export const db = new Database(
-  new URL(env.DATABASE_PATH, basePath),
-);
+const db = new Database(env.DATABASE_PATH);
 
 addSigListener(() => {
   console.log("Closing DB");
@@ -20,8 +17,30 @@ db.sql`
 `;
 
 db.sql`
-  CREATE TABLE IF NOT EXISTS kitty (
-    userId TEXT PRIMARY KEY,
-    kittyCount INTEGER KEY
+  CREATE TABLE IF NOT EXISTS meow (
+    meowId INTEGER PRIMARY KEY AUTOINCREMENT,
+    userId TEXT KEY,
+    guildId TEXT KEY,
+    timestamp TEXT KEY
   );
 `;
+
+db.sql`
+  CREATE TABLE IF NOT EXISTS mipo (
+    mipoId INTEGER PRIMARY KEY AUTOINCREMENT,
+    userId TEXT KEY,
+    guildId TEXT KEY,
+    timestamp BIGINT KEY
+  );
+`;
+
+db.sql`
+  CREATE TABLE IF NOT EXISTS mipoints (
+    mipointId INTEGER PRIMARY KEY AUTOINCREMENT,
+    userId TEXT KEY,
+    guildId TEXT KEY,
+    timestamp BIGINT KEY
+  );
+`;
+
+export default db;
