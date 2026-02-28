@@ -85,17 +85,3 @@ export interface LastFMData {
     };
   };
 }
-
-export interface MipoEntry {
-  mipoId: number;
-  userId: string;
-  guildId: string;
-  timestamp: number;
-}
-
-export interface MipointEntry {
-  mipointId: number;
-  userId: string;
-  guildId: string;
-  timestamp: number;
-}

@@ -52,7 +52,7 @@ export const xkcd: NonSlashCommand = {
 export const slashxkcd: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName("xkcd")
-    .setDescription("Replies with pong!")
+    .setDescription("get an xkcd comic")
     .addIntegerOption((option) =>
       option
         .setName("entry")

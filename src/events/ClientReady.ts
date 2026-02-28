@@ -1,8 +1,15 @@
 import { ActivityType, ChannelType, type Client, Events } from "discord.js";
 import db from "../db.ts";
 import env from "../env.ts";
-import type { BotEvent, MipoEntry } from "../types.ts";
+import type { BotEvent } from "../types.ts";
 import { getRandomEmoji, sleep } from "../utils.ts";
+
+export interface MipoEntry {
+  mipoId: number;
+  userId: string;
+  guildId: string;
+  timestamp: number;
+}
 
 const channels = env.MIPO_CHANNELS.split(",").map((id) => id.trim());
 

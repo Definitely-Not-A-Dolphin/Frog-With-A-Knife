@@ -1,7 +1,14 @@
 import { type Message, MessageFlags } from "discord.js";
 import db from "../db.ts";
 import env from "../env.ts";
-import type { MipointEntry, NonSlashCommand } from "../types.ts";
+import type { NonSlashCommand } from "../types.ts";
+
+export interface MipointEntry {
+  mipointId: number;
+  userId: string;
+  guildId: string;
+  timestamp: number;
+}
 
 const channels = env.MIPO_CHANNELS.split(",").map((id) => id.trim());
 
