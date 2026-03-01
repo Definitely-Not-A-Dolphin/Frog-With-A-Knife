@@ -53,17 +53,17 @@ export const lastFMnp: NonSlashCommand = {
       return `${message.author.username} used .np, but forgot to set their username`;
     }
 
-    const baseUrl =
-      `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${lastFMUsername}&api_key=${env.LASTFM_KEY}&format=json`;
-    const response = await fetch(baseUrl);
+    const response = await fetch(
+      `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${lastFMUsername}&api_key=${env.LASTFM_KEY}&format=json`,
+    );
 
     if (!response.ok) {
       await message.reply("Er ging iets mis owo :3");
-      return `${message.author.username} used .np, but something went wrong`;
+      return `${message.author.username} used ;np, but something went wrong`;
     }
 
-    const lastFMData: LastFMData = await response.json();
-    const nowPlayingTrack: LastFMTrack[] = lastFMData.recenttracks.track;
+    const lastFMData = await response.json() as LastFMData;
+    const nowPlayingTrack = lastFMData.recenttracks.track as LastFMTrack[];
 
     if (!nowPlayingTrack[0]["@attr"]?.nowplaying) {
       await message.reply("No track is currently playing!");
@@ -80,7 +80,6 @@ export const lastFMnp: NonSlashCommand = {
 
     const pfpURL = message.author.avatarURL()
       ?? message.author.defaultAvatarURL;
-
     const trackEmbed = await trackEmbedBuilder(nowPlaying, pfpURL);
 
     await message.reply({

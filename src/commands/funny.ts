@@ -5,9 +5,10 @@ export const perkele: NonSlashCommand = {
   command: /perkele/i,
   description: "perkele",
   showInHelp: false,
-  match: (message) => message.content === perkele.command,
+  match: (message) =>
+    Boolean(message.content.match(perkele.command)) && !message.author.bot,
   execute: async (message) => {
-    await message.reply(`PERKELE!!`);
+    await message.reply("PERKELE!!");
     return `${message.author.username} said perkele!`;
   },
 };
@@ -17,9 +18,10 @@ export const perhana: NonSlashCommand = {
   command: /perhana/i,
   description: "perhana",
   showInHelp: false,
-  match: (message) => message.content === perhana.command,
+  match: (message) =>
+    Boolean(message.content.match(perhana.command)) && !message.author.bot,
   execute: async (message) => {
-    await message.reply(`you are not a five year old kid, just say perkele`);
+    await message.reply("you are not a five year old kid, just say perkele");
     return `${message.author.username} said perhana!`;
   },
 };

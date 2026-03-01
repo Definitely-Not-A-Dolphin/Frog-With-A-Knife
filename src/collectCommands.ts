@@ -46,7 +46,7 @@ nonSlashCommands.push({
   description: "check all available commands",
   command: ";help",
   showInHelp: true,
-  match: (message) => message.content === ".help",
+  match: (message) => message.content === ";help",
   execute: async (message) => {
     await message.reply({ content: helpMessage });
     return `${message.author.username} used .help`;

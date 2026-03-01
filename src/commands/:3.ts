@@ -11,11 +11,12 @@ interface MeowEntry {
 
 export const kitty: NonSlashCommand = {
   name: ":3",
-  command: ":3",
+  command: /(\:|;)3/,
   description: "oh nothing",
   showInHelp: false,
   match: (message) =>
-    message.content.includes(":3") && message.content !== ":3stats"
+    Boolean(message.content.match(kitty.command))
+    && message.content !== ":3stats"
     && !message.author.bot,
   execute: async (message) => {
     db.sql`
@@ -41,8 +42,6 @@ export const kittyStats: NonSlashCommand = {
       SELECT * FROM meow
       WHERE guildId = ${message.guild.id}
     ` as MeowEntry[];
-
-    console.log(rawMeowData);
 
     const userIds = rawMeowData.map((entry) => entry.userId) as string[];
 

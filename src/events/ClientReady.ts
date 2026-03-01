@@ -13,7 +13,7 @@ export interface MipoEntry {
 
 const channels = env.MIPO_CHANNELS.split(",").map((id) => id.trim());
 
-export async function awardMipo(client: Client<true>): Promise<void> {
+async function awardMipo(client: Client<true>): Promise<void> {
   while (true) {
     const today = new Date();
     today.setDate(today.getDate());
@@ -92,7 +92,7 @@ export const clientReadyEvent: BotEvent<Events.ClientReady> = {
   execute: async (client: Client<true>) => {
     console.log(`Ready! Logged in as ${client.user.tag}`);
     client.user.setActivity(
-      getRandomEmoji(),
+      `testing in production ${getRandomEmoji()}`,
       {
         type: ActivityType.Custom,
       },
