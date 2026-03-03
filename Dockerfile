@@ -1,5 +1,4 @@
-# Make this alpine when pushed
-FROM denoland/deno:debian
+FROM denoland/deno:latest
 
 WORKDIR /app
 
