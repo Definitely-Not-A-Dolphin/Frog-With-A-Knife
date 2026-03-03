@@ -24,7 +24,9 @@ export const urbanDictionary = new NonSlashCommand({
   description: "get a definition from the urban dictionary",
   showInHelp: true,
   match(message): boolean {
-    return Boolean(message.content.split(" ")[0].match(urbanDictionary.name));
+    return Boolean(
+      message.content.split(" ")[0].match(urbanDictionary.command),
+    );
   },
   execute: async (message) => {
     const givenWord = message.content.split(" ")[1];
