@@ -1,6 +1,6 @@
 import { MessageFlags } from "discord.js";
 import db from "../db.ts";
-import type { NonSlashCommand } from "../types.ts";
+import { NonSlashCommand } from "../types.ts";
 
 interface MeowEntry {
   meowId: number;
@@ -9,32 +9,35 @@ interface MeowEntry {
   timestamp: string;
 }
 
-export const kitty: NonSlashCommand = {
+export const kitty = new NonSlashCommand({
   name: ":3",
   command: /(\:|;)3/,
   description: "oh nothing",
   showInHelp: false,
-  match: (message) =>
-    Boolean(message.content.match(kitty.command))
-    && message.content !== ":3stats"
-    && !message.author.bot,
+  match(message): boolean {
+    return Boolean(message.content.match(this.command))
+      && message.content !== ":3stats"
+      && !message.author.bot;
+  },
   execute: async (message) => {
     db.sql`
       INSERT INTO meow (userId, guildId, timestamp)
-      VALUES (${message.author.id}, ${message.guild?.id ?? 0}, ${Date.now()});
+      VALUES (${message.author.id}, ${message.guildId ?? 0}, ${Date.now()});
     `;
 
     await message.reply(":3");
     return `${message.author.username} did a :3`;
   },
-};
+});
 
-export const kittyStats: NonSlashCommand = {
+export const kittyStats = new NonSlashCommand({
   name: ":3stats",
   command: ":3stats",
   description: "Check the :3stats",
   showInHelp: true,
-  match: (message) => message.content === kittyStats.command,
+  match(message): boolean {
+    return message.content === this.command;
+  },
   execute: async (message) => {
     if (!message.guild) return;
 
@@ -43,7 +46,7 @@ export const kittyStats: NonSlashCommand = {
       WHERE guildId = ${message.guild.id}
     ` as MeowEntry[];
 
-    const userIds = rawMeowData.map((entry) => entry.userId) as string[];
+    const userIds = rawMeowData.map((entry) => entry.userId);
 
     // Maps userId to displayName
     const members = Object.fromEntries(
@@ -89,4 +92,4 @@ export const kittyStats: NonSlashCommand = {
     });
     return `${message.author.username} user :3stats`;
   },
-};
+});

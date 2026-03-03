@@ -3,7 +3,7 @@ import {
   InteractionContextType,
   SlashCommandBuilder,
 } from "discord.js";
-import type { NonSlashCommand, SlashCommand } from "../types.ts";
+import { NonSlashCommand, SlashCommand } from "../types.ts";
 
 interface XKCDData {
   month: string;
@@ -19,12 +19,14 @@ interface XKCDData {
   day: string;
 }
 
-export const xkcd: NonSlashCommand = {
+export const xkcd = new NonSlashCommand({
   name: "xkcd",
   command: ";xkcd",
   description: "get an xkcd comic",
   showInHelp: true,
-  match: (message) => message.content.split(" ")[0] === xkcd.command,
+  match(message): boolean {
+    return message.content.split(" ")[0] === xkcd.command;
+  },
   execute: async (message) => {
     const entry = message.content.split(" ")[1];
     const xkcdResponse = await fetch(
@@ -47,9 +49,9 @@ export const xkcd: NonSlashCommand = {
     await message.reply({ embeds: [xkcdEmbed] });
     return `${message.author.username} used .xkcd [${entry}]`;
   },
-};
+});
 
-export const slashxkcd: SlashCommand = {
+export const slashxkcd = new SlashCommand({
   data: new SlashCommandBuilder()
     .setName("xkcd")
     .setDescription("get an xkcd comic")
@@ -88,4 +90,4 @@ export const slashxkcd: SlashCommand = {
       .catch((err) => console.error(err));
     return `${interaction.user.username} user .xkcd [${entry}]`;
   },
-};
+});

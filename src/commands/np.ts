@@ -7,13 +7,54 @@ import {
 import { getAverageColor } from "fast-average-color-node";
 import db from "../db.ts";
 import env from "../env.ts";
-import type {
-  LastFMData,
-  LastFMTrack,
-  NonSlashCommand,
-  SlashCommand,
-  Track,
-} from "../types.ts";
+import { NonSlashCommand, SlashCommand } from "../types.ts";
+
+interface Track {
+  name: string;
+  album: string;
+  artist: string;
+  image: string;
+  url: string;
+}
+
+interface LastFMTrack {
+  artist: {
+    mbid: string;
+    "#text": string;
+  };
+  streamable: string;
+  image: {
+    size: string;
+    "#text": string;
+  }[];
+  mbid: string;
+  album: {
+    mbid: string;
+    "#text": string;
+  };
+  name: string;
+  url: string;
+  date?: {
+    uts: string;
+    "@attr": string;
+  };
+  "@attr"?: {
+    nowplaying: boolean;
+  };
+}
+
+interface LastFMData {
+  recenttracks: {
+    track: LastFMTrack[];
+    "@attr": {
+      user: string;
+      totalPages: string;
+      page: string;
+      perPage: string;
+      total: string;
+    };
+  };
+}
 
 const trackEmbedBuilder = async (
   trackPlaying: Track,
@@ -34,12 +75,14 @@ const trackEmbedBuilder = async (
       )).hex as `#${string}`,
     );
 
-export const lastFMnp: NonSlashCommand = {
+export const lastFMnp = new NonSlashCommand({
   name: "np",
   command: ";np",
   description: "Show your currently playing track!",
   showInHelp: true,
-  match: (message) => message.content === lastFMnp.command,
+  match(message): boolean {
+    return message.content === lastFMnp.command;
+  },
   execute: async (message) => {
     const lastFMUsername: string | null = db
       .sql`SELECT lastfmUsername FROM lastfm WHERE userId = ${message.author.id}`[
@@ -87,14 +130,16 @@ export const lastFMnp: NonSlashCommand = {
     });
     return `${message.author.username} used .np`;
   },
-};
+});
 
-export const lastFMSet: NonSlashCommand = {
+export const lastFMSet = new NonSlashCommand({
   name: "lastFMSet",
   command: ";lastFMSet",
   description: "Set your lastFM username!",
   showInHelp: true,
-  match: (message) => message.content.split(" ")[0] === lastFMSet.command,
+  match(message): boolean {
+    return message.content.split(" ")[0] === lastFMSet.command;
+  },
   execute: async (message) => {
     const lastFMUsername = message.content.split(" ").slice(1).join();
 
@@ -121,9 +166,9 @@ export const lastFMSet: NonSlashCommand = {
     );
     return `${message.author.username} used .lastFMSet [${lastFMUsername}]`;
   },
-};
+});
 
-export const slashLastFMnp: SlashCommand = {
+export const slashLastFMnp = new SlashCommand({
   data: new SlashCommandBuilder()
     .setName("lastfm-np")
     .setDescription("Show what you are listening to")
@@ -197,9 +242,9 @@ export const slashLastFMnp: SlashCommand = {
     }).catch((err) => console.error(err));
     return `${interaction.user.username} used /lastfm-np`;
   },
-};
+});
 
-export const slashLastFMSet: SlashCommand = {
+export const slashLastFMSet = new SlashCommand({
   data: new SlashCommandBuilder()
     .setName("lastfm-set")
     .setDescription("Set your lastfm username!")
@@ -237,4 +282,4 @@ export const slashLastFMSet: SlashCommand = {
       );
     return `${interaction.user.username} used /lastfm-set [${lastFMUsername}]`;
   },
-};
+});

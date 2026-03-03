@@ -1,87 +1,49 @@
-import {
-  type ChatInputCommandInteraction,
-  type ClientEvents,
-  Events,
-  type Message,
-  type SlashCommandBuilder,
-  type SlashCommandOptionsOnlyBuilder,
+import type {
+  ChatInputCommandInteraction,
+  ClientEvents,
+  Message,
+  SlashCommandBuilder,
+  SlashCommandOptionsOnlyBuilder,
 } from "discord.js";
 
-export type SlashCommand = {
+export class SlashCommand {
   data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
   execute: (interaction: ChatInputCommandInteraction) => Promise<string>;
-};
 
-export const slashCommandGuard = (object: object) =>
-  "data" in object && "execute" in object;
+  constructor(obj: SlashCommand) {
+    this.data = obj.data;
+    this.execute = obj.execute;
+  }
+}
 
-export type NonSlashCommand = {
+export class NonSlashCommand {
   name: string;
   command: string | RegExp;
   description: string;
   showInHelp: boolean;
   match: (message: Message) => boolean;
   execute: (message: Message) => Promise<string | void>;
-};
 
-export const nonSlashCommandGuard = (object: object) =>
-  "match" in object && "execute" in object;
+  constructor(obj: NonSlashCommand) {
+    this.name = obj.name;
+    this.command = obj.command;
+    this.description = obj.description;
+    this.showInHelp = obj.showInHelp;
+    this.match = obj.match;
+    this.execute = obj.execute;
+  }
+}
 
-export type BotEvent<T extends keyof ClientEvents> = {
+export class BotEvent<T extends keyof ClientEvents> {
   type: T;
-  once?: boolean;
+  once: boolean;
   execute: (...args: ClientEvents[T]) => void;
-};
 
-export const botEventGuard = (object: object) =>
-  "type" in object && "execute" in object
-  && Object.values(Events).includes(object.type as Events);
+  constructor(obj: BotEvent<T>) {
+    this.type = obj.type;
+    this.once = obj.once;
+    this.execute = obj.execute;
+  }
+}
 
 export type MaybePromiseVoid = void | Promise<void>;
-
-export interface Track {
-  name: string;
-  album: string;
-  artist: string;
-  image: string;
-  url: string;
-}
-
-export interface LastFMTrack {
-  artist: {
-    mbid: string;
-    "#text": string;
-  };
-  streamable: string;
-  image: {
-    size: string;
-    "#text": string;
-  }[];
-  mbid: string;
-  album: {
-    mbid: string;
-    "#text": string;
-  };
-  name: string;
-  url: string;
-  date?: {
-    uts: string;
-    "@attr": string;
-  };
-  "@attr"?: {
-    nowplaying: boolean;
-  };
-}
-
-export interface LastFMData {
-  recenttracks: {
-    track: LastFMTrack[];
-    "@attr": {
-      user: string;
-      totalPages: string;
-      page: string;
-      perPage: string;
-      total: string;
-    };
-  };
-}

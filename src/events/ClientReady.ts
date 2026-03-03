@@ -1,19 +1,20 @@
-import { ActivityType, ChannelType, type Client, Events } from "discord.js";
+import { ActivityType, type Client, Events, TextChannel } from "discord.js";
 import db from "../db.ts";
-import env from "../env.ts";
-import type { BotEvent } from "../types.ts";
+import { BotEvent } from "../types.ts";
 import { getRandomEmoji, sleep } from "../utils.ts";
 
-export interface MipoEntry {
+interface MipoEntry {
   mipoId: number;
+  messageId: string;
+  channelId: string;
   userId: string;
   guildId: string;
   timestamp: number;
 }
 
-const channels = env.MIPO_CHANNELS.split(",").map((id) => id.trim());
-
 async function awardMipo(client: Client<true>): Promise<void> {
+  const guilds = (await client.guilds.fetch()).values();
+
   while (true) {
     const today = new Date();
     today.setDate(today.getDate());
@@ -25,15 +26,10 @@ async function awardMipo(client: Client<true>): Promise<void> {
 
     const msTillNextDay = Math.floor(tomorrow.getTime() - new Date().getTime());
 
+    // After the wait, award
     await sleep(msTillNextDay);
 
-    // After the wait, award
-
-    for (const channelId of channels) {
-      const channel = await client.channels.fetch(channelId);
-      if (!channel || channel.type !== ChannelType.GuildText) return;
-      const guild = channel.guild;
-
+    for (const guild of guilds) {
       const rawMipoData = db.sql`
         SELECT * FROM mipo
         WHERE guildId = ${guild.id} AND ${today.getTime()} < timestamp AND timestamp < ${tomorrow.getTime()}
@@ -45,10 +41,15 @@ async function awardMipo(client: Client<true>): Promise<void> {
 
       if (mipoData.length === 2) {
         db.sql`
-          INSERT INTO mipoints (userId, guildId, timestamp)
-          VALUES (${client.user.id}, ${guild.id}, ${Date.now()})
+          INSERT INTO mipoints (userId, messageId, guildId, timestamp)
+          VALUES (${client.user.id}, 0, ${guild.id}, ${Date.now()})
         `;
-        await channel.send(`w00t <@${client.user.id}>!`);
+
+        const channel = await client.channels.fetch(mipoData[0].channelId);
+        if (!channel || !(channel instanceof TextChannel)) return;
+        const message = await channel.messages.fetch(mipoData[0].messageId);
+
+        await message.reply(`w00t <@${client.user.id}>!`);
       } else if (mipoData.length % 2 !== 0) {
         const mipo = mipoData[(mipoData.length - 1) / 2];
 
@@ -57,7 +58,11 @@ async function awardMipo(client: Client<true>): Promise<void> {
           VALUES (${mipo.userId}, ${mipo.guildId}, ${Date.now()})
         `;
 
-        await channel.send(`w00t <@${mipo.userId}>!`);
+        const channel = await client.channels.fetch(mipoData[0].channelId);
+        if (!channel || !(channel instanceof TextChannel)) return;
+        const message = await channel.messages.fetch(mipoData[0].messageId);
+
+        await message.reply(`w00t <@${mipo.userId}>!`);
       } else {
         // Oh boy this gets very complicated.
         let averageTime = 0;
@@ -80,13 +85,18 @@ async function awardMipo(client: Client<true>): Promise<void> {
           INSERT INTO mipoints (userId, guildId, timestamp)
           VALUES (${mipo1.userId}, ${mipo.guildId}, ${Date.now()})
         `;
-        await channel.send(`w00t <@${mipo.userId}>!`);
+
+        const channel = await client.channels.fetch(mipo.channelId);
+        if (!channel || !(channel instanceof TextChannel)) return;
+        const message = await channel.messages.fetch(mipo.messageId);
+
+        await message.reply(`w00t <@${mipo.userId}>!`);
       }
     }
   }
 }
 
-export const clientReadyEvent: BotEvent<Events.ClientReady> = {
+export const clientReadyEvent = new BotEvent<Events.ClientReady>({
   type: Events.ClientReady,
   once: true,
   execute: async (client: Client<true>) => {
@@ -100,4 +110,4 @@ export const clientReadyEvent: BotEvent<Events.ClientReady> = {
 
     await awardMipo(client);
   },
-};
+});

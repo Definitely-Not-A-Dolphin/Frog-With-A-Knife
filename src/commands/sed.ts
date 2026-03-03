@@ -1,13 +1,15 @@
-import type { NonSlashCommand } from "../types.ts";
+import { NonSlashCommand } from "../types.ts";
 
 // uniflex thank you for this code, i don't know regex well enough to do this completely on my own :)
 
-export const sed: NonSlashCommand = {
+export const sed = new NonSlashCommand({
   name: "sed",
   command: /^`?\;sed`?\/`?(\\.|[^\/])*\/(\\.|[^\/])*?(\/.*?)?`?$/,
   description: "replace text and make someone look bad",
   showInHelp: true,
-  match: (message) => Boolean(message.content.match(sed.command)),
+  match(message): boolean {
+    return Boolean(message.content.match(sed.command));
+  },
   execute: async (message) => {
     if (
       !(message.reference && message.reference.messageId && !message.author.bot)
@@ -57,4 +59,4 @@ export const sed: NonSlashCommand = {
     });
     return `${message.author.username} used ${message.content}`;
   },
-};
+});

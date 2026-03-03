@@ -7,7 +7,7 @@ import {
 } from "discord.js";
 import { slashCommands } from "./collectCommands.ts";
 import env from "./env.ts";
-import { type BotEvent, botEventGuard } from "./types.ts";
+import { BotEvent } from "./types.ts";
 import { coolBanner } from "./utils.ts";
 
 const client = new Client<true>({
@@ -45,7 +45,7 @@ for (const eventFile of eventFiles) {
   const module = await import(`./events/${eventFile.name}`) as object;
 
   for (const [name, entry] of Object.entries(module)) {
-    if (!botEventGuard(entry)) {
+    if (!(entry instanceof BotEvent)) {
       console.warn(
         `[WARNING] The export ${name} in module ${eventFile.name} doesn't really look like an event..`,
       );

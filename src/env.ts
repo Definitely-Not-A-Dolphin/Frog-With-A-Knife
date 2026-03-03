@@ -5,7 +5,6 @@ const requiredKeys = [
   "TOKEN",
   "LASTFM_KEY",
   "DATABASE_PATH",
-  "MIPO_CHANNELS",
 ] as const;
 
 const env = await load();

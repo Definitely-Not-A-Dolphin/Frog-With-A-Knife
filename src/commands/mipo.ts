@@ -1,7 +1,6 @@
-import { type Message, MessageFlags } from "discord.js";
+import { type Message, MessageFlags, TextChannel } from "discord.js";
 import db from "../db.ts";
-import env from "../env.ts";
-import type { NonSlashCommand } from "../types.ts";
+import { NonSlashCommand } from "../types.ts";
 
 export interface MipointEntry {
   mipointId: number;
@@ -10,24 +9,26 @@ export interface MipointEntry {
   timestamp: number;
 }
 
-const channels = env.MIPO_CHANNELS.split(",").map((id) => id.trim());
-
-export const mipo: NonSlashCommand = {
+export const mipo = new NonSlashCommand({
   name: "mipo",
   command: ";mipo",
   description: "doe de mipo!",
   showInHelp: true,
-  match: (message: Message) => message.content === mipo.command,
+  match(message: Message): boolean {
+    return message.content === mipo.command;
+  },
   execute: async (message: Message) => {
-    if (!channels.includes(message.channelId)) {
+    if (!(message.channel instanceof TextChannel)) {
       await message.reply("mipo MIJN REET");
       return `${message.author.username} tried mipo where it isn't allowed`;
     }
 
     db.sql`
-      INSERT INTO mipo (userId, guildId, timestamp)
+      INSERT INTO mipo (userId, messageId, channelId, guildId, timestamp)
       VALUES (
         ${message.author.id},
+        ${message.id},
+        ${message.channelId},
         ${message.guild?.id ?? 0},
         ${message.createdTimestamp}
       );
@@ -38,14 +39,16 @@ export const mipo: NonSlashCommand = {
     await message.react("🔪");
     return `${message.author.username} did a mipo`;
   },
-};
+});
 
-export const mipoStats: NonSlashCommand = {
+export const mipoStats = new NonSlashCommand({
   name: "mipostats",
   command: ";mipostats",
   description: "Check the mipostats",
   showInHelp: true,
-  match: (message) => message.content === mipoStats.command,
+  match(message): boolean {
+    return message.content === mipoStats.command;
+  },
   execute: async (message) => {
     if (!message.guild) return;
 
@@ -81,7 +84,7 @@ export const mipoStats: NonSlashCommand = {
       if (count > Number(highestCount)) highestCount = String(count);
     }
 
-    let replyMessage = "# :3 stats\n```\n";
+    let replyMessage = "# mipostats\n```\n";
 
     let first = true;
     for (const [name, count] of Object.entries(mipointData)) {
@@ -100,4 +103,4 @@ export const mipoStats: NonSlashCommand = {
     });
     return `${message.author.username} user :3stats`;
   },
-};
+});

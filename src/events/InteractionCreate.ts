@@ -1,14 +1,14 @@
 import { Events, type Interaction, MessageFlags } from "discord.js";
 import { slashCommands } from "../collectCommands.ts";
-import type { BotEvent, SlashCommand } from "../types.ts";
+import { BotEvent } from "../types.ts";
 
-export const interactionCreateEvent: BotEvent<Events.InteractionCreate> = {
+export const interactionCreateEvent = new BotEvent<Events.InteractionCreate>({
   type: Events.InteractionCreate,
   once: false,
   execute: async (interaction: Interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
-    const command: SlashCommand | undefined = slashCommands.find((
+    const command = slashCommands.find((
       slashCommand,
     ) => slashCommand.data.name === interaction.commandName);
 
@@ -30,4 +30,4 @@ export const interactionCreateEvent: BotEvent<Events.InteractionCreate> = {
       });
     }
   },
-};
+});

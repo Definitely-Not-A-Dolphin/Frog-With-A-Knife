@@ -28,6 +28,8 @@ db.sql`
 db.sql`
   CREATE TABLE IF NOT EXISTS mipo (
     mipoId INTEGER PRIMARY KEY AUTOINCREMENT,
+    messageId INTEGER KEY,
+    channelId INTEGER KEY,
     userId TEXT KEY,
     guildId TEXT KEY,
     timestamp BIGINT KEY

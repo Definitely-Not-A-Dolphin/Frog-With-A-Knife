@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import type { NonSlashCommand } from "../types.ts";
+import { NonSlashCommand } from "../types.ts";
 
 interface UrbanDictionaryEntry {
   author: string;
@@ -18,13 +18,14 @@ interface UrbanDictionaryResponse {
   list: UrbanDictionaryEntry[];
 }
 
-export const urbanDictionary: NonSlashCommand = {
+export const urbanDictionary = new NonSlashCommand({
   name: "urban dictionary",
   command: /;u(d|rban)/i,
   description: "get a definition from the urban dictionary",
   showInHelp: true,
-  match: (message) =>
-    Boolean(message.content.split(" ")[0].match(urbanDictionary.name)),
+  match(message): boolean {
+    return Boolean(message.content.split(" ")[0].match(urbanDictionary.name));
+  },
   execute: async (message) => {
     const givenWord = message.content.split(" ")[1];
 
@@ -68,4 +69,4 @@ export const urbanDictionary: NonSlashCommand = {
     });
     return `${message.author.username} used .ud [${word}]`;
   },
-};
+});
