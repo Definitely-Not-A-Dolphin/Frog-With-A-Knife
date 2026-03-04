@@ -1,21 +1,21 @@
 while :
 do
   cd ../Frog-With-A-Knife-Token;
-  echo "git pull secrets";
+  echo "Pulling secrets";
   git pull;
 
   cd ../Frog-With-A-Knife;
   echo "Copying secrets";
-  cp ../Frog-With-A-Knife-Token/.env.prod .env;
+  cp ../Frog-With-A-Knife-Token/prod.env .env;
 
-  echo "git pull code";
+  echo "Pulling code";
   git pull;
 
   echo "deno install";
   deno install;
 
-  echo "deno run prod";
-  deno run prod;
+  echo "docker compose up --build";
+  docker compose -up;
 
   echo "getting eepy";
   sleep 1h;

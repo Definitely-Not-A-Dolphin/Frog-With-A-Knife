@@ -20,7 +20,7 @@ interface UrbanDictionaryResponse {
 
 export const urbanDictionary = new NonSlashCommand({
   name: "urban dictionary",
-  command: /;u(d|rban)/i,
+  command: /^;u(d|rban)/i,
   description: "get a definition from the urban dictionary",
   showInHelp: true,
   match(message): boolean {
