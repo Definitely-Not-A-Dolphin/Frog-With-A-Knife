@@ -6,4 +6,4 @@ COPY . .
 
 RUN deno install
 
-CMD ["deno", "run", "dev"]
+CMD ["deno", "run", "prod"]

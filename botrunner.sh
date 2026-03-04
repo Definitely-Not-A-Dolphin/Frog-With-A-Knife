@@ -6,7 +6,7 @@ do
 
   cd ../Frog-With-A-Knife;
   echo "Copying secrets";
-  cp ../Frog-With-A-Knife-Token/prod.env .env;
+  deno run copy-prod;
 
   echo "Pulling code";
   git pull;
@@ -15,8 +15,11 @@ do
   deno install;
 
   echo "docker compose up --build";
-  docker compose -up;
+  docker compose up --build;
 
   echo "getting eepy";
   sleep 1h;
+
+  echo "The container must be stopped!";
+  docker stop frog-with-a-knife-frog-1;
 done
