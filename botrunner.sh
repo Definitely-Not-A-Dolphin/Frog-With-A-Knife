@@ -15,7 +15,7 @@ do
   deno install;
 
   echo "docker compose up --build";
-  docker compose up --build;
+  docker compose up --build &
 
   echo "getting eepy";
   sleep 1h;
