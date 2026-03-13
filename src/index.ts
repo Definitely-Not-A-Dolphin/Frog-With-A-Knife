@@ -31,8 +31,10 @@ console.log(
   `Started refreshing ${commands.length} application (/) commands.`,
 );
 
+
+const CLIENTID = env.CLIENTID ?? (await rest.get(Routes.oauth2CurrentApplication()).catch(console.error) as { id?: string; }).id;
 await rest
-  .put(Routes.applicationCommands(env.CLIENTID), { body: commands })
+  .put(Routes.applicationCommands(CLIENTID), { body: commands })
   .catch((err) => console.error(err));
 
 console.log(`Successfully reloaded application (/) commands.`);

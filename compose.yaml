@@ -4,5 +4,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    env_file:
+      - .env
     volumes:
-      - ./daataabaasaa.db:/app/daataabaasaa.db
+      - ${DATABASE_PATH:-./daataabaasaa.db}:/app/${DATABASE_PATH:-./daataabaasaa.db}

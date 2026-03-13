@@ -11,8 +11,10 @@ do
   echo "Pulling code";
   git pull;
 
-  echo "deno install";
-  deno install;
+  . .env
+  DB=${DATABASE_PATH:-./daataabaasaa.db}
+  mkdir -p "$(dirname "$DB")"
+  touch "$DB"
 
   echo "docker compose up --build";
   docker compose up --build &
