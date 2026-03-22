@@ -25,7 +25,7 @@ export const xkcd = new NonSlashCommand({
   description: "get an xkcd comic",
   showInHelp: true,
   match(message): boolean {
-    return message.content.split(" ")[0] === xkcd.command;
+    return message.content.split(" ")[0] === this.command;
   },
   execute: async (message) => {
     const entry = message.content.split(" ")[1];
@@ -40,7 +40,7 @@ export const xkcd = new NonSlashCommand({
       return `${message.author.username} used .xkcd [${entry}], but something went wrong`;
     }
 
-    const xkcdData: XKCDData = await xkcdResponse.json();
+    const xkcdData = await xkcdResponse.json() as XKCDData;
     const xkcdEmbed = new EmbedBuilder()
       .setTitle(xkcdData.title)
       .setImage(xkcdData.img)
@@ -77,7 +77,7 @@ export const slashxkcd = new SlashCommand({
       return `${interaction.user.username} used .xkcd [${entry}], but something went wrong`;
     }
 
-    const xkcdData: XKCDData = await xkcdResponse.json();
+    const xkcdData = await xkcdResponse.json() as XKCDData;
     const xkcdEmbed = new EmbedBuilder()
       .setTitle(xkcdData.title)
       .setImage(xkcdData.img)

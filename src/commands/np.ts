@@ -81,13 +81,13 @@ export const lastFMnp = new NonSlashCommand({
   description: "Show your currently playing track!",
   showInHelp: true,
   match(message): boolean {
-    return message.content === lastFMnp.command;
+    return message.content === this.command;
   },
   execute: async (message) => {
-    const lastFMUsername: string | null = db
+    const lastFMUsername = db
       .sql`SELECT lastfmUsername FROM lastfm WHERE userId = ${message.author.id}`[
         0
-      ]?.lastfmUsername;
+      ]?.lastfmUsername as string | null;
 
     if (!lastFMUsername) {
       await message.reply(
@@ -138,7 +138,7 @@ export const lastFMSet = new NonSlashCommand({
   description: "Set your lastFM username!",
   showInHelp: true,
   match(message): boolean {
-    return message.content.split(" ")[0] === lastFMSet.command;
+    return message.content.split(" ")[0] === this.command;
   },
   execute: async (message) => {
     const lastFMUsername = message.content.split(" ").slice(1).join();
@@ -178,10 +178,10 @@ export const slashLastFMnp = new SlashCommand({
       InteractionContextType.PrivateChannel,
     ]),
   execute: async (interaction) => {
-    const lastFMUsername: string | null = db
+    const lastFMUsername = db
       .sql`SELECT lastfmUsername FROM lastfm WHERE userId = ${interaction.user.id}`[
         0
-      ]?.lastfmUsername;
+      ]?.lastfmUsername as string | null;
 
     if (!lastFMUsername) {
       await interaction
@@ -208,7 +208,7 @@ export const slashLastFMnp = new SlashCommand({
     }
 
     const lastFMData: LastFMData = await response.json();
-    const nowPlayingTrack: LastFMTrack = lastFMData.recenttracks.track?.[0];
+    const nowPlayingTrack = lastFMData.recenttracks.track?.[0];
 
     if (!nowPlayingTrack["@attr"]?.nowplaying) {
       await interaction

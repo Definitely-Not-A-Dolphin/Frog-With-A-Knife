@@ -1,4 +1,4 @@
-import { type Message, MessageFlags, TextChannel } from "discord.js";
+import { MessageFlags, TextChannel } from "discord.js";
 import db from "../db.ts";
 import { NonSlashCommand } from "../types.ts";
 
@@ -14,10 +14,10 @@ export const mipo = new NonSlashCommand({
   command: ";mipo",
   description: "doe de mipo!",
   showInHelp: true,
-  match(message: Message): boolean {
-    return message.content === mipo.command;
+  match(message): boolean {
+    return message.content === this.command;
   },
-  execute: async (message: Message) => {
+  execute: async (message) => {
     if (!(message.channel instanceof TextChannel)) {
       await message.reply("mipo MIJN REET");
       return `${message.author.username} tried mipo where it isn't allowed`;
@@ -47,11 +47,9 @@ export const mipoStats = new NonSlashCommand({
   description: "Check the mipostats",
   showInHelp: true,
   match(message): boolean {
-    return message.content === mipoStats.command;
+    return message.content === this.command;
   },
   execute: async (message) => {
-    if (!message.guild) return;
-
     const rawMipointsData = db.sql`
       SELECT * FROM mipoints
       WHERE guildId = ${message.guild.id}
@@ -92,7 +90,7 @@ export const mipoStats = new NonSlashCommand({
         " ".repeat(highestCount.length - String(count).length + 1)
       }: ${name}\n`;
 
-      first = false;
+      if (first) first = false;
     }
 
     replyMessage += "```";

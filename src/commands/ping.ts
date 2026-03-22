@@ -7,7 +7,7 @@ export const ping = new NonSlashCommand({
   description: "ping pong",
   showInHelp: true,
   match(message): boolean {
-    return message.content === ping.command;
+    return message.content === this.command;
   },
   execute: async (message) => {
     const diff = Date.now() - message.createdTimestamp;

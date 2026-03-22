@@ -22,7 +22,7 @@ export class NonSlashCommand {
   description: string;
   showInHelp: boolean;
   match: (message: Message) => boolean;
-  execute: (message: Message) => Promise<string | void>;
+  execute: (message: Message<true>) => Promise<string | void>;
 
   constructor(obj: NonSlashCommand) {
     this.name = obj.name;

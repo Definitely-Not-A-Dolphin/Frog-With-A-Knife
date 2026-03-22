@@ -17,6 +17,13 @@ db.sql`
 `;
 
 db.sql`
+  CREATE TABLE IF NOT EXISTS quoteChannels (
+    guildId TEXT PRIMARY KEY,
+    channelId TEXT KEY
+  );
+`;
+
+db.sql`
   CREATE TABLE IF NOT EXISTS meow (
     meowId INTEGER PRIMARY KEY AUTOINCREMENT,
     userId TEXT KEY,

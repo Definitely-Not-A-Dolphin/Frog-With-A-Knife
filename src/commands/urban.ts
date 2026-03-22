@@ -25,7 +25,7 @@ export const urbanDictionary = new NonSlashCommand({
   showInHelp: true,
   match(message): boolean {
     return Boolean(
-      message.content.split(" ")[0].match(urbanDictionary.command),
+      message.content.split(" ")[0].match(this.command),
     );
   },
   execute: async (message) => {
@@ -36,7 +36,7 @@ export const urbanDictionary = new NonSlashCommand({
       return `${message.author.username} used .ud [], but failed to supply a word`;
     }
 
-    const urbanDictionaryResponse: Response = await fetch(
+    const urbanDictionaryResponse = await fetch(
       `https://api.urbandictionary.com/v0/define?term=${givenWord}`,
     );
 
@@ -45,16 +45,16 @@ export const urbanDictionary = new NonSlashCommand({
       return `${message.author.username} used .ud ${givenWord}, but something went wrong`;
     }
 
-    const responseData: UrbanDictionaryResponse = await urbanDictionaryResponse
-      .json();
+    const responseData = await urbanDictionaryResponse
+      .json() as UrbanDictionaryResponse;
 
     if (!responseData.list[0]) {
       await message.reply("Definition not found :\\");
       return `${message.author.username} used .ud [${givenWord}], but no definition was found`;
     }
 
-    const { author, definition, permalink, thumbs_down, thumbs_up, word }:
-      UrbanDictionaryEntry = responseData.list[0];
+    const { author, definition, permalink, thumbs_down, thumbs_up, word } =
+      responseData.list[0];
 
     const udEmbed = new EmbedBuilder()
       .setTitle(word)
