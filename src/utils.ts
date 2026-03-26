@@ -22,14 +22,3 @@ export function getRandomEmoji(): string {
 
 export const sleep = async (ms: number) =>
   await new Promise((resolve) => setTimeout(resolve, ms));
-
-export function unwrap<T>($: T | undefined | null): NonNullable<T> {
-  // Using $ feels very illegal
-  if ($ === undefined) {
-    throw new Error("Unwrapping failed: value is undefined");
-  } else if ($ === null) {
-    throw new Error("Unwrapping failed: value is null");
-  }
-
-  return $;
-}

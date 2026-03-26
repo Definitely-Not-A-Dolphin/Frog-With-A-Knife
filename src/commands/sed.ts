@@ -1,5 +1,4 @@
 import { NonSlashCommand } from "../types.ts";
-import { unwrap } from "../utils.ts";
 
 // uniflex thank you for this code, i don't know regex well enough to do this completely on my own :)
 
@@ -19,9 +18,9 @@ export const sed = new NonSlashCommand({
       return `${message.author.username} used ${message.content}`;
     }
 
-    const match = unwrap(message.content.match(
+    const match = message.content.match(
       /^`?\;sed`?\/`?((?:\\.|[^\/])*)\/((?:\\.|[^\/])*?)(\/(.*?))?`?$/,
-    ));
+    )!;
     const [, find, replace, , options] = match;
 
     if (
