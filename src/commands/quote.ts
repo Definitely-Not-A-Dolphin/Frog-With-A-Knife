@@ -53,7 +53,7 @@ export const setQuoteChannel = new NonSlashCommand({
   },
   async execute(message): Promise<string> {
     if (!(message.channel instanceof TextChannel)) {
-      await message.reply("this channel isnt valid sis");
+      await message.reply("this channel isn't valid sis");
       return `${message.author.displayName} tried to set a quotes channel somewhere invalid.`;
     }
 

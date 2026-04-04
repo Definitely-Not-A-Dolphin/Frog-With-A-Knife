@@ -55,42 +55,43 @@ export const mipoStats = new NonSlashCommand({
       WHERE guildId = ${message.guild.id}
     ` as MipointEntry[];
 
-    const userIds = rawMipointsData.map((entry) => entry.userId) as string[];
+    const userIds = rawMipointsData.map((entry) => entry.userId);
 
     // Maps userId to displayName
-    const members = Object.fromEntries(
+    const members = new Map(
       (await message.guild.members.fetch({
         user: userIds,
       })).map((member) => [member.id, member.displayName]),
     );
 
-    let mipointData: Record<string, number> = {};
+    let mipointData = new Map<string, number>();
 
     for (const { userId } of rawMipointsData) {
-      const displayName = members[userId];
-      if (mipointData[displayName]) mipointData[displayName] += 1;
-      else mipointData[displayName] = 1;
+      const displayName = members.get(userId)!;
+      if (mipointData.get(displayName)) {
+        mipointData.set(displayName, mipointData.get(displayName)! + 1);
+      } else mipointData.set(displayName, 1);
     }
 
     // Sorts it
-    mipointData = Object.fromEntries(
-      Object.entries(mipointData).sort((a, b) => b[1] - a[1]),
+    mipointData = new Map(
+      [...mipointData.entries()].sort((a, b) => b[1] - a[1]),
     );
 
     let highestCount = "0";
-    for (const count of Object.values(mipointData)) {
+    for (const count of mipointData.values()) {
       if (count > Number(highestCount)) highestCount = String(count);
     }
 
     let replyMessage = "# mipostats\n```\n";
 
     let first = true;
-    for (const [name, count] of Object.entries(mipointData)) {
+    for (const [name, count] of mipointData.entries()) {
       replyMessage += `${first ? "╭" : "├"}─ ${count}${
         " ".repeat(highestCount.length - String(count).length + 1)
       }: ${name}\n`;
 
-      if (first) first = false;
+      first = false;
     }
 
     replyMessage += "```";

@@ -97,7 +97,9 @@ export const lastFMnp = new NonSlashCommand({
     }
 
     const response = await fetch(
-      `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${lastFMUsername}&api_key=${env.LASTFM_KEY}&format=json`,
+      `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${lastFMUsername}&api_key=${
+        env.get("LASTFM_KEY")
+      }&format=json`,
     );
 
     if (!response.ok) {
@@ -194,8 +196,10 @@ export const slashLastFMnp = new SlashCommand({
     }
 
     const baseUrl =
-      `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${lastFMUsername}&api_key=${env.LASTFM_KEY}&format=json`;
-    const response: Response = await fetch(baseUrl);
+      `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${lastFMUsername}&api_key=${
+        env.get("LASTFM_KEY")
+      }&format=json`;
+    const response = await fetch(baseUrl);
 
     if (!response.ok) {
       await interaction
@@ -207,7 +211,7 @@ export const slashLastFMnp = new SlashCommand({
       return `${interaction.user.username} used /lastfm-np, but something went wrong`;
     }
 
-    const lastFMData: LastFMData = await response.json();
+    const lastFMData = await response.json() as LastFMData;
     const nowPlayingTrack = lastFMData.recenttracks.track?.[0];
 
     if (!nowPlayingTrack["@attr"]?.nowplaying) {

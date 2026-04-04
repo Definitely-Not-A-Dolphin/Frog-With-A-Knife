@@ -2,7 +2,7 @@ import { Database } from "@db/sqlite";
 import env from "./env.ts";
 import { addSigListener } from "./sigHandler.ts";
 
-const db = new Database(env.DATABASE_PATH);
+const db = new Database(env.get("DATABASE_PATH")!);
 
 addSigListener(() => {
   console.log("Closing DB");

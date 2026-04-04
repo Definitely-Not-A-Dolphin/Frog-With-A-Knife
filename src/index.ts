@@ -25,16 +25,14 @@ for (const slashCommand of slashCommands) {
   commands.push(slashCommand.data.toJSON());
 }
 
-const rest = new REST().setToken(env.TOKEN);
+const rest = new REST().setToken(env.get("TOKEN")!);
 
 console.log(
   `Started refreshing ${commands.length} application (/) commands.`,
 );
 
-
-const CLIENTID = env.CLIENTID ?? (await rest.get(Routes.oauth2CurrentApplication()).catch(console.error) as { id?: string; }).id;
 await rest
-  .put(Routes.applicationCommands(CLIENTID), { body: commands })
+  .put(Routes.applicationCommands(env.get("CLIENTID")!), { body: commands })
   .catch((err) => console.error(err));
 
 console.log(`Successfully reloaded application (/) commands.`);
@@ -65,5 +63,5 @@ for (const eventFile of eventFiles) {
   }
 }
 
-client.login(env.TOKEN);
+client.login(env.get("TOKEN"));
 console.log(coolBanner);

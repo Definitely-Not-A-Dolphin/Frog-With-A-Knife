@@ -49,34 +49,33 @@ export const kittyStats = new NonSlashCommand({
     const userIds = rawMeowData.map((entry) => entry.userId);
 
     // Maps userId to displayName
-    const members = Object.fromEntries(
+    const members = new Map(
       (await message.guild.members.fetch({
         user: userIds,
       })).map((member) => [member.id, member.displayName]),
     );
 
-    let meowData: Record<string, number> = {};
+    let meowData = new Map<string, number>();
 
     for (const { userId } of rawMeowData) {
-      const displayName = members[userId];
-      if (meowData[displayName]) meowData[displayName] += 1;
-      else meowData[displayName] = 1;
+      const displayName = members.get(userId)!;
+      if (meowData.get(displayName)) {
+        meowData.set(displayName, meowData.get(displayName)! + 1);
+      } else meowData.set(displayName, 1);
     }
 
     // Sorts it
-    meowData = Object.fromEntries(
-      Object.entries(meowData).sort((a, b) => b[1] - a[1]),
-    );
+    meowData = new Map([...meowData.entries()].sort((a, b) => b[1] - a[1]));
 
     let highestCount = "0";
-    for (const count of Object.values(meowData)) {
+    for (const count of meowData.values()) {
       if (count > Number(highestCount)) highestCount = String(count);
     }
 
     let replyMessage = "# :3 stats\n```\n";
 
     let first = true;
-    for (const [name, count] of Object.entries(meowData)) {
+    for (const [name, count] of [...meowData.entries()]) {
       replyMessage += `${first ? "╭" : "├"}─ ${count}${
         " ".repeat(highestCount.length - String(count).length + 1)
       }: ${name}\n`;
