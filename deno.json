@@ -4,7 +4,7 @@
     "copy-prod": "cp ../Frog-With-A-Knife-Token/prod.env .env",
     "copy-dev": "cp ../Frog-With-A-Knife-Token/dev.env .env",
     "prod": "deno run -A src/index.ts",
-    "prod-db": "rm daataabaasaa.db; deno run -A src/db.ts; deno run dev",
+    "prod-db": "rm daataabaasaa.db; deno run -A src/db.ts; deno run prod",
     "dev": "deno run -A --watch src/index.ts",
     "dev-db": "rm daataabaasaa.db; deno run -A src/db.ts; deno run dev-watch"
   },

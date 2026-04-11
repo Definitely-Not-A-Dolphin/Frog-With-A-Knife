@@ -15,10 +15,10 @@ for (const key of requiredKeys) {
 }
 
 console.log("\x1b[34m.env values:\x1b[0m");
-for (const [key, value] of env.values()) {
+for (const [key, value] of env.entries()) {
   console.log(
     `\t${key}: \x1b[32m"${
-      value.substring(0, 5) + ".".repeat(value.length - 5)
+      value.substring(0, 5) + ".".repeat(Math.max(0, value.length - 5))
     }"\x1b[0m`,
   );
 }

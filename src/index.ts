@@ -7,8 +7,21 @@ import {
 } from "discord.js";
 import { slashCommands } from "./collectCommands.ts";
 import env from "./env.ts";
+import db from "$src/db.ts";
 import { BotEvent } from "./types.ts";
 import { coolBanner } from "./utils.ts";
+
+function sigHandler(): Promise<never> {
+  console.log("Shutting down...");
+
+  console.log("Closing database");
+  db.close();
+
+  Deno.exit();
+}
+
+if (Deno.build.os === "windows") Deno.addSignalListener("SIGINT", sigHandler);
+else Deno.addSignalListener("SIGTERM", sigHandler);
 
 const client = new Client<true>({
   intents: [
