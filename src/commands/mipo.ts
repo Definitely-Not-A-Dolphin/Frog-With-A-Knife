@@ -29,7 +29,7 @@ export const mipo = new NonSlashCommand({
         ${message.author.id},
         ${message.id},
         ${message.channelId},
-        ${message.guild?.id ?? 0},
+        ${message.guild.id!},
         ${message.createdTimestamp}
       );
     `;

@@ -40,7 +40,8 @@ async function awardMipo(client: Client<true>): Promise<void> {
           entry.timestamp - nextEntry.timestamp
         );
 
-        if (mipoData.length === 0) { continue; } else if (mipoData.length === 2) {
+        if (mipoData.length === 0) continue; 
+        else if (mipoData.length === 2) {
           db.sql`
             INSERT INTO mipoints (userId, guildId, timestamp)
             VALUES (${client.user.id}, ${guild.id}, ${Date.now()})
@@ -51,7 +52,7 @@ async function awardMipo(client: Client<true>): Promise<void> {
           const message = await channel.messages.fetch(mipoData[0].messageId);
 
           await message.reply(`w00t <@${client.user.id}>!`);
-        } else if (mipoData.length % 2 !== 0) {
+        } else if (mipoData.length % 2 === 1) {
           const mipo = mipoData[(mipoData.length - 1) / 2];
 
           db.sql`

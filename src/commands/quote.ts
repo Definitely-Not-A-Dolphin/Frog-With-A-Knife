@@ -39,6 +39,7 @@ export const quote = new NonSlashCommand({
 
       channel.send(content);
     }
+    
     return `${message.author.displayName} quoted ${repliedToMessage.author.displayName}`;
   },
 });

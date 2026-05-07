@@ -57,6 +57,7 @@ export const sed = new NonSlashCommand({
       allowedMentions: { repliedUser: false },
       content: newContent + `\n-# \`${message.content}\``,
     });
+    
     return `${message.author.username} used ${message.content}`;
   },
 });
