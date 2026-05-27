@@ -11,7 +11,7 @@ do
   echo "Pulling code";
   git pull;
 
-  . .env
+  . ./.env
   DB=${DATABASE_PATH:-./daataabaasaa.db}
   mkdir -p "$(dirname "$DB")"
   touch "$DB"
