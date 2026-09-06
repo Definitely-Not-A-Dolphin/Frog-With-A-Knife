@@ -40,7 +40,8 @@ async function awardMipo(client: Client<true>): Promise<void> {
           entry.timestamp - nextEntry.timestamp
         );
 
-        if (mipoData.length === 0) { continue; } else if (mipoData.length === 2) {
+        if (mipoData.length === 0) continue;
+        else if (mipoData.length === 2) {
           db.sql`
             INSERT INTO mipoints (userId, guildId, timestamp)
             VALUES (${client.user.id}, ${guild.id}, ${Date.now()})
@@ -78,7 +79,7 @@ async function awardMipo(client: Client<true>): Promise<void> {
           );
 
           const mipo = Math.abs(mipo1.timestamp - averageTime)
-            < Math.abs(mipo2.timestamp - averageTime)
+              < Math.abs(mipo2.timestamp - averageTime)
             ? mipo1
             : mipo2;
 
@@ -93,7 +94,9 @@ async function awardMipo(client: Client<true>): Promise<void> {
 
           await message.reply(`w00t <@${mipo.userId}>!`);
         }
-      } catch (e) { console.error(e); }
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 }
@@ -105,9 +108,7 @@ export const clientReadyEvent = new BotEvent<Events.ClientReady>({
     console.log(`Ready! Logged in as ${client.user.tag}`);
     client.user.setActivity(
       `testing in production ${getRandomEmoji()}`,
-      {
-        type: ActivityType.Custom,
-      },
+      { type: ActivityType.Custom },
     );
 
     await awardMipo(client);

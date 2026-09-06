@@ -6,22 +6,20 @@ import {
   Routes,
 } from "discord.js";
 import { slashCommands } from "./collectCommands.ts";
-import env from "./env.ts";
-import db from "$src/db.ts";
 import { BotEvent } from "./types.ts";
 import { coolBanner } from "./utils.ts";
 
-function sigHandler(): Promise<never> {
-  console.log("Shutting down...");
+const requiredKeys = [
+  "TOKEN",
+  "LASTFM_KEY",
+  "DATABASE_PATH",
+] as const;
 
-  console.log("Closing database");
-  db.close();
-
-  Deno.exit();
+for (const key of requiredKeys) {
+  if (!Deno.env.get(key)) {
+    throw new Error(`\x1b[34mMissing .env variable ${key}\x1b[0m`);
+  }
 }
-
-if (Deno.build.os === "windows") Deno.addSignalListener("SIGINT", sigHandler);
-else Deno.addSignalListener("SIGTERM", sigHandler);
 
 const client = new Client<true>({
   intents: [
@@ -38,15 +36,14 @@ for (const slashCommand of slashCommands) {
   commands.push(slashCommand.data.toJSON());
 }
 
-const rest = new REST().setToken(env.get("TOKEN")!);
-
 console.log(
   `Started refreshing ${commands.length} application (/) commands.`,
 );
 
-await rest
-  .put(Routes.applicationCommands(env.get("CLIENTID")!), { body: commands })
-  .catch((err) => console.error(err));
+await new REST().setToken(Deno.env.get("TOKEN")!).put(
+  Routes.applicationCommands(Deno.env.get("CLIENTID")!),
+  { body: commands },
+).catch(console.error);
 
 console.log(`Successfully reloaded application (/) commands.`);
 
@@ -62,19 +59,13 @@ for (const eventFile of eventFiles) {
       console.warn(
         `[WARNING] The export ${name} in module ${eventFile.name} doesn't really look like an event..`,
       );
-
-      continue;
-    }
-
-    const event = entry as BotEvent<typeof entry.type>;
-
-    if (event.once) {
-      client.once(event.type as string, (...args) => event.execute(...args));
+    } else if (entry.once) {
+      client.once(entry.type, entry.execute);
     } else {
-      client.on(event.type as string, (...args) => event.execute(...args));
+      client.on(entry.type, entry.execute);
     }
   }
 }
 
-client.login(env.get("TOKEN"));
+client.login(Deno.env.get("TOKEN"));
 console.log(coolBanner);

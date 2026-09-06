@@ -8,9 +8,9 @@ export const interactionCreateEvent = new BotEvent<Events.InteractionCreate>({
   execute: async (interaction: Interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
-    const command = slashCommands.find((
-      slashCommand,
-    ) => slashCommand.data.name === interaction.commandName);
+    const command = slashCommands.find(
+      (slashCommand) => slashCommand.data.name === interaction.commandName,
+    );
 
     if (!command) {
       console.error(
@@ -20,8 +20,10 @@ export const interactionCreateEvent = new BotEvent<Events.InteractionCreate>({
     }
 
     try {
-      const returnMessage = await command.execute(interaction);
-      console.log(`\x1b[36m > \x1b[0m ${returnMessage}`);
+      const logMessage = await command.execute(interaction);
+      console.log(
+        new Date().toISOString() + `\x1b[36m > \x1b[0m${logMessage}`,
+      );
     } catch (error) {
       console.error(error);
       await interaction.reply({

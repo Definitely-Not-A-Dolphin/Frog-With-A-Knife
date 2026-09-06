@@ -34,8 +34,6 @@ export const mipo = new NonSlashCommand({
       );
     `;
 
-    // If this line appears unfinished, its because
-    // your font can't render the emoji and panics
     await message.react("🔪");
     return `${message.author.username} did a mipo`;
   },

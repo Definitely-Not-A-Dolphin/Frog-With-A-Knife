@@ -1,19 +1,22 @@
-import { Events, type Message } from "discord.js";
+import { Events, type Message, TextChannel } from "discord.js";
 import { nonSlashCommands } from "../collectCommands.ts";
 import { BotEvent } from "../types.ts";
 
-export const messageCreateEvent = new BotEvent<Events.MessageCreate>({
+export const nonSlashCommandEvent = new BotEvent<Events.MessageCreate>({
   type: Events.MessageCreate,
   once: false,
   execute: async (message: Message) => {
-    if (!message.guild) return;
-
-    const guildMessage = message as Message<true>;
+    if (!(message.channel instanceof TextChannel)) return;
 
     for (const nonSlashCommand of nonSlashCommands) {
-      if (nonSlashCommand.match(guildMessage)) {
-        const logMessage = await nonSlashCommand.execute(guildMessage);
-        console.log(`\x1b[36m > \x1b[0m ${logMessage}`);
+      if (nonSlashCommand.match(message)) {
+        const logMessage = await nonSlashCommand.execute(
+          // Todo: make this redundant
+          message as Message<true>,
+        );
+        console.log(
+          new Date().toISOString() + `\x1b[36m > \x1b[0m${logMessage}`,
+        );
       }
     }
   },

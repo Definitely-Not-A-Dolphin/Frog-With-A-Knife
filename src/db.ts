@@ -1,19 +1,11 @@
 import { Database } from "@db/sqlite";
-import env from "./env.ts";
 
-const db = new Database(env.get("DATABASE_PATH")!);
+const db = new Database(Deno.env.get("DATABASE_PATH")!);
 
 db.sql`
   CREATE TABLE IF NOT EXISTS lastfm (
     userId TEXT PRIMARY KEY,
     lastfmUsername TEXT KEY
-  );
-`;
-
-db.sql`
-  CREATE TABLE IF NOT EXISTS quoteChannels (
-    guildId TEXT PRIMARY KEY,
-    channelId TEXT KEY
   );
 `;
 

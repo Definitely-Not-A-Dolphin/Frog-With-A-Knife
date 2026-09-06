@@ -13,7 +13,7 @@ export const ping = new NonSlashCommand({
     const diff = Date.now() - message.createdTimestamp;
 
     await message.reply(`Pong! Latency: ${diff}ms`);
-    return `${message.author.username} used .ping, ping was ${diff}`;
+    return `${message.author.username} used ;ping: Command successful`;
   },
 });
 
@@ -29,12 +29,10 @@ export const slashPing = new SlashCommand({
   execute: async (interaction) => {
     const diff = Date.now() - interaction.createdTimestamp;
 
-    await interaction
-      .reply({
-        content: `Pong! Latency: ${diff}ms`,
-        withResponse: true,
-      })
-      .catch((err) => console.error(err));
-    return `${interaction.user.username} used .ping, ping was ${diff}`;
+    await interaction.reply({
+      content: `Pong! Latency: ${diff}ms`,
+      withResponse: true,
+    }).catch(console.error);
+    return `${interaction.user.username} used /ping: Command Successful`;
   },
 });

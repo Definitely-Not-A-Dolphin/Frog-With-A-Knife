@@ -1,12 +1,13 @@
 import {
   EmbedBuilder,
   InteractionContextType,
+  InteractionReplyOptions,
+  MessageReplyOptions,
   SlashCommandBuilder,
   type SlashCommandStringOption,
+  User,
 } from "discord.js";
 import { getAverageColor } from "fast-average-color-node";
-import db from "../db.ts";
-import env from "../env.ts";
 import { NonSlashCommand, SlashCommand } from "../types.ts";
 
 interface Track {
@@ -56,24 +57,110 @@ interface LastFMData {
   };
 }
 
+// Todo: bedenk betere naam
+interface Thing {
+  logMessageExtension: string;
+  interactionReplyOptions: InteractionReplyOptions;
+  messageReplyOptions: MessageReplyOptions;
+}
+
 const trackEmbedBuilder = async (
   trackPlaying: Track,
   pfp: string,
 ) =>
-  new EmbedBuilder()
-    .setTitle(trackPlaying.name)
-    .setURL(trackPlaying.url)
-    .setAuthor({
-      name: "Currently playing",
-      iconURL: pfp,
-    })
+  new EmbedBuilder({
+    title: trackPlaying.name,
+    url: trackPlaying.url,
+    description: `**${trackPlaying.artist}** on _${trackPlaying.album}_`,
+  }).setAuthor({ name: "Currently playing", iconURL: pfp })
     .setThumbnail(trackPlaying.image)
-    .setDescription(`**${trackPlaying.artist}** on _${trackPlaying.album}_`)
     .setColor(
       (await getAverageColor(
         trackPlaying.image,
       )).hex as `#${string}`,
     );
+
+async function getNowPlaying(
+  user: User,
+): Promise<Thing> {
+  const db = await Deno.openKv(Deno.env.get("DATABASE_PATH"));
+  const getLastFMUsername = await db.get<string>(
+    ["lastfmusernames", user.id],
+  );
+  db.close();
+
+  if (!getLastFMUsername.versionstamp) {
+    return {
+      logMessageExtension: "No username was set for this user.",
+      interactionReplyOptions: {
+        content: "You need to set a username first!",
+        withResponse: true,
+      },
+      messageReplyOptions: {
+        content: "You need to set a username first!",
+      },
+    };
+  }
+
+  const response = await fetch(
+    `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${getLastFMUsername.value}&api_key=${
+      Deno.env.get("LASTFM_KEY")
+    }&format=json`,
+  );
+
+  if (!response.ok) {
+    const errorMessage = "Something went wrong while fetching lastfm data.";
+    return {
+      logMessageExtension: errorMessage,
+      interactionReplyOptions: {
+        content: errorMessage,
+        withResponse: true,
+      },
+      messageReplyOptions: {
+        content: errorMessage,
+      },
+    };
+  }
+
+  const lastFMData = await response.json() as LastFMData;
+  const nowPlayingTrack = lastFMData.recenttracks.track[0];
+
+  if (!nowPlayingTrack["@attr"]?.nowplaying) {
+    return {
+      logMessageExtension: "Command successful.",
+      interactionReplyOptions: {
+        content: "No track is currently playing!",
+        withResponse: true,
+      },
+      messageReplyOptions: {
+        content: "No track is currently playing!",
+      },
+    };
+  }
+
+  const nowPlaying: Track = {
+    name: nowPlayingTrack.name,
+    album: nowPlayingTrack.album["#text"],
+    artist: nowPlayingTrack.artist["#text"],
+    image: nowPlayingTrack.image[3]["#text"],
+    url: nowPlayingTrack.url,
+  };
+
+  const pfpURL = user.avatarURL()
+    ?? user.defaultAvatarURL;
+  const trackEmbed = await trackEmbedBuilder(nowPlaying, pfpURL);
+
+  return {
+    logMessageExtension: "Command successful.",
+    interactionReplyOptions: {
+      embeds: [trackEmbed],
+      withResponse: true,
+    },
+    messageReplyOptions: {
+      embeds: [trackEmbed],
+    },
+  };
+}
 
 export const lastFMnp = new NonSlashCommand({
   name: "np",
@@ -84,89 +171,16 @@ export const lastFMnp = new NonSlashCommand({
     return message.content === this.command;
   },
   execute: async (message) => {
-    const lastFMUsername = db
-      .sql`SELECT lastfmUsername FROM lastfm WHERE userId = ${message.author.id}`[
-        0
-      ]?.lastfmUsername as string | null;
-
-    if (!lastFMUsername) {
-      await message.reply(
-        "You need to set a username first!",
-      );
-      return `${message.author.username} used .np, but forgot to set their username`;
-    }
-
-    const response = await fetch(
-      `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${lastFMUsername}&api_key=${
-        env.get("LASTFM_KEY")
-      }&format=json`,
-    );
-
-    if (!response.ok) {
-      await message.reply("Er ging iets mis owo :3");
-      return `${message.author.username} used ;np, but something went wrong`;
-    }
-
-    const lastFMData = await response.json() as LastFMData;
-    const nowPlayingTrack = lastFMData.recenttracks.track as LastFMTrack[];
-
-    if (!nowPlayingTrack[0]["@attr"]?.nowplaying) {
-      await message.reply("No track is currently playing!");
-      return `${message.author.username} used .np, but no music was playing`;
-    }
-
-    const nowPlaying: Track = {
-      name: nowPlayingTrack[0].name,
-      album: nowPlayingTrack[0].album["#text"],
-      artist: nowPlayingTrack[0].artist["#text"],
-      image: nowPlayingTrack[0].image[3]["#text"],
-      url: nowPlayingTrack[0].url,
-    };
-
-    const pfpURL = message.author.avatarURL()
-      ?? message.author.defaultAvatarURL;
-    const trackEmbed = await trackEmbedBuilder(nowPlaying, pfpURL);
-
-    await message.reply({
-      embeds: [trackEmbed],
-    });
-    return `${message.author.username} used .np`;
-  },
-});
-
-export const lastFMSet = new NonSlashCommand({
-  name: "lastFMSet",
-  command: ";lastFMSet",
-  description: "Set your lastFM username!",
-  showInHelp: true,
-  match(message): boolean {
-    return message.content.split(" ")[0] === this.command;
-  },
-  execute: async (message) => {
     const lastFMUsername = message.content.split(" ").slice(1).join();
+    const logMessageBase =
+      `${message.author.username} used ;np <${lastFMUsername}>: `;
 
-    if (lastFMUsername === "") {
-      await message.reply("Dan moet je ook wel een username geven slimmerik");
-      return `${message.author.username} used .lastFMSet [], but no username was supplied`;
-    }
-
-    try {
-      db.sql`DELETE FROM lastfm WHERE userId = ${message.author.id}`;
-
-      db.sql`
-        INSERT INTO lastfm (userId, lastfmUsername) VALUES (${message.author.id}, ${lastFMUsername})`;
-    } catch (err) {
-      console.error(err);
-      await message
-        .reply("Something went wrong!")
-        .catch((err) => console.error(err));
-      return `${message.author.username} used .lastFMSet [${lastFMUsername}], but something went wrong`;
-    }
-
-    await message.reply(
-      `Je nieuwe username is ${lastFMUsername}, geniet er maar van`,
+    const { logMessageExtension, messageReplyOptions } = await getNowPlaying(
+      message.author,
     );
-    return `${message.author.username} used .lastFMSet [${lastFMUsername}]`;
+
+    await message.reply(messageReplyOptions).catch(console.error);
+    return logMessageBase + logMessageExtension;
   },
 });
 
@@ -180,71 +194,84 @@ export const slashLastFMnp = new SlashCommand({
       InteractionContextType.PrivateChannel,
     ]),
   execute: async (interaction) => {
-    const lastFMUsername = db
-      .sql`SELECT lastfmUsername FROM lastfm WHERE userId = ${interaction.user.id}`[
-        0
-      ]?.lastfmUsername as string | null;
+    const lastFMUsername = interaction.options.getString("username", true);
+    const logMessageBase =
+      `${interaction.user.username} used /lastfm-np <${lastFMUsername}>: `;
 
-    if (!lastFMUsername) {
-      await interaction
-        .reply({
-          content: "You need to set a username first!",
-          withResponse: true,
-        })
-        .catch((err) => console.error(err));
-      return `${interaction.user.username} used /lastfm-np, but forgot to set their username`;
-    }
+    const { logMessageExtension, interactionReplyOptions } =
+      await getNowPlaying(interaction.user);
 
-    const baseUrl =
-      `http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${lastFMUsername}&api_key=${
-        env.get("LASTFM_KEY")
-      }&format=json`;
-    const response = await fetch(baseUrl);
+    await interaction.reply(interactionReplyOptions).catch(console.error);
+    return logMessageBase + logMessageExtension;
+  },
+});
 
-    if (!response.ok) {
-      await interaction
-        .reply({
-          content: "Er ging iets mis owo :3",
-          withResponse: true,
-        })
-        .catch((err) => console.error(err));
-      return `${interaction.user.username} used /lastfm-np, but something went wrong`;
-    }
-
-    const lastFMData = await response.json() as LastFMData;
-    const nowPlayingTrack = lastFMData.recenttracks.track?.[0];
-
-    if (!nowPlayingTrack["@attr"]?.nowplaying) {
-      await interaction
-        .reply({
-          content: "No track is currently playing!",
-          withResponse: true,
-        })
-        .catch((err) => console.error(err));
-      return `${interaction.user.username} used /lastfm-np, but no music was playing`;
-    }
-
-    const nowPlaying: Track = {
-      name: nowPlayingTrack.name,
-      album: nowPlayingTrack.album["#text"],
-      artist: nowPlayingTrack.artist["#text"],
-      image: nowPlayingTrack.image[3]["#text"],
-      url: nowPlayingTrack.url,
+async function setLastFMUsername(
+  lastFMUsername: string,
+  user: User,
+): Promise<Thing> {
+  if (lastFMUsername === "") {
+    return {
+      logMessageExtension: "No username was supplied.",
+      interactionReplyOptions: {
+        content: "Dan moet je ook wel een username geven slimmerik",
+        withResponse: true,
+      },
+      messageReplyOptions: {
+        content: "Dan moet je ook wel een username geven slimmerik",
+      },
     };
+  }
 
-    const pfpURL = interaction.user.avatarURL()
-      ?? interaction.user.defaultAvatarURL;
+  try {
+    const db = await Deno.openKv(Deno.env.get("DATABASE_PATH"));
+    db.set(["lastfmusernames", user.id], lastFMUsername);
+    db.close();
+  } catch (err) {
+    console.error(err);
+    return {
+      logMessageExtension:
+        "Something went wrong while writing new username to database.",
+      interactionReplyOptions: {
+        content: "Something went wrong while setting your new username!",
+        withResponse: true,
+      },
+      messageReplyOptions: {
+        content: "Something went wrong while setting your new username!",
+      },
+    };
+  }
 
-    const trackEmbed = await trackEmbedBuilder(
-      nowPlaying,
-      pfpURL,
-    );
-
-    await interaction.reply({
-      embeds: [trackEmbed],
+  return {
+    logMessageExtension: "Command successful.",
+    interactionReplyOptions: {
+      content: `Je nieuwe username is ${lastFMUsername}, geniet er maar van`,
       withResponse: true,
-    }).catch((err) => console.error(err));
-    return `${interaction.user.username} used /lastfm-np`;
+    },
+    messageReplyOptions: {
+      content: `Je nieuwe username is ${lastFMUsername}, geniet er maar van`,
+    },
+  };
+}
+
+export const lastFMSet = new NonSlashCommand({
+  name: "lastFMSet",
+  command: ";lastFMSet",
+  description: "Set your lastFM username!",
+  showInHelp: true,
+  match(message): boolean {
+    return message.content.split(" ")[0] === this.command;
+  },
+  execute: async (message) => {
+    const lastFMUsername = message.content.split(" ").slice(1).join();
+    const logMessageBase =
+      `${message.author.username} used ;lastFMSet <${lastFMUsername}>: `;
+
+    const { logMessageExtension, messageReplyOptions } =
+      await setLastFMUsername(lastFMUsername, message.author);
+
+    await message.reply(messageReplyOptions).catch(console.error);
+    return logMessageBase + logMessageExtension;
   },
 });
 
@@ -265,25 +292,13 @@ export const slashLastFMSet = new SlashCommand({
     ]),
   execute: async (interaction) => {
     const lastFMUsername = interaction.options.getString("username", true);
+    const logMessageBase =
+      `${interaction.user.username} used ;lastFMSet <${lastFMUsername}>: `;
 
-    try {
-      db.sql`
-        DELETE FROM lastfm WHERE userId = ${interaction.user.id};
-      `;
-      db.sql`
-        INSERT INTO lastfm (userId, lastfmUsername) VALUES (${interaction.user.id}, ${lastFMUsername})
-      `;
-    } catch (err) {
-      console.error(err);
-    }
+    const { logMessageExtension, interactionReplyOptions } =
+      await setLastFMUsername(lastFMUsername, interaction.user);
 
-    await interaction
-      .reply({
-        content: `Set Last.fm username to _${lastFMUsername}_`,
-        withResponse: true,
-      }).catch(
-        (err) => console.error(err),
-      );
-    return `${interaction.user.username} used /lastfm-set [${lastFMUsername}]`;
+    await interaction.reply(interactionReplyOptions).catch(console.error);
+    return logMessageBase + logMessageExtension;
   },
 });

@@ -30,32 +30,36 @@ for (const nonSlashCommand of nonSlashCommands) {
   }
 }
 
-nonSlashCommands.push({
-  name: "help",
-  description: "check all available commands",
-  command: ";help",
-  showInHelp: true,
-  match: (message) => message.content === ";help",
-  execute: async (message) => {
-    await message.reply({ content: helpMessage });
-    return `${message.author.username} used .help`;
-  },
-});
+nonSlashCommands.push(
+  new NonSlashCommand({
+    name: "help",
+    description: "check all available commands",
+    command: ";help",
+    showInHelp: true,
+    match: (message) => message.content === ";help",
+    execute: async (message) => {
+      await message.reply({ content: helpMessage });
+      return `${message.author.username} used .help`;
+    },
+  }),
+);
 
-slashCommands.push({
-  data: new SlashCommandBuilder()
-    .setName("help")
-    .setDescription("Replies with pong!"),
-  execute: async (interaction) => {
-    await interaction
-      .reply({
-        content: helpMessage,
-        withResponse: true,
-      })
-      .catch((err) => console.error(err));
-    return `${interaction.user.username} used .help`;
-  },
-});
+slashCommands.push(
+  new SlashCommand({
+    data: new SlashCommandBuilder()
+      .setName("help")
+      .setDescription("Replies with pong!"),
+    execute: async (interaction) => {
+      await interaction
+        .reply({
+          content: helpMessage,
+          withResponse: true,
+        })
+        .catch((err) => console.error(err));
+      return `${interaction.user.username} used .help`;
+    },
+  }),
+);
 
 console.log(
   "\x1b[34mSlashCommands: \x1b[0m\n",

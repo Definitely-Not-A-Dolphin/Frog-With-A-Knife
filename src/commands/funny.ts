@@ -6,8 +6,7 @@ export const perkele = new NonSlashCommand({
   description: "perkele",
   showInHelp: false,
   match(message): boolean {
-    return Boolean(message.content.match(this.command))
-      && !message.author.bot;
+    return Boolean(message.content.match(this.command)) && !message.author.bot;
   },
   execute: async (message) => {
     await message.reply("PERKELE!!");
@@ -21,8 +20,7 @@ export const perhana = new NonSlashCommand({
   description: "perhana",
   showInHelp: false,
   match(message): boolean {
-    return Boolean(message.content.match(this.command))
-      && !message.author.bot;
+    return Boolean(message.content.match(this.command)) && !message.author.bot;
   },
   execute: async (message) => {
     await message.reply("you are not a five year old kid, just say perkele");
