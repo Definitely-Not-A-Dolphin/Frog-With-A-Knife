@@ -1,7 +1,9 @@
 import type {
   ChatInputCommandInteraction,
   ClientEvents,
+  InteractionReplyOptions,
   Message,
+  MessageReplyOptions,
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
 } from "discord.js";
@@ -47,3 +49,10 @@ export class BotEvent<T extends keyof ClientEvents> {
 }
 
 export type MaybePromiseVoid = void | Promise<void>;
+
+// Todo: bedenk betere naam
+export interface Thing {
+  logMessageExtension: string;
+  interactionReplyOptions: InteractionReplyOptions;
+  messageReplyOptions: MessageReplyOptions;
+}

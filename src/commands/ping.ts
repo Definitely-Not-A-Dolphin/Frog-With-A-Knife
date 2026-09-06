@@ -1,5 +1,20 @@
 import { InteractionContextType, SlashCommandBuilder } from "discord.js";
-import { NonSlashCommand, SlashCommand } from "../types.ts";
+import { NonSlashCommand, SlashCommand, Thing } from "../types.ts";
+
+function doPing(timestamp: number): Thing {
+  const diff = Date.now() - timestamp;
+  const message = `Pong! Latency: ${diff}ms`;
+  return {
+    logMessageExtension: "Command successful",
+    messageReplyOptions: {
+      content: message,
+    },
+    interactionReplyOptions: {
+      content: message,
+      withResponse: true,
+    },
+  };
+}
 
 export const ping = new NonSlashCommand({
   name: "ping",
@@ -10,10 +25,12 @@ export const ping = new NonSlashCommand({
     return message.content === this.command;
   },
   execute: async (message) => {
-    const diff = Date.now() - message.createdTimestamp;
+    const { logMessageExtension, messageReplyOptions } = doPing(
+      message.createdTimestamp,
+    );
 
-    await message.reply(`Pong! Latency: ${diff}ms`);
-    return `${message.author.username} used ;ping: Command successful`;
+    await message.reply(messageReplyOptions).catch(console.error);
+    return `${message.author.username} used ;ping: ` + logMessageExtension;
   },
 });
 
@@ -27,12 +44,11 @@ export const slashPing = new SlashCommand({
       InteractionContextType.PrivateChannel,
     ]),
   execute: async (interaction) => {
-    const diff = Date.now() - interaction.createdTimestamp;
+    const { logMessageExtension, interactionReplyOptions } = doPing(
+      interaction.createdTimestamp,
+    );
 
-    await interaction.reply({
-      content: `Pong! Latency: ${diff}ms`,
-      withResponse: true,
-    }).catch(console.error);
-    return `${interaction.user.username} used /ping: Command Successful`;
+    await interaction.reply(interactionReplyOptions).catch(console.error);
+    return `${interaction.user.username} used /ping: ` + logMessageExtension;
   },
 });

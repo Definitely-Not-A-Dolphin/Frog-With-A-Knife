@@ -1,22 +1,12 @@
 import {
   EmbedBuilder,
   InteractionContextType,
-  InteractionReplyOptions,
-  MessageReplyOptions,
   SlashCommandBuilder,
   type SlashCommandStringOption,
   User,
 } from "discord.js";
 import { getAverageColor } from "fast-average-color-node";
-import { NonSlashCommand, SlashCommand } from "../types.ts";
-
-interface Track {
-  name: string;
-  album: string;
-  artist: string;
-  image: string;
-  url: string;
-}
+import { NonSlashCommand, SlashCommand, Thing } from "../types.ts";
 
 interface LastFMTrack {
   artist: {
@@ -56,29 +46,6 @@ interface LastFMData {
     };
   };
 }
-
-// Todo: bedenk betere naam
-interface Thing {
-  logMessageExtension: string;
-  interactionReplyOptions: InteractionReplyOptions;
-  messageReplyOptions: MessageReplyOptions;
-}
-
-const trackEmbedBuilder = async (
-  trackPlaying: Track,
-  pfp: string,
-) =>
-  new EmbedBuilder({
-    title: trackPlaying.name,
-    url: trackPlaying.url,
-    description: `**${trackPlaying.artist}** on _${trackPlaying.album}_`,
-  }).setAuthor({ name: "Currently playing", iconURL: pfp })
-    .setThumbnail(trackPlaying.image)
-    .setColor(
-      (await getAverageColor(
-        trackPlaying.image,
-      )).hex as `#${string}`,
-    );
 
 async function getNowPlaying(
   user: User,
@@ -123,9 +90,9 @@ async function getNowPlaying(
   }
 
   const lastFMData = await response.json() as LastFMData;
-  const nowPlayingTrack = lastFMData.recenttracks.track[0];
+  const lastTrack = lastFMData.recenttracks.track[0];
 
-  if (!nowPlayingTrack["@attr"]?.nowplaying) {
+  if (!lastTrack["@attr"]?.nowplaying) {
     return {
       logMessageExtension: "Command successful.",
       interactionReplyOptions: {
@@ -138,17 +105,21 @@ async function getNowPlaying(
     };
   }
 
-  const nowPlaying: Track = {
-    name: nowPlayingTrack.name,
-    album: nowPlayingTrack.album["#text"],
-    artist: nowPlayingTrack.artist["#text"],
-    image: nowPlayingTrack.image[3]["#text"],
-    url: nowPlayingTrack.url,
-  };
-
-  const pfpURL = user.avatarURL()
-    ?? user.defaultAvatarURL;
-  const trackEmbed = await trackEmbedBuilder(nowPlaying, pfpURL);
+  const pfpURL = user.avatarURL() ?? user.defaultAvatarURL;
+  const trackEmbed = new EmbedBuilder({
+    title: lastTrack.name,
+    url: lastTrack.url,
+    description: `**${lastTrack.artist["#text"]}** on _${
+      lastTrack.album["#text"]
+    }_`,
+  }).setAuthor({ name: "Currently playing", iconURL: pfpURL })
+    .setThumbnail(lastTrack.url)
+    // Todo: move this on the constructor parameter object
+    .setColor(
+      (await getAverageColor(
+        lastTrack.url,
+      )).hex as `#${string}`,
+    );
 
   return {
     logMessageExtension: "Command successful.",
